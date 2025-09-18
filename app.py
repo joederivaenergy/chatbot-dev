@@ -158,7 +158,7 @@ with st.sidebar.expander(" Tools", expanded=True):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("�� Support"):
+with st.sidebar.expander("Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 st.sidebar.divider()
