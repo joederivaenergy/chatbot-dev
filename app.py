@@ -15,7 +15,7 @@ DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 from langchain_aws.chat_models import ChatBedrock
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import BaseMessage, HumanMessage, AIMessage
-from langchain_core.chat_history import BaseChatMessageHistory  # Correct import path
+from langchain_core.chat_history import BaseChatMessageHistory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 import time
 from typing import List
@@ -60,7 +60,7 @@ class CustomDynamoDBChatHistory(BaseChatMessageHistory):
             self.table.put_item(
                 Item={
                     'session_id': self.session_id,
-                    'message_timestamp': str(int(time.time() * 1000)),  # Convert to string
+                    'message_timestamp': str(int(time.time() * 1000)),
                     'message_type': msg_type,
                     'content': message.content
                 }
@@ -79,17 +79,15 @@ class CustomDynamoDBChatHistory(BaseChatMessageHistory):
     def clear(self):
         """Clear all messages for this session"""
         try:
-            # Query all items for this session
             response = self.table.query(
                 KeyConditionExpression=boto3.dynamodb.conditions.Key('session_id').eq(self.session_id)
             )
             
-            # Delete each item
             for item in response.get('Items', []):
                 self.table.delete_item(
                     Key={
                         'session_id': item['session_id'],
-                        'message_timestamp': str(item['message_timestamp'])  # Ensure string format
+                        'message_timestamp': str(item['message_timestamp'])
                     }
                 )
         except Exception as e:
@@ -104,8 +102,7 @@ dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
 def create_dynamodb_table_if_not_exists():
     try:
         table = dynamodb.Table(DDB_TABLE_NAME)
-        table.load()  # Check if table exists
-        # st.success(f"✅ DynamoDB table '{DDB_TABLE_NAME}' exists")
+        table.load()
     except dynamodb.meta.client.exceptions.ResourceNotFoundException:
         st.warning(f"Creating DynamoDB table '{DDB_TABLE_NAME}'...")
         try:
@@ -135,22 +132,19 @@ def create_dynamodb_table_if_not_exists():
         return False
     return True
 
-# Check/create table on startup
 if not create_dynamodb_table_if_not_exists():
     st.stop()
 
 # --- Streamlit Page ---
-st.set_page_config(page_icon="🤖", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
+st.set_page_config(page_icon="��", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
 
 st.sidebar.title("⚙️ Settings")
 
-# Session / User identity (swap with SSO user if you have it)
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
 def reset_history():
     try:
-        # Use custom history class
         hist = CustomDynamoDBChatHistory(
             table_name=DDB_TABLE_NAME, 
             session_id=st.session_state["session_id"]
@@ -159,12 +153,12 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("🧹 Tools", expanded=True):
-    if st.button("🗑️ Clear Chat"):
+with st.sidebar.expander("�� Tools", expanded=True):
+    if st.button("��️ Clear Chat"):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("📧 Support"):
+with st.sidebar.expander("�� Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 st.sidebar.divider()
@@ -173,15 +167,13 @@ st.sidebar.caption("Diva The Chatbot is made by Deriva Energy and is for interna
 st.markdown("<h1 style='text-align: center;'>⚡Meet Diva!</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines.</p>", unsafe_allow_html=True)
 
-# --- LLM + Memory (simplified approach) ---
+# --- LLM + Memory ---
 chat_model = ChatBedrock(
     client=bedrock_runtime,
     model_id=BEDROCK_MODEL_ID,
     region_name=AWS_REGION,
-    # model_kwargs={"temperature": 0.2}
 )
 
-# Use custom DynamoDB chat history that works with your table schema
 chat_history_store = CustomDynamoDBChatHistory(
     table_name=DDB_TABLE_NAME,
     session_id=st.session_state["session_id"]
@@ -209,214 +201,141 @@ def retrieve_from_kb(query: str, max_results: int = 6) -> Dict:
             chunks.append(txt.strip())
         if loc:
             sources.append({"location": loc, "score": score})
-    return {"context": "\n\n---\n\n".join(chunks), "sources": sources}
+    return {"context": "\n\n---\n\n".join(chunks), "sources": sources, "relevance_score": max([s.get("score", 0) for s in sources]) if sources else 0}
 
-# --- Clarifying Router ---
-ROUTER_POLICY = """
-You are Diva, Deriva's internal charging-guidelines assistant.
- 
-DEFAULT: Clarify first for any query about policies, charging, codes, expenses, departments, projects, or sites. Only skip clarification for pure greetings or when the message + history already contains all critical fields.
- 
-Critical fields (generic):
-- team/department (ask: “Which team or department do you work in?”)
-- if the provided team is umbrella-level (e.g., an org name), ask for the specific sub-team/department within it
-- site/plant if policy can vary by site
-- any other column implied by the retrieved context that changes the code (category, activity, etc.)
- 
-Rules:
-1) Greetings → intent: "answer".
-2) Prefer intent: "clarify" and ask at most TWO concise, targeted questions for missing fields.
-3) If prior chat history already contains what's needed, intent: "answer".
-4) Never invent values; if unsure, ask.
-5) Keep questions short and friendly.
- 
-Return ONLY JSON:
-{
-  "intent": "clarify" | "answer",
-  "questions": ["q1","q2"],
-  "known": {"team": "...", "department": "...", "site": "..."},
-  "notes": "if IT, which IT department or team; if operations, is it wind, solar, or battery?"
-}
-"""
-
-router_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", ROUTER_POLICY),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}")
+# --- Detect if query is about charging guidelines ---
+def is_charging_related(query: str) -> bool:
+    """Detect if the query is related to charging guidelines"""
+    charging_keywords = [
+        "charge", "charging", "expense", "expenses", "code", "codes", "account", "budget",
+        "department", "project", "cost", "billing", "guidelines", "policy", "travel",
+        "meal", "lodging", "flight", "hotel", "finance", "accounting", "reimbursement"
     ]
-)
+    query_lower = query.lower()
+    return any(keyword in query_lower for keyword in charging_keywords)
 
-
-def route_turn(user_input: str) -> Dict:
-    import re, json as _json
-
-    # 0) Quick greeting bypass
-    text_raw = (user_input or "").strip()
-    text = text_raw.lower()
-    GREETINGS = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
-    if text in GREETINGS or any(text.startswith(g) for g in GREETINGS):
-        return {"intent": "answer", "questions": [], "known": {"reason": "greeting"}, "notes": ""}
-
-    # 1) Heuristic: detect explicit team in the current input (so we don't rely solely on the LLM)
-    TEAM_KEYWORDS = {
-        "it": "IT",
-        "finance": "Finance",
-        "engineering": "Engineering",
-        "ops": "Operations",
-        "operations": "Operations",
-        "data analytics": "IT",  # treat as IT umbrella; you can specialize later
-    }
-    team_guess = None
-    for kw, norm in TEAM_KEYWORDS.items():
-        if re.search(rf"\b{re.escape(kw)}\b", text):
-            team_guess = norm
-            break
-
-    # 2) Ask the LLM router (for broader detection like site or asset_type)
-    try:
-        mv = memory.load_memory_variables({})
-        msgs = router_prompt.format_messages(chat_history=mv.get("chat_history", []), input=user_input)
-        resp = chat_model.invoke(msgs)
-        content = resp.content.strip()
-
-        # strip code fences if present
-        if content.startswith("```json"):
-            content = content[7:]
-        if content.startswith("```"):
-            content = content[3:]
-        if content.endswith("```"):
-            content = content[:-3]
-        content = content.strip()
-
-        m = re.search(r'\{.*\}', content, re.DOTALL)
-        data = _json.loads(m.group() if m else content)
-    except Exception:
-        data = {"intent": "clarify", "questions": [], "known": {}, "notes": "router_exception_fallback"}
-
-    # 3) Consolidate knowns (prefer explicit user hint)
-    known = data.get("known", {}) or {}
-    if team_guess and not known.get("team"):
-        known["team"] = team_guess
-
-    team = (known.get("team") or "").strip().lower()
-    asset_type = (known.get("asset_type") or "").strip().lower()
-    site = (known.get("site") or "").strip()
-
-    # 4) Compute what’s still missing
-    missing_questions = []
-    if not team:
-        missing_questions.append("which team you're with (Operations, Engineering, Finance, or IT)")
-    if team == "operations" and not asset_type:
-        missing_questions.append("if it's for Wind, Solar, or Battery")
-    if team == "operations" and not site:
-        # only ask site for Ops to keep it short; include if we still have space
-        missing_questions.append("the site/plant (if applicable)")
-
-    # 5) Sufficiency rule
-    sufficient = False
-    if team:
-        if team == "operations":
-            sufficient = bool(asset_type)  # site can still be asked later in the answer if truly required
-        else:
-            sufficient = True
-
-    # 6) Force **answer** when sufficient, even if the LLM said "clarify"
-    if sufficient:
+# --- Improved Query Classification ---
+def classify_and_respond(user_input: str) -> Dict:
+    """
+    Classify the query and determine response strategy:
+    1. Greeting -> Simple greeting response
+    2. Charging-related -> Try KB first, then clarify if needed
+    3. General knowledge -> Use LLM directly
+    """
+    
+    # Check for greetings
+    text_lower = user_input.lower().strip()
+    greetings = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
+    if text_lower in greetings or any(text_lower.startswith(g) for g in greetings):
         return {
-            "intent": "answer",
-            "questions": [],
-            "known": known,
-            "notes": "forced_answer_minimum_context"
+            "type": "greeting",
+            "response": "Hello! I'm Diva, your AI assistant for Deriva Energy's charging guidelines. I can help you find expense codes, department information, and charging policies. I can also answer general questions. How can I help you today?"
         }
-
-    # 7) Otherwise clarify with only the missing pieces (max 2)
-    qs = missing_questions[:2] or (data.get("questions", [])[:2] if isinstance(data.get("questions"), list) else [])
-    return {
-        "intent": "clarify",
-        "questions": qs,
-        "known": known,
-        "notes": data.get("notes", "")
-    }
-
-
-
-# --- Answer Prompt (only for final answers) ---
-SYSTEM_INSTRUCTIONS = (
-    "You are Diva, an internal Deriva Energy assistant for charging guidelines. "
-    "If the user is just greeting you (like 'hi', 'hello', 'hey', etc.), respond with a simple, friendly greeting and ask how you can help with charging guidelines. Do NOT use bullet points for greetings.\n\n"
-    "For all other queries about guidelines, codes, departments, projects, etc., return a markdown bulleted list with exactly these fields:\n"
-    "- **Description:**\n- **Account number:**\n- **Location:**\n- **Company ID:**\n- **Project:**\n- **Department:**\n"
-    "Use 'N/A' when unavailable. Finish with 1-2 short notes if needed."
-)
-
-#"""
-# If it's a greeting, greet back (your name is Diva. Made by Deriva Energy.) Else, based on the following retrieved information and the user's query, please provide the most relevant details about charging guidelines.\n\nExtract and present the following in a markdown bulleted list:\n\n- **Description:**\n- **Account number:**\n- **Location:**\n- **Company ID:**\n- **Project:**\n- **Department:**\n\nIf not available, return \"N/A\".\n\nFinish with 1-2 relevant notes if needed.
-# """
-
-answer_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", SYSTEM_INSTRUCTIONS + "\n\nContext:\n{context}"),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}")
-    ]
-)
-
-# --- Clarification Prompt (for asking questions) ---
-CLARIFICATION_INSTRUCTIONS = (
-    "You are Diva, an internal Deriva Energy assistant. "
-    "Based on the conversation and the questions you need to ask, respond naturally and conversationally. "
-    "Ask the clarifying questions in a friendly, helpful manner. Do NOT provide bullet points or structured data yet."
-)
-
-clarification_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", CLARIFICATION_INSTRUCTIONS),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "Please ask these clarifying questions: {questions}")
-    ]
-)
-
-
-# def generate_clarification(user_input: str, questions: List[str]) -> str:
-#     """Generate a natural clarifying response - simplified for speed"""
-#     # Use a simple template instead of calling the LLM for speed
-#     q_text = " ".join(questions[:2])  # Join questions naturally
-#     return f"I'd be happy to help! To give you the right charging guidelines, could you tell me {q_text}?"
-
-def generate_clarification(user_input: str, questions: List[str], notes: str = "") -> str:
-    qs = [q.strip().rstrip("?") for q in (questions or []) if q and q.strip()]
     
-    # Use notes to provide specific follow-up questions
-    if "if IT, which IT department or team" in notes.lower() and "it" in user_input.lower():
-        return "I can help with that! To give you the right charging guideline, could you tell me which specific IT department or team you're with?"
+    # Check if it's charging-related
+    if is_charging_related(user_input):
+        return {"type": "charging", "query": user_input}
     
-    if "if operations, is it wind, solar, or battery" in notes.lower() and "operations" in user_input.lower():
-        return "I can help with that! Could you specify if this is for Wind, Solar, or Battery Operations?"
+    # General knowledge query
+    return {"type": "general", "query": user_input}
+
+# --- Enhanced Answer Generation ---
+def generate_answer(user_input: str, query_type: str) -> Dict:
+    """Generate answer based on query type"""
+    
+    if query_type == "charging":
+        # Try knowledge base first
+        retrieval = retrieve_from_kb(user_input)
         
-    if not qs:
-        # Fallback if no specific questions are generated
-        return "I'd be happy to help! To give you the right charging guidelines, could you tell me which team you're with (Operations, Engineering, Finance, or IT)?"
-        
-    if len(qs) == 1:
-        q_text = qs[0] + "?"
-    else:
-        q_text = f"{qs[0]} and {qs[1]}?"
-        
-    return f"I can help with that. To point you to the right charging guideline, could you tell me {q_text}"
+        # If we have good relevance, provide answer
+        if retrieval["relevance_score"] > 0.3:  # Lowered threshold
+            # Check if we have enough context from conversation
+            mv = memory.load_memory_variables({})
+            history = mv.get("chat_history", [])
+            
+            # Extract any team/department info from history
+            team_context = ""
+            for msg in reversed(history[-10:]):  # Check last 10 messages
+                content = msg.content.lower()
+                if "operations" in content:
+                    team_context = "Operations team"
+                elif "finance" in content:
+                    team_context = "Finance team"
+                elif "engineering" in content:
+                    team_context = "Engineering team"
+                elif "it" in content:
+                    team_context = "IT team"
+                if team_context:
+                    break
+            
+            # Build enhanced context
+            enhanced_context = retrieval["context"]
+            if team_context:
+                enhanced_context = f"User context: {team_context}\n\n{enhanced_context}"
+            
+            # Generate structured answer
+            answer_prompt = ChatPromptTemplate.from_messages([
+                ("system", """You are Diva, Deriva Energy's internal charging guidelines assistant.
 
-def generate_answer(user_input: str) -> Dict:
-    retrieval = retrieve_from_kb(user_input)
-    context = retrieval["context"]
-    mv = memory.load_memory_variables({})
-    messages = answer_prompt.format_messages(context=context, chat_history=mv["chat_history"], input=user_input)
-    llm_resp = chat_model.invoke(messages)
+Based on the context provided, answer the user's question about charging guidelines. If you have specific information, format it as:
+
+- **Description:** [specific description]
+- **Account number:** [number or N/A]
+- **Location:** [location or N/A]  
+- **Company ID:** [ID or N/A]
+- **Project:** [project or N/A]
+- **Department:** [department or N/A]
+
+If the context doesn't have complete information but is relevant, provide what you can and mention what additional details might be helpful.
+
+If you need more context to give accurate charging guidelines, ask for clarification about team/department.
+
+Context: {context}"""),
+                MessagesPlaceholder(variable_name="chat_history"),
+                ("human", "{input}")
+            ])
+            
+            messages = answer_prompt.format_messages(
+                context=enhanced_context,
+                chat_history=mv["chat_history"], 
+                input=user_input
+            )
+            llm_resp = chat_model.invoke(messages)
+            
+            return {
+                "answer": llm_resp.content,
+                "sources": retrieval["sources"],
+                "type": "structured"
+            }
+        
+        else:
+            # Low relevance - ask for clarification
+            return {
+                "answer": "I can help you with charging guidelines! To give you the most accurate information, could you tell me which team you're with (Operations, Engineering, Finance, or IT)?",
+                "sources": [],
+                "type": "clarification"
+            }
     
-    # Use the standard LangChain memory methods
-    memory.chat_memory.add_user_message(user_input)
-    memory.chat_memory.add_ai_message(llm_resp.content)
-    
-    return {"answer_md": llm_resp.content, "sources": retrieval["sources"]}
+    else:  # General knowledge
+        # Use LLM for general questions
+        general_prompt = ChatPromptTemplate.from_messages([
+            ("system", "You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge."),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("human", "{input}")
+        ])
+        
+        mv = memory.load_memory_variables({})
+        messages = general_prompt.format_messages(
+            chat_history=mv["chat_history"],
+            input=user_input
+        )
+        llm_resp = chat_model.invoke(messages)
+        
+        return {
+            "answer": llm_resp.content,
+            "sources": [],
+            "type": "general"
+        }
 
 # --- Render existing history ---
 for m in chat_history_store.messages:
@@ -430,39 +349,39 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # 1) Route: clarify or answer?
-    try:
-        decision = route_turn(user_input)
-    except:
-        # If router fails, default to answer for speed
-        decision = {"intent": "answer", "questions": [], "known": {}, "notes": ""}
-
-    if decision["intent"] == "clarify" and decision.get("questions"):
-        # Generate a natural clarifying response
-        # Pass the notes from the router's decision
-        clarifier = generate_clarification(user_input, decision["questions"], decision["notes"]) 
+    # Classify the query
+    classification = classify_and_respond(user_input)
     
-        # Save to memory
+    if classification["type"] == "greeting":
+        # Simple greeting response
+        response = classification["response"]
+        
         memory.chat_memory.add_user_message(user_input)
-        memory.chat_memory.add_ai_message(clarifier)
-    
+        memory.chat_memory.add_ai_message(response)
+        
         with st.chat_message("assistant"):
-            st.markdown(clarifier)
+            st.markdown(response)
+    
     else:
-    # ... (rest of the code is unchanged)
+        # Generate answer based on type
         with st.chat_message("assistant"):
             with st.spinner("Thinking…"):
                 try:
-                    result = generate_answer(user_input)
-                    st.markdown(result["answer_md"])
+                    result = generate_answer(user_input, classification["type"])
                     
-                    # Comment out sources for production, uncomment for dev
-                    # if result["sources"]:
+                    memory.chat_memory.add_user_message(user_input)
+                    memory.chat_memory.add_ai_message(result["answer"])
+                    
+                    st.markdown(result["answer"])
+                    
+                    # Show sources for charging-related queries if in debug mode
+                    # if result.get("sources") and result["type"] == "structured":
                     #     with st.expander("Sources"):
                     #         for i, s in enumerate(result["sources"], 1):
                     #             loc = s.get("location", {})
                     #             score = s.get("score")
                     #             st.markdown(f"- {i}. `{json.dumps(loc)}`" + (f"  (score: {score:.3f})" if score is not None else ""))
+                            
                 except Exception as e:
                     st.error(f"⚠️ Error: {e}")
 
