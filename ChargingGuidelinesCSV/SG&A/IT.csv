@@ -1,0 +1,269 @@
+IT Charging Guidelines,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,"Concur, Timesheets, Maximo, Basware, IFS",,,,,,,,,
+Description,,Company id,Location,Department,Project,Activity,Expense Type,Account,Account Name,Account Group,
+Labor,,"(77079) Deriva Energy Sub I
+(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC
+(75736) - General & Admin","DSOP
+DWOP
+DCS4
+DWE1
+STRG
+DSOL",,"DSOP25G001
+DWOP25G001
+DCS425G001
+DWE125G001
+STRG25G001
+DSOL25G001","DSOP25G001.100.10
+DWOP25G001.100.10
+DCS425G001.100.10
+DWE125G001.100.10
+STRG25G001.100.10
+DSOL25G001.100.10",,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+Labor - NERC and PI support,,"(75736) Deriva Energy Services, LLC",DSOL,,DSOLITWS,DSOLITWS.100.10,,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+Contract Workers,,"(75736) Deriva Energy Services, LLC",DSOL,Contact IT Manager,,,,515220,Consultant - Staff Augmentation,Consultant fees,
+Contract Workers - NERC and PI support,,"(75736) Deriva Energy Services, LLC",DSOL,Contact IT Manager,DSOLITWS,,,515220,Consultant - Staff Augmentation,Consultant fees,
+"PMD
+ (personal mobile device)",,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+Parking,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Parking,517102,Transportation - Tolls and Parking,Travel,
+Travel - Lodging,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Accommodations Hotel / Lodging Expenses,517110,Accommodations Hotel / Lodging Expenses,Travel,
+Travel - Auto Rental & Rental Car Fuel,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Auto Rental & Rental Car Fuel,517105,Transportation - Auto Rental and Rental Car Fuel,Travel,
+Travel - Flight / Airfare,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Flight / Airfare,517103,Transportation - Flight / Airfare,Travel,
+"Travel - Ground Bus, Taxi",,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,"Ground Bus, Taxi",517104,Transportation - Ground Bus Taxi,Travel,
+Travel - Meals - Individual,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Meals - Individual,517200,Meals,Meals & entertainment,
+Travel - Meals - Small Teams (Max 8-10),,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Meals - Small Teams (Max 8-10),517200,Meals,Meals & entertainment,
+Travel - Mileage Reimbursement,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Mileage Reimbursement,517101,Transportation - Mileage Reimbursement,Travel,
+Travel - Other Transportation,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Other Transportation,517100,Transportation - Other,Travel,
+Travel - Tolls,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Tolls,517102,Transportation - Tolls and Parking,Travel,
+Conferences and Seminars,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Conferences and Seminars,517400,Conferences and Seminars,Employee Related Expenses,
+Training,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Employee Training,517501,Employee Training,Employee Related Expenses,
+Memberships,,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List tab,,,Memberships,517600,Memberships,Employee Related Expenses,
+Shipping/Freight,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,Freight,514130,Maintenance Material Freight Out Courier/Trucking,Equipment Maintenance,
+Team Building,,"(75736) Deriva Energy Services, LLC",DSOL,8034,,,Entertainment (Staff & External Guests),517111,Entertainment (Staff & External Guests),Meals & entertainment,
+Late Charges,,"(75736) Deriva Energy Services, LLC",DSOL,Contact IT Manager,,,,513719,Other Fees,Other Fees & charges,
+Azure,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+AWS,,"(75736) Deriva Energy Services, LLC",DSOL,8032,,,,514301,IT Software,Computer Expenses,
+Redshift,,"(75736) Deriva Energy Services, LLC",DSOL,8032,,,,514301,IT Software,Computer Expenses,
+MS Unified Support,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Litera,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Digital Reality,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSB,,,514302,IT Hardware,Computer Expenses,
+Telco Circuits,,Individual Sites,Individual Sites,8031,XXXX25G018,,,513102,Telecom - Telephone,Communications (IT & Telecoms),
+M365 Licensing,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Solar Winds,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+End User Software,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Adobe Licensing,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Verizon,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSBC,,,513102,Telecom - Telephone,Communications (IT & Telecoms),
+Door James (Workstation Reservation),,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Printers,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514302,IT Hardware,Computer Expenses,
+Team Viewer Licensing,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Citrix,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+Domain Management - Cloudflare,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Cloudockit,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514301,IT Software,Computer Expenses,
+Checkpoint,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514302,IT Hardware,Computer Expenses,
+Office Hardware - IT,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514302,IT Hardware,Computer Expenses,
+Office Hardware - OT,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514302,IT Hardware,Computer Expenses,
+Password Management Tool,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,514301,IT Software,Computer Expenses,
+VMWare,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+Badging,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+Cisco,,"(75736) Deriva Energy Services, LLC",DSOL,8031,,,,514302,IT Hardware,Computer Expenses,
+Palo Alto,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLITWSB,,,514302,IT Hardware,Computer Expenses,
+Jira,,"(75736) Deriva Energy Services, LLC",DSOL,8032,,,,514301,IT Software,Computer Expenses,
+Miro,,"(75736) Deriva Energy Services, LLC",DSOL,8032,,,,514301,IT Software,Computer Expenses,
+Workato,,"(75736) Deriva Energy Services, LLC",DSOL,8032,,,,514301,IT Software,Computer Expenses,
+Acquis Consulting (Concur Support),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,515200,Consultant Other,Consultant fees,
+Cerebro Capital (debt compliance),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+IT2 (ROB),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+IFS (ROB),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Certent Disclosure Management (replaces Wdesk) bf Allocation,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Basware or Medius - selection IP ,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+OneStream (Rob),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+DSA Tool,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+TRM Tracker (BF Allocations),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+ZE Power (BF Allocations),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Morningstar (Subscription and Excel Add-in),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+PSC - GE EMS Support,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,515200,Consultant Other,Consultant fees,
+Excele Support,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,515200,Consultant Other,Consultant fees,
+Maximo (Projetech),,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSBC,,,514301,IT Software,Computer Expenses,
+EZMax (Maximo),,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSBC,,,514301,IT Software,Computer Expenses,
+PaSTA (Maximo),,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSBC,,,514301,IT Software,Computer Expenses,
+GEMS / Provider-Computershare,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+MV-90,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+GE EMS,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+VT Scada,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+Kepware (PI OPC Interface),,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+Seeq,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWS,,,514301,IT Software,Computer Expenses,
+"PI (Multiple Products, AVEVA)",,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWS,,,113200,IT Software,Computer Expenses,
+Hartigen PowerOptix,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Litmos,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Procore ,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+BenePass,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Landworks,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Exterro,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+SimpleLegal,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Identiflight - Eagle Imaging,,(75785) Top of the World Wind Energy LLC,TOPW,8030,,,,514301,IT Software,Computer Expenses,
+Identiflight - Eagle Imaging,,"(75764) Three Buttes Windpower, LLC",TBWP,8030,,,,514301,IT Software,Computer Expenses,
+Identiflight - Eagle Imaging,,"(75940) Ledyard Windpower, LLC",LEDY,8030,,,,514301,IT Software,Computer Expenses,
+Identiflight - Eagle Imaging,,"(75880) Frontier Windpower II, LLC",FRN2,8030,,,,514301,IT Software,Computer Expenses,
+Poseidon ,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWIND,,,514301,IT Software,Computer Expenses,
+Onyx,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWIND,,,514301,IT Software,Computer Expenses,
+Vaisala - Revenue Deviation,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+Milestone,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITSLR,,,514301,IT Software,Computer Expenses,
+Milestonem - DataLink,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITSLR,,,514301,IT Software,Computer Expenses,
+Structrz.com,,"(75736) Deriva Energy Services, LLC",DCSV,8030,,,,514301,IT Software,Computer Expenses,
+Holman,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSBC,,,514301,IT Software,Computer Expenses,
+System1 (Adapt.Wind),,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWIND,,,514301,IT Software,Computer Expenses,
+"TCM (Gram & Juhl, TCM, TCM Enterprise)",,(75785) Top of the World Wind Energy LLC,TOPW,8030,,,,514301,IT Software,Computer Expenses,
+"TCM (Gram & Juhl, TCM, TCM Enterprise)",,"(75865) Laurel Hill Wind Energy, LLC",CLHW,8030,,,,514301,IT Software,Computer Expenses,
+"TCM (Gram & Juhl, TCM, TCM Enterprise)",,"(75679) Cimarron Windpower II, LLC",CM2W,8030,,,,514301,IT Software,Computer Expenses,
+"TCM (Gram & Juhl, TCM, TCM Enterprise)",,"(75683) Los Vientos Windpower IA, LLC",LV1A,8030,,,,514301,IT Software,Computer Expenses,
+"TCM (Gram & Juhl, TCM, TCM Enterprise)",,"(75676) Ironwood Windpower, LLC",IWWP,8030,,,,514301,IT Software,Computer Expenses,
+PAS - Procedure Automation System,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+KPA fLEX,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSBC,,,514301,IT Software,Computer Expenses,
+Alteryx workflow (10 user est),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Ascend (Qtrly Subscription) (15k per qtr + 36k annual),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 25%
+DWE1: 25%
+STRG: 50%",8030,,,,514301,IT Software,Computer Expenses,
+Hitachi ABB Fundamental Curve Subscription ,,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 45%
+DWE1: 45%
+STRG: 10%",8030,,,,514301,IT Software,Computer Expenses,
+Wood Mackenzie,,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+SirionLab-Conga ($90 * 10 users per month),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+"Nira (MISO, SPP, TVA)",,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+GPI Strategies,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSBC,,,514301,IT Software,Computer Expenses,
+RTO Insider,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+EnerKnol (Subscription),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 30%
+DWE1: 30%
+STRG: 40%",8030,,,,514301,IT Software,Computer Expenses,
+Pivvot (Subscription),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+PowerDB lite,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Primavera,,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+PSCAD,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+PVCAD,,"(77079) Deriva Energy Sub I, LLC",DCS4,8030,,,,514301,IT Software,Computer Expenses,
+PVSYST,,"(77079) Deriva Energy Sub I, LLC",DCS4,8030,,,,514301,IT Software,Computer Expenses,
+Arc Pro,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Aarc Cad Civil 3D,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+ArcGIS Pro,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Siemens PSSE,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWS,,,514301,IT Software,Computer Expenses,
+SKM Systems Analysis,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+PowerDB Pro,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Articulate license,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+ISNetworld,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Open Meteo (RCC),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Force5 (CliqKey) (RCC),,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLITWSB,,,514301,IT Software,Computer Expenses,
+CES WAN XML Data Services ,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,513102,Telecom - Telephone,Communications (IT & Telecoms),
+Oracle NetSuite,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Caravel (project cost) (one time),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,515200,Consultant Other,Consultant fees,
+Work Day,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Work Day - change orders,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,515200,Consultant Other,Consultant fees,
+Top Bloc (workday support),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,515200,Consultant Other,Consultant fees,
+Karta,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,514301,IT Software,Computer Expenses,
+Lumen,,"(75736) Deriva Energy Services, LLC",DSOL,8033,DSOLITWSB,,,515200,Consultant Other,Consultant fees,
+CGI SOC,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+Tenable,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,514301,IT Software,Computer Expenses,
+KnowBe4,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,514301,IT Software,Computer Expenses,
+BDO/DataBrix,,"(75736) Deriva Energy Services, LLC",DSOL,8032,,,,514301,IT Software,Computer Expenses,
+Hartigen support for PowerOptix ,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,515200,Consultant Other,Consultant fees,
+Curate,,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+Fractal,,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+New CRM (Hubspot),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+New Project Media (subscription),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 50%
+DWE1: 25%
+STRG: 25%",8030,,,,514301,IT Software,Computer Expenses,
+Transmission software (one time setup) (Capital Markets),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 45%
+DWE1: 45%
+STRG: 10%",8030,,,,514301,IT Software,Computer Expenses,
+Transmission software cost (Capital Markets),,"(77079) Deriva Energy Sub I, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DCS4: 45%
+DWE1: 45%
+STRG: 10%",8030,,,,514301,IT Software,Computer Expenses,
+Rapid 7 (Vulnerability management external scans of all PortCos),,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+Dark Owl (Threat Intelligence program),,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+KPMG – Situational awareness and Regulatory reviews ,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+Shodan (vulnerability management),,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+Incident Response Retainer with external third-party ,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+Third-party NIST CSF 2.0 Maturity Assessment for Operations ,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+External Disaster Recovery Fire drill ,,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+"OneTrust (Third party, Incident Response, Privacy Risk Management)",,"(75736) Deriva Energy Services, LLC",DSOL,8033,,,,515200,Consultant Other,Consultant fees,
+Scipher app - LV3,,"(75668) Los Vientos Windpower III, LLC",LV03,8030,,,,514301,IT Software,Computer Expenses,
+Scipher app - LV4,,"(75801) Los Vientos Windpower IV, LLC",LV04,8030,,,,514301,IT Software,Computer Expenses,
+Scipher app - LV5,,"(75808) Los Vientos Windpower V, LLC",LV05,8030,,,,514301,IT Software,Computer Expenses,
+YES Energy,,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+Threads (HR related),,"(75736) Deriva Energy Services, LLC",DSOL,8030,,,,514301,IT Software,Computer Expenses,
+,,,,,,,,,,,
+"IT Allocation to Wind, Solar & Battery",,"(75736) Deriva Energy Services, LLC",DSOL,,DSOLITWSB,,"Project Code for site allocation:
+XXXX25G013",,,,
+"IT Allocation to Wind, Solar, Batt & Cntrl Svcs",,"(75736) Deriva Energy Services, LLC",DSOL,,DSOLITWSBC,,,,,,
+IT Allocation to Wind & Solar Assets,,"(75736) Deriva Energy Services, LLC",DSOL,,DSOLITWS,,,,,,
+IT Allocation to Wind Assets,,"(75736) Deriva Energy Services, LLC",DSOL,,DSOLITWIND,,,,,,
+IT Allocation to Solar Assets,,"(75736) Deriva Energy Services, LLC",DSOL,,DSOLITSLR,,,,,,
+Deriva ETRM RFP selection and ETRM implementation,,"(75736) Deriva Energy Services, LLC",DSOL,,DETRMRFP25,,,,,,
+,,,,,,,,,,,
+IT Separation,,,,,,,,,,,
+Core ERP,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24001,,,"Dependent upon work performed or purchase
+
+Account:
+
+514301: IT Software
+514302: IT Hardware
+515200: Consultant Other
+515220: Consultant Staff Aug",,,
+Core HRIS System,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24002,,,,,,
+New Deriva HRIS,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24003,,,,,,
+IT and HR Helpdesk Solution ,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24004,,,,,,
+ETRM Solution & Bid to Bill,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24005,,,,,,
+"Operational Data Management (PI Systems), EMS, Meters",,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24006,,,,,,
+Integration Layer & Data Analytics,,"(75736) Deriva Energy Services, LLC",DSOL,8032,DSOLM24007,,,,,,
+"Core Workflow Management [Maximo (Projetech), PasTa, EZMax ]",,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24008,,,,,,
+Other Key apps for cloning and extraction,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24009,,,,,,
+Data Center & Colo Migration,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24010,,,,,,
+Sites migrations,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24011,,,,,,
+Cloud Foundation Setup,,"(75736) Deriva Energy Services, LLC",DSOL,8032,DSOLM24012,,,,,,
+Network and Telecom Setup,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24013,,,,,,
+Cybersecurity and AD Setup,,"(75736) Deriva Energy Services, LLC",DSOL,8033,DSOLM24014,,,,,,
+"Email, SharePoint & End User Compute Setup",,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24015,,,,,,
+Other IT Infra Tools Setup,,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24016,,,,,,
+Physical Security Setup (Sites),,"(75736) Deriva Energy Services, LLC",DSOL,8031,DSOLM24017,,,,,,
+Oracle ERP,,"(75736) Deriva Energy Services, LLC",DSOL,8030,DSOLM24018,,,,,,

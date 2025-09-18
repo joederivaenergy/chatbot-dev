@@ -1,0 +1,56 @@
+"Development Charging Guidelines (Development, M&A, Greenfield)",,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+,Oper Unit,Bus Unit,,,,,,,,Company id,Location,,,,,,,,
+DCS4 = Solar Development,DCS4,77079,,,,,,,,(77079) Deriva Energy Sub I,DCS4,,,,,,,,
+DWE1 = Wind Development,DWE1,75752,,,,,,,,"(75752) Deriva Energy Wind, LLC",DWE1,,,,,,,,
+STRG = Battery Development,STRG,75969,,,,,,,,"(75969) Deriva Energy Storage, LLC",STRG,,,,,,,,
+DSOL = SG&A,,,,,,,,,,(75736) - General & Admin,DSOL,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+,"People Soft, Maximo and CAPS (until move to new AP System and IFS)",,,,,,,,,"Concur, Timesheets, Maximo, Basware, IFS",,,,,,,,,
+Description,Oper Unit,Bus Unit,Resp Center,Account,Resource Type,Process ID,Project ,Activity,,Company id,Location,Department,Project,Activity,Expense Type,Account,Account Name,Account Group,
+Salaries,See above,See above,See Employee Dept List tab,0920000,11000,SALARY,,,,"(77079) Deriva Energy Sub I
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC
+(75736) - General & Admin
+**Project Specific - see Project Activity Sequence tab","DCS4
+DWE1
+STRG
+DSOL
+**Project Specific - see Project Activity Sequence tab",,"DCS425G001
+DWE125G001
+STRG25G001
+DSOL25G001
+**Project Specific - see Project Activity Sequence tab","DCS425G001.100.10
+DWE125G001.100.10
+STRG25G001.100.10
+DSOL25G001.100.10
+**Project Specific - see Project Activity Sequence tab",,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+"PMD
+ (personal mobile device)",,,,,,,,,,See above,See above,See Employee Dept List tab,,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+Travel - Auto Rental & Rental Car Fuel,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Auto Rental & Rental Car Fuel,517105,Transportation - Auto Rental and Rental Car Fuel,Travel,
+Travel - Flight / Airfare,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Flight / Airfare,517103,Transportation - Flight / Airfare,Travel,
+"Travel - Ground Bus, Taxi",,,,,,,,,,See above,See above,See Employee Dept List tab,,,"Ground Bus, Taxi",517104,Transportation - Ground Bus Taxi,Travel,
+Travel - Lodging,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Accommodations Hotel / Lodging Expenses,517110,Accommodations Hotel / Lodging Expenses,Travel,
+Travel - Meals - Individual,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Meals - Individual,517200,Meals,Meals & entertainment,
+Travel - Meals - Small Teams (Max 8-10),,,,,,,,,,See above,See above,See Employee Dept List tab,,,Meals - Small Teams (Max 8-10),517200,Meals,Meals & entertainment,
+Travel - Mileage Reimbursement,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Mileage Reimbursement,517101,Transportation - Mileage Reimbursement,Travel,
+Travel - Other Transportation,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Other Transportation,517100,Transportation - Other,Travel,
+Travel - Tolls,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Tolls,517102,Transportation - Tolls and Parking,Travel,
+Vehicle,See above,See above,See Employee Dept List tab,0500000,50000,VEHLSE,,,,See above,See above,See Employee Dept List tab,,,Vehicle Fuel / Gas,514501,Vehicle Fuel / Gas,Motor vehicles,
+Parking,,,,,,,,,,See above,See above,See Employee Dept List tab,,,Parking,517102,Transportation - Tolls and Parking,Travel,
+Training,See above,See above,See Employee Dept List tab,0930940,30000,TRNGSEM,,,,See above,See above,See Employee Dept List tab,,,Employee Training,517501,Employee Training,Employee Related Expenses,
+Memberships,See above,See above,HW20,0921100,49002,MEMDUES,,,,See above,See above,8021,,,Memberships,517600,Memberships,Employee Related Expenses,
+Conferences,,,,,,,,,,See above,See above,8021,,,Conferences and Seminars,517400,Conferences and Seminars,Employee Related Expenses,
+Contract Workers,See above,See above,HW20,0923000,69000,CONTLAB,,,,See above,See above,8021,,,,515220,Consultant - Staff Augmentation,Consultant fees,
+Subscriptions,See above,See above,HW20,0500000,49002,SUBSCRP,,,,See above,See above,8021,,,Memberships,517600,Memberships,Employee Related Expenses,
+Subscriptions - New Project Media,See above,See above,HW20,0921400,36001,ITSOFT,,,,See above,See above,8021,,,Computer Expenses,514301,IT Software,Computer Expenses,
+Consultant Legal Services,See above,See above,HW20,0928031,69700,CSLTLGL,,,,See above,See above,8021,,,Legal Consultant Fees,515210,Consultant Legal Services,Legal Consultant Fees,
+Engineering,See above,See above,HW50,0143011,11000,ENGSUPP,,,,See above,See above,8024,,,Outside Services Other,515100,Outside Services Other,Outside Services,
+Environmental,See above,See above,HW50,0500000,69100,ENVEXP,,,,See above,See above,8024,,,Outside Services,515104,Outside Services Environmental,Outside Services,
+Interconnection,See above,See above,HW50,500000,69700,ELECEXP,,,,See above,See above,8024,,,Outside Services Electrical,515101,Outside Services Electrical,Outside Services,
+Origination,See above,See above,HW50,0143011,11000,ENGSUPP,,,,See above,See above,8024,,,Other Operating Expenses,518200,Sustainable Development Expense,Other Operating Expenses,
+Permitting/Tax,See above,See above,HW50,0165511,63000,REFDEPO,,,,See above,See above,8024,,,Other Operating Expenses,518200,Sustainable Development Expense,Other Operating Expenses,
+Real Etate,See above,See above,HW50,0165400,60007,LEASE,,,,See above,See above,8024,,,Rent,513402,Long Term Lease Property / Land,Rent,
+Security,See above,See above,HW50,0186201,63000,NREFDEP,,,,See above,See above,8024,,,Outside Services Other,515100,Outside Services Other,Outside Services,
+Security,See above,See above,HW50,0186201,63000,REFDEPO,,,,See above,See above,8024,,,Outside Services Other,515100,Outside Services Other,Outside Services,

@@ -1,0 +1,152 @@
+,,,,,,,,,,,,,,,
+Operations O&M Charging Guidelines,,,,,,,,,,,"Lapetus, Rambler, Holstein, East Blackland",,"Broad River, Speedway, Stony Knoll","Jackpot, Black Mesa",Palmer
+SOLAR SITES and CENTRAL SERVICES SOLAR SITE SUPPORT,,,,,,,,,,,"Charge 100% to fixed fee OU's (XLAP, XRAM, XHOL, XPFL) for the types of expenses marked with an X",,"Charge 100% to fixed fee OU's (XBRV, XSWY, XSTN) for the types of expenses marked with an X","Charge 100% to fixed fee OU's (XJCK, XBMS) for the types of expenses marked with an X",Charge 100% to fixed fee OU's (XPAL) for the types of expenses marked with an X
+Cost Description,Account,"Process ID
+*INFORMATIONAL ONLY",Resource Type,Additional Guidance,Account #,Account Name,"Project Code
+XXXX = Site Location Code",Category,Sub Category,Account Group,"Use site OU's (LPTS, RAMB, HOLS, EBSL) for all other expenses",Changes effective 1/1/21,"Use site OU's (BRRV, SPWY, STNY) for all other expenses","Use site OU's (JACK, BLCK) for all other expenses",Use site OU's (PALM) for all other expenses
+Preventative Maintenance,,,,,,,,,,,,,,,
+Labor - Site (Deriva FTE's),0920000,OPSLAB,11000,Site Technicians ,512101,Salaries and Wages - Regular Hours - Salaried,XXXX25G006,Solar O&M,Preventative Maintenance,Salary & Wages,"Technician and SRC Labor:                                      
+ Lapetus 75% to XLAP + 25% to LPTS                      Rambler 85% to XRAM + 15% to RAMB                 Holstein 100% to XHOL                                                                                                       East Blackland 100% to XPFL                                      ",,"Technician and SRC Labor:                                      Broad River 90% to XBRV + 10% to BRRV
+     Speedway 90% to XSWY + 10% to SPWY
+Stony Knoll 90% to XSTN + 10% to STNY           
+  ",Technician and SRC Labor:                                                Jackpot 100% to XJCK                                                           Black Mesa 100% to XBMS,"Technician and SRC Labor:                                      Palmer 100% to XPAL
+  "
+,,AGLAB,,Site ARRC's,512101,Salaries and Wages - Regular Hours - Salaried,XXXX25G002,Solar O&M,Preventative Maintenance,Salary & Wages,,,,,
+,,SALARY,,"Site Area Managers, Planner/Schedulers, Supervisors",512101,Salaries and Wages - Regular Hours - Salaried,XXXX25G002,Solar O&M,Preventative Maintenance,Salary & Wages,X,,X,X,X
+Staff Aug/ Contingent workers - Site,0500000,CONTLAB,69000,"Technician/SRC contingent worker labor for individuals under the direct supervision of a Deriva Manager/Supervisor (included on Duke org chart); i.e. Spencer Ogden, ERSG, Staffing Specialist",515220,Consultant - Staff Augementation,XXXX25G006,Solar O&M,Preventative Maintenance,Consultant fees,"
+   Rambler 85% to XRAM + 15% to RAMB
+*Pending Confirmation",changed from RT 69100 to 69000; the RT for Staff Aug is now 69000 enterprise-wide,X,X,
+Scheduled Maintenance,,MTCEXP,31000,"Purchases/consumption of inventory associated with scheduled maintenance (parts, inverter filter replacements, parts associated with OEM replacement intervals, etc.), scheduled generator maintenance/parts (installed)",514151,Supplies Consumable Maintenance,XXXX25G006,Solar O&M,Preventative Maintenance,Supplies,X,,X,X,
+Consumables,0510000,MTCSUPP,30000,"Items coded to consumables in Maximo (zip ties, wire ties, wires, fuses, etc.), unless specifically for High Voltage outage or similar",514151,Supplies Consumable Maintenance,XXXX25G006,Solar O&M,Preventative Maintenance,Supplies,,,X,X,
+Refurbished Parts,,MTCSUPP,,Refurbished Parts,514159,Supplies Consumable Maintenance - Refurbished Parts,XXXX25G006,Solar O&M,Preventative Maintenance,Supplies,,,,,
+Drone Inspection,,MTCEXP,36009,"All drone related expenses (including travel, shipping, and returning), except Tech labor",514402,Operation equipment Repairs & Maintenance,XXXX25G006,Solar O&M,Preventative Maintenance,Equipment Maintenance,X,,X,X,
+Other Contracts,,RBMSUPP,69500,"Forecasting contracts (WREGIS, GATS, RIG support, AWS Truepower, etc.); SPOT devices",515100,Outside Services Other,XXXX25G006,Solar O&M,Preventative Maintenance,Outside Services,,,,,
+Freight,0500000,FREIGHT,33001,For freight and shipping expenses **Consumable items should use the freight box on CAPS,514130,Maintenance Material Freight Out Courier/Trucking,XXXX25G006,Solar O&M,Preventative Maintenance,Equipment Maintenance,X,,X,X,
+Personal Mobile Device (PMD),0401100,EMPEXP,40007,Allocate the cost among the sites supported ,513105,Telecom - Cellular Service,XXXX25G006,Solar O&M,Preventative Maintenance,Communications (IT & Telecoms),X,,X,X,
+"EHS supplies, safety equipment, PPE, uniforms",0510000,SAFEEXP,30000,"Dust masks, hard hats, safety glasses, boots, first aid kits, 40 cal suits, fire extinguisher/suppression system certification/service/inspections, fire alarms, etc.",514154,Supplies Safety Gear,XXXX25G006,Solar O&M,Preventative Maintenance,Supplies,X,,X,X,
+Tooling,0930940,TOOLPUR,,"New tooling that is not capitalized; shop equipment and tools (ex. ladders, shop vacs, meters, etc.)",514153,Supplies Tools,XXXX25G006,Solar O&M,Preventative Maintenance,Supplies,X,,X,X,
+Training (including Safety Training),,TRNGSEM,,"Danish Wind Academy, HV substation training, On-Boarding/DRA training + materials, other training fees",517501,Employee Training,XXXX25G006,Solar O&M,Preventative Maintenance,Employee Related Expenses,,,,,
+Travel,0921100,TRVLEXP,40000,"Travel for Tech's to their respective sites for site visit, inspections, employee/customer visits, etc.",517100,Transportation - Other,XXXX25G006,Solar O&M,Preventative Maintenance,Travel,X,,X,X,X
+,,,,Per Diem,517112,Per Diem Allowance Travel Meals,XXXX25G006,Solar O&M,Preventative Maintenance,Meals & entertainment,X,,X,X,X
+Site Vehicles,0921200,VEHLSE,50000,Vehicle Fuel / Gas,514501,Vehicle Fuel / Gas,XXXX25G006,Solar O&M,Preventative Maintenance,Motor vehicles,X,,X,X,
+,,,,Vehicle Rental,517105,Transportation - Auto Rental and Rental Car Fuel,XXXX25G006,Solar O&M,Preventative Maintenance,Travel,X,,X,X,
+,,,,Vehicle Maintenace and Repairs,514502,Vehicle Maintenace and Repairs,XXXX25G006,Solar O&M,Preventative Maintenance,Motor vehicles,X,,X,X,
+Relocation,0921200,RELOC,44000,Relocation/moving expenses (when applicable for site technicians and SRC's),512334,Hiring Costs / Moving Expenses / Relocation Costs - Salaried,XXXX25G006,Solar O&M,Preventative Maintenance,Benefits,,,,,
+General Site Support from Central Services Teams,,,,Labor (Deriva FTE),512101,Salaries and Wages - Regular Hours - Salaried,XXXX25G006,Solar O&M,Preventative Maintenance,Salary & Wages,X,,X,X,X
+,,,,Travel - use applicable travel account to correspond with cost,517100,Transportation - Other,XXXX25G006,Solar O&M,Preventative Maintenance,Travel,X,,X,X,X
+,,,,Per Diem,517112,Per Diem Allowance Travel Meals,XXXX25G006,Solar O&M,Preventative Maintenance,Meals & entertainment,X,,X,X,X
+,,,,Staff Aug/ Contingent workers (Labor),515220,Consultant - Staff Augmentation,XXXX25G006,Solar O&M,Preventative Maintenance,Consultant fees,X,,X,X,X
+,,,,Vehicle Rental,517105,Transportation - Auto Rental and Rental Car Fuel,XXXX25G006,Solar O&M,Preventative Maintenance,Travel,X,,X,X,X
+,,,,Vehicle Fuel,514501,Vehicle Fuel / Gas,XXXX25G006,Solar O&M,Preventative Maintenance,Motor vehicles,X,,X,X,X
+LTSA,,,,,,,,,,,,,,,
+Fixed O&M Contract and Variable O&M Fees,0553000,RBMSUPP,69400,Fixed and variable fee portions of O&M contract payments,515140,Operation and maintenance - fixed fee,XXXX25G004,Solar O&M,LTSA,O&M fixed fee,,,,,
+Major Corrective,,,,,,,,,,,,,,,
+"Unscheduled Maintenance: Wiring, Cable, Ground Faults, Met Stations, Repairs and Maintenance, other Unscheduled Maintenance",,REPMTC,31002,"Parts & hardware purchased or consumed from inventory to repair/replace damaged wire and cable, met towers (wind speed, rain gauge, radiance, etc.), and misc. components; ATV maintenance and fuel, communications, non-outage rentals of any kind, portable generator/owned",514151,Supplies Consumable Maintenance,XXXX25M007,Solar O&M,Major Corrective,Supplies,,,,,
+"Unscheduled Maintenance: O&M building, Fencing, Racking, Power Station Equipment (excluding inverters)",,REPMTC,36009,"Items on pad, including cameras",514402,Operation equipment Repairs & Maintenance,XXXX25M007,Solar O&M,Major Corrective,Equipment Maintenance,,,,,
+Minor Corrective,,,,,,,,,,,,,,,
+Solar O&M Minor Corrective Repairs,,,,"Tracker repairs, combiner boxes, DC field issues",514151,Supplies Consumable Maintenance,XXXX25G005,Solar O&M,Minor Corrective,Supplies,,,,,
+,,,,,515109,Outside Services Equipment Maintenance,XXXX25G005,Solar O&M,Minor Corrective,Outside Services,,,,,
+Modules O&M (Panels),,,,,,,,,,,,,,,
+Panel Cleaning Fees,0553000,MTCEXP,69400,"Contract for an outside company to provide this service; if the service provider invoices for water, charge the water here; if the site provides water through an on-site metered service, see codes under O&M Building Utilities",515109,Outside Services Equipment Maintenance,XXXX25P004,Modules O&M,Panel Cleaning,Outside Services,X,,,,
+Panel Replacement,0553000,REPMTC,30000,"Parts & hardware purchased or consumed from inventory to replace damaged panels (large amounts) **If not a Consumable see inventory line for coding. If Consumable, check box in Maximo ",514414,Solar Panels ,XXXX25P003,Modules O&M,Major Corrective,Equipment Maintenance,,,,,
+Panel Replacement (Minor),,,,,,,XXXX25P002,Modules O&M,Minor Corrective,,,,,,
+Panel Replacement (Preventative),,,,,,,XXXX25P001,Modules O&M,Preventative Maintenance,,,,,,
+Inverter O&M,,,,,,,,,,,,,,,
+Inverter Repairs (Major),,REPMTC,31000,"Parts & hardware purchased or consumed from inventory to replace/repair inverters **If not a Consumable see inventory line for coding. If Consumable, check box in Maximo ",514415,Inverters ,XXXX25I003,Inverter O&M,Major Corrective,Equipment Maintenance,,,,,
+Inverter Repairs (Minor),,,,"Inverter Inspections, AC/DC contactor replacements, fuse replacements",515109,Outside Services Equipment Maintenance,XXXX25I002,Inverter O&M,Minor Corrective,Outside Services,,,,,
+,,,,,514415,Inverters ,XXXX25I002,Inverter O&M,Minor Corrective,Equipment Maintenance,,,,,
+,,,,,514151,Supplies Consumable Maintenance,XXXX25I002,Inverter O&M,Minor Corrective,Supplies,,,,,
+Inverter Repairs (Preventative),,,,"Inverter cleaning, Inverter PM's",515109,Outside Services Equipment Maintenance,XXXX25I001,Inverter O&M,Preventative Maintenance,Outside Services,,,,,
+BoP,,,,,,,,,,,,,,,
+Vegetation Management,0553000,GROUNDS,69100,"Contractor services to cut, mow, and weed-eat vegetation, weeds, and grass (includes sheep); contingent workers hired exclusively for vegetation management services",515119,Outside Services Vegetation Control,XXXX25B004,BoP,Vegetation Management,Outside Services,Rambler - Pending Confirmation                                                                                          (Only addt'l services outside of normal mowing and herbicide treatment to site OU [natural disaster]) ,,X                                                                                          (Only addt'l services outside of normal mowing and herbicide treatment to site OU [natural disaster]),X                                                                                          (Only addt'l services outside of normal mowing and herbicide treatment to site OU [natural disaster]),
+Chemical Application,,GROUNDS,69400,Chemical application,515119,Outside Services Vegetation Control,XXXX25B004,BoP,Vegetation Management,Outside Services,Rambler - Pending Confirmation,,X,X,
+Equipment Maintenance,,GROUNDS,36009,"Maintenance, repairs, non-capitalized purchases, fuel, and oil for vegetation management equipment (excluding ATV's not used for vegetation management)",514402,Operation equipment Repairs & Maintenance,XXXX25B004,BoP,Vegetation Management,Equipment Maintenance,Rambler - Pending Confirmation,,X,X,
+Other Vegetation Management,,GROUNDS,69500,"Other miscellaneous work (i.e. seeding, ditch maintenance, clean-up after sheep)",515119,Outside Services Vegetation Control,XXXX25B004,BoP,Vegetation Management,Outside Services,Rambler - Pending Confirmation,,X,X,
+Grounds Maintenance & Repairs,0510000,BLDGGRD,63000,"Gravel, erosion repair, etc.",515100,Outside Services Other,XXXX25B005,BoP,Civil BoP,Outside Services,,,,,
+Met Tower & Calibration,,MTCEXP,69100,"New met station equipment and instrument calibrations, including pulling from inventory or paying for calibrations as part of a scheduled maintenance interval (annual, semi-annual, etc.), tooling calibration",515100,Outside Services Other,XXXX25B003,BoP,Met Mast/Met Station BoP,Outside Services,X,,X,X,
+BoP: Preventative Maintenance and Scheduled Outages ,,HVMTC,31000,"Materials, parts, and supplies needed to support Scheduled Outages and Preventative Maintenance (includes relays, general spare parts, rags,etc.) (site department)",514100,Maintenance Material Other,XXXX25B002,BoP,Elec BoP,Equipment Maintenance,X,,X,X,X
+,,,,"3rd Party Services, Repairs (site department)",515109,Outside Services Equipment Maintenance,XXXX25B002,BoP,Elec BoP,Outside Services,X,,X,X,X
+,,,,Labor (Deriva FTE),512101,Salaries and Wages - Regular Hours - Salaried,XXXX25B002,BoP,Elec BoP,Salary & Wages,X,,X,X,X
+,,,,Travel - use applicable travel account to correspond with cost,517100,Transportation - Other,XXXX25B002,BoP,Elec BoP,Travel,X,,X,X,X
+,,,,Per Diem,517112,Per Diem Allowance Travel Meals,XXXX25B002,BoP,Elec BoP,Meals & entertainment,X,,X,X,X
+,,,,Staff Aug/ Contingent workers (Labor),515220,Consultant - Staff Augmentation,XXXX25B002,BoP,Elec BoP,Consultant fees,X,,X,X,X
+,,,,Vehicle Rental,517105,Transportation - Auto Rental and Rental Car Fuel,XXXX25B002,BoP,Elec BoP,Travel,X,,X,X,X
+,,,,Vehicle Fuel,514501,Vehicle Fuel / Gas,XXXX25B002,BoP,Elec BoP,Motor vehicles,X,,X,X,X
+,,,63000,"Equipment Rentals to support Scheduled Outages and Preventative Maintenance (includes manlifts, telehandlers, porta-potties etc.) (site department)",514400,Maintenance equipment Rental,XXXX25B002,BoP,Elec BoP,Equipment Maintenance,X,,X,X,X
+,,,69400,"Contractor outage support arranged by HV team (equipment mobilization, Substation & T&D support)",515109,Outside Services Equipment Maintenance,XXXX25B002,BoP,Elec BoP,Outside Services,X,,X,X,X
+BoP: Corrective Maintenance and Unscheduled Outages,,HGHVOLT,31000,"Materials, parts, and supplies needed to support Scheduled Outages and Preventative Maintenance (includes relays, general spare parts, rags,etc.) (site department)",514100,Maintenance Material Other,XXXX25B001,BoP,Elec BoP,Equipment Maintenance,,,,,
+,,,,"3rd Party Services, Repairs (site department)",515109,Outside Services Equipment Maintenance,XXXX25B001,BoP,Elec BoP,Outside Services,,,,,
+,,,,Labor (Deriva FTE),512101,Salaries and Wages - Regular Hours - Salaried,XXXX25B001,BoP,Elec BoP,Salary & Wages,,,,,
+,,,,Travel - use applicable travel account to correspond with cost,517100,Transportation - Other,XXXX25B001,BoP,Elec BoP,Travel,,,,,
+,,,,Per Diem,517112,Per Diem Allowance Travel Meals,XXXX25B001,BoP,Elec BoP,Meals & entertainment,,,,,
+,,,,Staff Aug/ Contingent workers (Labor),515220,Consultant - Staff Augmentation,XXXX25B001,BoP,Elec BoP,Consultant fees,,,,,
+,,,,Vehicle Rental,517105,Transportation - Auto Rental and Rental Car Fuel,XXXX25B001,BoP,Elec BoP,Travel,,,,,
+,,,,Vehicle Fuel,514501,Vehicle Fuel / Gas,XXXX25B001,BoP,Elec BoP,Motor vehicles,,,,,
+,,,69400,"Contractor outage support arranged by HV team (equipment mobilization, Substation & T&D support)",515109,Outside Services Equipment Maintenance,XXXX25B001,BoP,Elec BoP,Outside Services,,,,,
+,,,63000,"Equipment Rentals to support Unscheduled Outages and Corrective Maintenance (includes manlifts, telehandlers, porta-potties etc.) (site department)",514400,Maintenance equipment Rental,XXXX25B001,BoP,Elec BoP,Equipment Maintenance,,,,,
+Other,,,,,,,,,,,,,,,
+Administrative Costs,,,,Issuance Fee  (APX vendor),515100,Outside Services Other,XXXX25G008,Other,APX,Outside Services,,,,,
+Community Involvement,0930940,COMSERV,1B418,"Donations to local charities, community organizations, etc.",518102,Donations Charitable Registered,XXXX25G009,Other,Community Benefit,Donations,,,,,
+NERC PRC & MOD Testing,0510000,ENGSUPP,69400,Electrical Engineering team members engage vendor and monitor service is completed; SRC should process invoices and Area Manager should approve,515114,Outside Services Corps of Engineers,XXXX25G010,Other,NERC Compliance,Outside Services,X,,,,
+Environmental,0500000,ENVEXP,69100,"Environmental compliance, permitting, hazmat, etc. (not actual work done to site)",515104,Outside Services Environmental,XXXX25G011,Other,Environmental Compliance,Outside Services,,,,,
+O&M Building: Exterminator,0510000,UTILSOU,63000,Exterminators at O&M buildings,515100,Outside Services Other,XXXX25G012,Other,Facilities,Outside Services,,,,,
+O&M Building: Janitorial Services,,UTILSOU,63000,"Service contracts in support of the O&M building (janitors, office cleaners, safety system inspections, etc.)",515113,Outside Services Janitorial,XXXX25G012,Other,Facilities,Outside Services,,,,,
+O&M Building: Electric Expense,,UTILSOU,66002,Electric expense at O&M buildings,513300,Utilities Office Electrical,XXXX25G012,Other,Facilities,Premises Costs,,changed from RT 63000 to 66002,,,
+O&M Building: Water,,UTILSOU,66002,Water expense at O&M buildings,513300,Utilities Office Electrical,XXXX25G012,Other,Facilities,Premises Costs,,changed from RT 63000 to 66002,,,
+O&M Building: Gas,,UTILSOU,66002,O&M gas/heat expense at O&M buildings,513300,Utilities Office Electrical,XXXX25G012,Other,Facilities,Premises Costs,,changed from RT 63000 to 66002,,,
+O&M Building:Internet Service,,UTILSOU,66001,Internet service at sites and O&M buildings,513102,Telecom - Telephone,XXXX25G012,Other,Facilities,Communications (IT & Telecoms),,changed from RT 63000 to 66001,,,
+General Expenses,,ADMIN,,"All other employee expenses not categorized elsewhere (meals, recognition awards, etc.)",514200,Office Supplies - General,XXXX25G012,Other,Facilities,Office Services,X,,X,X,
+Office supplies,,ADMIN,33000,"Paper, ink cartridges, coffee cups, pens, etc.",514200,Office Supplies - General,XXXX25G012,Other,Facilities,Office Services,X,,X,X,
+O&M Building Lease,0510000,LEASBLD,65002,O&M building lease,513402,Long Term Lease Property / Land,XXXX25G012,Other,Facilities,Rent,,,,,
+Resource Adequacy Fees,0930940,ADMIN,69500,Budgeted on site templates (only Pumpjack and Wildwood I),513719,Other Fees,XXXX25G012,Other,Facilities,Other Fees & charges,,,,,
+Interconnect Fees,,ELECEXP,69700,Site interconnect fees (also known as 'transmission' or 'facilities' on invoices),515101,Outside Services Electrical,XXXX25G015,Other,Interconnection Fees,Outside Services,,The RT for Consulting changed from 69000 to 69700 (enterprise-wide); 69000 is now for Staff Aug (enterprise-wide),,,
+Site Electric Expense,0500000,ELECEXP,66000,Site electric bills and taxes for interconnect (parasitic load),513300,Utilities Office Electrical,XXXX25G014,Other,Light & Heat,Premises Costs,,,,,
+Security ,,UTILSOU,63000,"Security services at sites and O&M buildings (i.e. ADT, CPI)",515100,Outside Services Other,XXXX25G017,Other,Site Security,Outside Services,,,,,
+BOP Waste Management,0500000,RNWSEXP,63000,Waste/garbage removal service at sites; portable toilets,515107,Outside Services Hazardous Waste Disposal,XXXX25G016,Other,Waste Management,Outside Services,,,,,
+O&M Building: Waste,,UTILSOU,63000,Waste/garbage removal service at O&M buildings,515107,Outside Services Hazardous Waste Disposal,XXXX25G016,Other,Waste Management,Outside Services,,,,,
+End of Contract Inspections,,,,,,,,,,,,,,,
+End of Contract Inspections,,EOWINSP,,3rd Party Services,515109,Outside Services Equipment Maintenance,XXXX25E001, Solar O&M ,End of Contract Inspections,Outside Services,,,,,
+,,,,Labor (Deriva FTE),512101,Salaries and Wages - Regular Hours - Salaried,XXXX25E001, Solar O&M ,End of Contract Inspections,Salary & Wages,,,,,
+,,,,Travel - use applicable travel account to correspond with cost,517100,Transportation - Other,XXXX25E001, Solar O&M ,End of Contract Inspections,Travel,,,,,
+,,,,Per Diem,517112,Per Diem Allowance Travel Meals,XXXX25E001, Solar O&M ,End of Contract Inspections,Meals & entertainment,,,,,
+,,,,Staff Aug/ Contingent workers (Labor),515220,Consultant - Staff Augmentation,XXXX25E001, Solar O&M ,End of Contract Inspections,Consultant fees,,,,,
+,,,,Vehicle Rental,517105,Transportation - Auto Rental and Rental Car Fuel,XXXX25E001, Solar O&M ,End of Contract Inspections,Travel,,,,,
+,,,,Vehicle Fuel,514501,Vehicle Fuel / Gas,XXXX25E001, Solar O&M ,End of Contract Inspections,Motor vehicles,,,,,
+,,,,,,,,,,,,,,,
+Inventory,0154100,INVNT,21000,Invoices for Maximo inventory (not consumables) Dept & Location not needed in Basware,113150,Other Inventory,,,,Inventory,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+ACCOUNTING USE ONLY,,,,,,,,,,,,,,,
+Leases & Landowner Royalties,0506000,LEASE,60007,,516111,Variable Lease Payments,,,,Royalties,,,,,
+Property Insurance,0500000,INSOOPS,71000,,513502,Insurance - Property,,,,Insurance,,,,,
+Liability Insurance,,,71002,,513501,Insurance - Liability,,,,Insurance,,,,,
+Insurance Proceeds,,,71005,Claim reimbursements from loss or damage,513502,Insurance - Property,,,,Insurance,,,,,
+Bank Fees,0930200,BANKFEE,34001,,513600,Bank charges & fees,,,,Other Fees & charges,,,,,
+Letter of Credit Fees,0921200,LOCFEES,34002,,741111,Fees Expense on Letter of Credit,,,,Other Interest & Financing Fees (Not Debt Related)7410,,,,,
+Audit Fees,0928029,AUDIT,60005,,515300,Audit - Financial Statements,,,,Audit Fees,,,,,
+Professional Fees,,OSSERIN,69700,"Accounting fees, tax fees, legal fees",515210,Consultant Legal Services,,,,Consultant fees,,The RT for Consulting changed from 69000 to 69700 (enterprise-wide); 69000 is now for Staff Aug (enterprise-wide),,,
+Property Tax Reimbursement & Interconnect Fees,0500000,OPSEXP,69500,Reimbursement to landowners for taxes they paid on mixed-use land (the Tax Dept pays property taxes for solar farm-only land); APS interconnect fees (Bagdad),513719,Other Fees,,,,Other Fees & charges,,,,,
+Energy Management Fees,0930050,EMAFEE,,"Lapetus, Holstein, and Rambler",507199,Intercompany - Management Fees - Trading & Marketing Fees,,,,Management Fees Purchases,,,,,
+Management Service Agreement Fees,,MSAFEE,99810,,507299,Intercompany - Management Fees - Administrative Services Fees,,,,Management Fees Purchases,,,,,
+Operating Fees,0501002,OPFEE,,,507299,Intercompany - Management Fees - Administrative Services Fees,,,,Management Fees Purchases,,,,,
+ARO Accretion,0411050,blank,,,815617, ARO Accretion,,,,Non-cash interest,,,,,
+Independent Engineer Fees,0930940,ENGSUPP,69400,"Lapetus, Palmer, and Rambler",515114,Outside Services Corps of Engineers,,,,Outside Services,X,,,,X
+Fixed Asset Depreciation,0403002,blank,99899,,821000,Depreciation Expense - General,,,,Depreciation of Power Generating Assets,,,,,
+ARO Depreciation,0403150,,,,821100,Depreciation of Asset Retirement Obligation,,,,Depreciation of Power Generating Assets,,,,,
+Amortization,0406505,,,,822100,Amortization of Intangible Assets - General,,,,Amortization of Intangibles,,,,,
+Amortization - Intangible,,AMORT,,,822100,Amortization of Intangible Assets - General,,,,Amortization of Intangibles,,,,,
+Amortization (PV NC Benefit),0404000,,,,822400,Amortization DFF Asset & Other Amortizable Deferred Charges,,,,Amortization of other long-term assets,,,,,
+Amortization of Deferred Financing Costs,0428100,AMRTLN,,,712201,Amortization of Discount - SB USD,,,,Amortization of Discount - SB USD,,,,,
+Interest Expense,0427523,INTEXP,94105,,712001,Interest expense - SB USD,,,,Interest expense - SB USD,,,,,
+Property Tax,0408121,PROPTAX,91004,,516200,Municipal Taxes - Hydrology Variable,,,,Property Tax and EDZ,,,,,
+Sales Tax,0408191,OTHTAX,90004,,516401,Non-Recoverable Tax Expense on Project,,,,Other Tax Expense,,,,,
+Franchise Tax,0408120,FRNTAX,90001,,516402,Franchise Tax Fee,,,,Other Tax Expense,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+No longer used:,,,,,,,,,,,,,,,
+PILOT Programs (Payment in Lieu of Taxes),0416330,MISCAG,69500,"This code black was incorrectly used in the 2020 Shoreham budget (per Brian McCready, the 2020 budget in this code block was actually property taxes; will be corrected for 2021 budget)",,,,,,,,,,,
+,,,,,,,,,,,,,,,

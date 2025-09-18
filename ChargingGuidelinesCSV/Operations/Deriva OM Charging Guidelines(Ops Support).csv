@@ -1,0 +1,124 @@
+,"Operations Support Groups Charging Guidelines (Renew Ops, EHS, Op Ex, RCC, Perf Svcs)",,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,"Concur, Timesheets, Maximo, Basware, IFS",,,,,,,,
+Dept Name,Description,,Company id,Location,Department,"Project
+XXXX = Location Code",Expense Type,Account,Account Name,Account Group,
+Renew Ops,Labor,,"Per ""Ops Support Allocations 2025"" workbook",,8120,"
+XXXX25G001 ",,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+Renew Ops,"PMD
+ (personal mobile device)",,"Per ""Ops Support Allocations 2025"" workbook",,8120,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+Renew Ops,Travel,,"Per ""Ops Support Allocations 2025"" workbook",,8120,,Other Transportation,517100,Transportation - Other,Travel,
+Renew Ops,Parking,,"Per ""Ops Support Allocations 2025"" workbook",,8120,,Parking,517102,Transportation - Tolls and Parking,Travel,
+Renew Ops,Conferences,,"Per ""Ops Support Allocations 2025"" workbook",,8120,,Conferences and Seminars,517400,Conferences and Seminars,Employee Related Expenses,
+Renew Ops,External Marketing Efforts,,"(75736) Deriva Energy Services, LLC",DCSV,8120,,,515200,Consultant Other,Consultant fees,
+Renew Ops,DRONE FLIGHT TRAINING ,,"(75736) Deriva Energy Services, LLC","DSOL: 50%
+DCSV: 50%",8120,,,515200,Consultant Other,Consultant fees,
+Renew Ops,ENERGY SYSTEMS INTEGRATION GROUP ,,"(75736) Deriva Energy Services, LLC",DSOL,8120,,Memberships,517600,Memberships,Employee Related Expenses,
+Renew Ops,Veriforce (Xcel Energy),,"(75736) Deriva Energy Services, LLC",DCSV,8120,,Memberships,517600,Memberships,Employee Related Expenses,
+,,,,,,,,,,,
+EHS,Labor,,"Per ""Ops Support Allocations 2025"" workbook",,8121,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)",,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+EHS,"PMD
+ (personal mobile device)",,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+EHS,Training,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Employee Training,517501,Employee Training,Employee Related Expenses,
+EHS,Travel,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Other Transportation,517100,Transportation - Other,Travel,
+EHS,Parking,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Parking,517102,Transportation - Tolls and Parking,Travel,
+EHS,Conferences,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Conferences and Seminars,517400,Conferences and Seminars,Employee Related Expenses,
+EHS,Membership,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Memberships,517600,Memberships,Employee Related Expenses,
+EHS,Office Supplies,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Office Supplies,514200,Office Supplies - General,Office Services,
+EHS,Freight,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,Postage & Courier,514206,Office Supplies Postage - Courier,Office Services,
+EHS,Safety Gear,,"Per ""Ops Support Allocations 2025"" workbook",,8121,,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)",514154,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)",Supplies,
+EHS,Brookfield HSSE Audit,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC","DWOP: 50%
+DSOP: 50%",8121,,Outside Services Other,515100,Outside Services Other,Outside Services,
+,,,,,,,,,,,
+Op Ex,Labor,,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+",,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+Op Ex,"PMD
+ (personal mobile device)",,"Per ""Ops Support Allocations 2025"" workbook",,8122,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+Op Ex,Training,,"Per ""Ops Support Allocations 2025"" workbook",,8122,,Employee Training,517501,Employee Training,Employee Related Expenses,
+Op Ex,Travel,,"Per ""Ops Support Allocations 2025"" workbook",,8122,,Other Transportation,517100,Transportation - Other,Travel,
+Op Ex,Parking,,"Per ""Ops Support Allocations 2025"" workbook",,8122,,Parking,517102,Transportation - Tolls and Parking,Travel,
+Op Ex,Conferences,,"Per ""Ops Support Allocations 2025"" workbook",,8122,,Conferences and Seminars,517400,Conferences and Seminars,Employee Related Expenses,
+Op Ex,Safety Gear,,"Per ""Ops Support Allocations 2025"" workbook",,8122,,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)",514154,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)",Supplies,
+Op Ex,Training Facility,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,,513401,Long Term Lease Building/Office Space,Rent,
+Op Ex,Office Supplies - Leadership training materials,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,Office Supplies,514200,Office Supplies - General,Office Services,
+Op Ex,Office Supplies - DRA general,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,Office Supplies,514200,Office Supplies - General,Office Services,
+Op Ex,Material Purchases - DRA general,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,Office Supplies,514200,Office Supplies - General,Office Services,
+Op Ex,Freight - DRA general,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,Postage & Courier,514206,Office Supplies Postage - Courier,Office Services,
+Op Ex,Vehicle - DRA general,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,Vehicle Fuel / Gas,514501,Vehicle Fuel / Gas,Motor vehicles,
+Op Ex,GWO Audit,,"(75752) Deriva Energy Wind, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 50%
+DCSV: 50%",8122,,Outside Services Other,515100,Outside Services Other,Outside Services,
+Op Ex,Consulting for Training,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,,515200,Consultant Other,Consultant fees,
+Op Ex,Consulting for Performance Improvement,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,,515200,Consultant Other,Consultant fees,
+Op Ex,Consulting for Procedure writing,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,,515200,Consultant Other,Consultant fees,
+Op Ex,Team Building,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,,,515200,Consultant Other,Consultant fees,
+,,,,,,,,,,,
+RCC,Labor,,"Per ""Ops Support Allocations 2025"" workbook",,8123,XXXX25G001,,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+RCC,"PMD
+ (personal mobile device)",,"Per ""Ops Support Allocations 2025"" workbook",,8123,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+RCC,Training,,"Per ""Ops Support Allocations 2025"" workbook",,8123,,Employee Training,517501,Employee Training,Employee Related Expenses,
+RCC,Travel,,"Per ""Ops Support Allocations 2025"" workbook",,8123,,Other Transportation,517100,Transportation - Other,Travel,
+RCC,Parking,,"Per ""Ops Support Allocations 2025"" workbook",,8123,,Parking,517102,Transportation - Tolls and Parking,Travel,
+RCC,Conferences,,"Per ""Ops Support Allocations 2025"" workbook",,8123,,Conferences and Seminars,517400,Conferences and Seminars,Employee Related Expenses,
+RCC,Team Building,,"(75736) Deriva Energy Services, LLC",DWCC,8123,,Entertainment (Staff & External Guests),517111,Entertainment (Staff & External Guests),Meals & entertainment,
+,,,,,,,,,,,
+Performance Svcs,Labor,,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)",,512101,Salaries and Wages - Regular Hours - Salaried,Salary & Wages,
+Performance Svcs,"PMD
+ (personal mobile device)",,"Per ""Ops Support Allocations 2025"" workbook",,8124,,Cellular Service (PMD),513105,Telecom - Cellular Service,Communications (IT & Telecoms),
+Performance Svcs,Training,,"Per ""Ops Support Allocations 2025"" workbook",,8124,,Employee Training,517501,Employee Training,Employee Related Expenses,
+Performance Svcs,Travel,,"Per ""Ops Support Allocations 2025"" workbook",,8124,,Other Transportation,517100,Transportation - Other,Travel,
+Performance Svcs,Parking,,"Per ""Ops Support Allocations 2025"" workbook",,8124,,Parking,517102,Transportation - Tolls and Parking,Travel,
+Performance Svcs,Membership,,"Per ""Ops Support Allocations 2025"" workbook",,8124,,Memberships,517600,Memberships,Employee Related Expenses,
+Performance Svcs,Freight,,"Per ""Ops Support Allocations 2025"" workbook",,8124,,Postage & Courier,514206,Office Supplies Postage - Courier,Office Services,
+Performance Svcs,Safety Gear,,"Per ""Ops Support Allocations 2025"" workbook",,8124,,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)",514154,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)",Supplies,
+Performance Svcs,"EPRI, Wind Program",,"(75752) Deriva Energy Wind, LLC",DWOP,8124,,,515200,Consultant Other,Consultant fees,
+Performance Svcs,"EPRI, Solar Program",,"(77079) Deriva Energy Sub I, LLC",DSOP,8124,,,515200,Consultant Other,Consultant fees,
+Performance Svcs,Consulting for Analytics ,,"(75752) Deriva Energy Wind, LLC",DWOP,8124,,,515200,Consultant Other,Consultant fees,
+Performance Svcs,Team Building,,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC","DWOP: 50%
+DSOP: 50%",8124,,,515200,Consultant Other,Consultant fees,

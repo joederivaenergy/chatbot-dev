@@ -1,0 +1,132 @@
+Route Code (CAPS),Description,Route Code (Basware)
+DEGSBATSOL,"SolNCPower5, LLC (Battleboro)",BATLSOL
+DEGSBRDRVR,Broad River Solar,BDRVSOL
+N/A,BIGBSERV - BASWARE: Big Blue Wind Farm (75736:CFST),BIGBSERV
+DEGSBLKMSA,BLACK MESA SOLAR,BLKMSOL
+DEGSLGBOAT,"Longboat Solar, LLC",BOATSOL
+DEGSCAPRK1,"Caprock Solar 1, LLC",CAP1SOL
+DEGSCFST,Central Services Field Services,CFSTSERV
+DEGSCGBT,Central Services Gearbox Team,CGBTSERV
+DEGSCLCT,Central Services Large Corrective,CLCTSERV
+DEGSWDOPLH,"Laurel Hill Wind Energy, LLC",CLHWWND
+DEGSWDOPCM,Cimarron Windpower II,CM2WWND
+DEGSCONSOL,"Conetoe II Solar, LLC",CONESOL
+DEGSCRESOL,"Creswell Alligood Solar, LLC",CRESSOL
+DEGSREAZHL,RE Ajo 1 LLC (Ajo),DAJ1SOL
+DEGSASTROS,"Gato Montes Solar, LLC",DATPSOL
+DEGSBLKMTN,"Black Mountain Solar, LLC",DBMSSOL
+DEGSBLADE,Deriva Blade Maintenance Team,DBMTSERV
+DEGSBPSOLR,Bethel Price Solar,DBPSSOL
+DEGSCSMURP,"CS Murphy Point, LLC (Wingate)",DCSMSOL
+DEGSDOGWDS,"Dogwood Solar, LLC",DDWSSOL
+DEGSRCIDSO,Walt Disney World Solar,DISNSERV
+DEGSMRNCR,"Martin's Creek Solar NC, LLC",DMCSSOL
+DEGSMURFRM,"Murphy's Farm Power, LLC",DMFPSOL
+DEGSDTE,RENEWABLE SERVICES - DTE,DMSTSERV
+DEGSNCRENW,"North Carolina Renewable Properties, LLC (Holiness)",DNCRSOL
+DEGSOUTLAN,"Duke Energy Renewable Services, LLC",DOESSERV
+DEGSRPORLN,"RP-Orlando, LLC (OUC)",DRPOSOL
+DEGSSFCTY1,"RE SFCITY 1, LP (Sunset Reservoir)",DSFLSOL
+DEGSSOLAR,DER SOLAR,DSOPCORP
+DEGSSLSTR2,"Solar Star North Carolina II, LLC (Murfreesboro)",DSS2SOL
+DEGSBUSDEV,DEGS Business Development,DSSOCORP
+DEGSCORP,DER Corporate,DSSOCORP
+DEGSDWCC,Renewable Control Center,DSSOCORP
+DEGSENG,DEGS Engineering,DSSOCORP
+DEGSENSTOR,DE Renewables Energy Storage,DSSOCORP
+DEGSWIND,,DSSOCORP
+DEGSTAYLRV,"Taylorsville, LLC",DTAYSOL
+DEGSWCHSOL,"Windsor Cooper Hill Solar, LLC",DWCHSOL
+DEGSWMSOLR,Washington Millfield Solar LLC,DWMSSOL
+DEGSWDOPME,Mesteno Wind,DWOPCORP
+DEGSWWPSOL,"Washington White Post Solar, LLC",DWPSSOL
+DEGSWWASOL,"Washington Airport Solar, LLC",DWWASOL
+DEGSEBSLSO,East Blackland Solar - Pflugerville,EBSLSOL
+DEGSEVESOL,Everetts Wildcats Solar LLC,EVERSOL
+DEGSWDOPF2,"Frontier Windpower II, LLC",FRN2WND
+DEGSFRNKSO,Franklin Solar,FRNKSOL
+DEGSWDOPFR,"Frontier Windpower I, LLC",FRONWND
+DEGSGARYSB,"Garysburg Solar, LLC",GARYSOL
+DEGSGASTSO,"Gaston Solar, LLC",GASTSOL
+DEGSHERTSO,"SoINCPower10, LLC (aka Hertford)",HERTSOL
+DEGSHFAXSO,HXOap Solar one (Halifax),HFAXSOL
+DEGSHIGHS1,"Highlander Solar 1, LLC",HIS1SOL
+DEGSHIGHS2,"Highlander Solar 2, LLC",HIS2SOL
+DEGSWDOPHJ,Happy Jack,HJKWWND
+HVWIND,Duke Energy Renewables High Voltage Team,HVLTSERV
+DEGSWDOPIW,Ironwood,IWWPWND
+DEGSJACKPT,Jackpot Solar,JACKSOL
+DEGSWDOPKC,Kit Carson,KCWPWND
+DEGSKELFRD,"Colonial Eagle Solar, LLC (a.k.a. Kelford)",KELFSOL
+DEGSWDOPLY,Ledyard Wind O&M,LEDYWND
+DEGSLF46SO,"Long Farm 46 Solar, LLC",LONGSOL
+DEGSLAPTSO,"Lapetus Solar, LLC",LPTSSOL
+DEGSWDOPL3,"Los Vientos Windpower III, LLC",LV03WND
+DEGSWDOPL4,"Los Vientos Windpower IV, LLC",LV04WND
+DEGSWDOPL5,Los Vientos Windpower V,LV05WND
+DEGSWDOPLA,"Los Vientos Windpower 1A, LLC",LV1AWND
+DEGSWDOPLB,"Los Vientos Windpower 1B, LLC",LV1BWND
+DEGSWDOPMY,Maryneal Wind Farm,MARYWND
+DEGSWDOPMC,Mesquite Creek Wind LLC,MESQWND
+DEGSMGEWPS,Lincoln Wind Site O&M: Integrys Business Support (WPS),MGECSERV
+DEGSWDOPAL,North Allegheny,NAWDWND
+DEGSNROSA1,North Rosamond Solar,NROSSOL
+DEGSWDOPNT,"Notrees Windpower, LP",NTRWWND
+DEGSPALMER,"Palmer Solar, LLC",PALMSOL
+DEGSPASQTK,"Colonial Eagle Solar, LLC (a.k.a. Pasquotank)",PASQSOL
+DEGSPIKESO,pike solar,PIKESOL
+DEGSPISGAH,Pisgah Ridge Solar,PISGSOL
+DEGSPUMJSO,"Pumpjack Solar 1 , LLC",PPJKSOL
+DEGSRAMBSO,"RE Rambler Solar, LLC",RAMBSOL
+DEGSRIOBR1,Rio Bravo Solar 1,RBS1SOL
+DEGSRIOBR2,Rio Bravo Solar II,RBS2SOL
+DEGSRIVRD,"River Road Solar, LLC",RVRDSOL
+DEGSSPEEDY,Speedway Solar,SDWYSOL
+DEGSSEASOL,"Seaboard Solar, LLC",SEABSOL
+DEGSSHAWSO,"Fresh Air Energy X, LLC (a.k.a. Shawboro)",SHAWSOL
+DEGSSHORES,"Shoreham Solar Commons, LLC",SHORSOL
+DEGSWDOPSH,"Shirley Wind, LLC",SHRWWND
+,Spanish Peaks,SPSLSOL
+DEGSSLRSTR,"Solar Star 1 North Carolina I, LLC (Shelby)",STNCSOL
+DEGSSTONEY,Stoney Knoll Solar,STONSOL
+DEGSSUNSOL,"SoINCPower6, LLC (Sunbury)",SUNBSOL
+DEGSSLSVS1,"Seville Solar One, LLC",SVS1SOL
+DEGSSLSVS2,"Seville Solar Two, LLC",SVS2SOL
+DEGSTARBSO,"Tarboro Solar, LLC",TARBSOL
+DEGSWDOPCH,Campbell Hill,TBWPWND
+DEGSWDOPTW,Top of the World,TOPWWND
+DEGSTXSOLR,"TX Solar I, LLC (Blue Wing)",TXS1SOL
+DEGSVICTSO,"Victory Solar 1, LLC",VICTSOL
+DEGSWWOOD2,"Wildwood Solar II , LLC",WDW2SOL
+DEGSWILWSO,"Wildwood Solar 1 , LLC",WDWDSOL
+DEGSWHITKR,"Colonial Eagle Solar, LLC (a.k.a. Whitakers)",WHTKSOL
+DEGSWINTSO,"Winton Solar, LLC",WINTSOL
+DEGSWILDFL,Wildflower Solar,WLDFSOL
+DEGSWOODLD,"Woodland Solar, LLC",WOODSOL
+DEGSHLSTSO,"Holstein Solar, LLC",XHOLSOL
+DEGSAPTOP,,TOPWWND
+DEGSCATAMT,DEGS Catamount,
+DEGSCOSMOS,DEGSCOSMOS,DSSOCORP
+DEGSPANOCH,,DSSOCORP
+DEGSSOLRNC,,
+DEGSWDCSCM,,
+DEGSWDCSF2,Frontier II Wind Construction Project,
+DEGSWDCSFR,Frontier I Wind Construction Project,
+DEGSWDCSIW,,
+DEGSWDCSL3,,
+DEGSWDCSL4,,
+DEGSWDCSL5,,
+DEGSWDCSLA,,
+DEGSWDCSLB,,
+DEGSWDCSLH,,
+DEGSWDCSLY,Ledyard Wind Construction,
+DEGSWDCSME,DEGS Mesteno Wind Construction Project,
+DEGSWDCSMY,Maryneal Wind Construction Project,
+DEGSWDCSNA,,
+DEGSWDOPOC,Ocotillo,
+DEGSWDOPSS,,
+DEGSWINDGN,,
+DEGSWINPO,,
+DEGSXCEL,RENEWABLE SERVICES - XCEL,
+DEOHCRC,,
+NM-CAP1,,

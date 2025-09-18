@@ -1,0 +1,315 @@
+Company ID,Company Description,Location,Location Description,Segment,"""Main"" Dept",Dept Name
+75865,"Laurel Hill Wind Energy, LLC",CLHW,"Laurel Hill Wind Energy, LLC",Wind,8109,Operations Wind Team 5
+75679,"Cimarron Windpower II, LLC",CM2W,"Cimarron Windpower II, LLC",Wind,8108,Operations Wind Team 4
+75880,"Frontier Windpower II, LLC",FRN2,"Frontier Windpower II, LLC",Wind,8113,Operations Wind Team 9
+75824,"Frontier Windpower, LLC",FRON,"Frontier Windpower, LLC",Wind,8113,Operations Wind Team 9
+75753,"Happy Jack Windpower, LLC",HJKW,"Happy Jack Windpower, LLC",Wind,8105,Operations Wind Team 1
+75676,"Ironwood Windpower, LLC",IWWP,"Ironwood Windpower, LLC",Wind,8108,Operations Wind Team 4
+75767,"Kit Carson Windpower, LLC",KCWP,"Kit Carson Windpower, LLC",Wind,8108,Operations Wind Team 4
+75940,"Ledyard Windpower, LLC",LEDY,"Ledyard Windpower, LLC",Wind,8114,Operations Wind Team 10
+75668,"Los Vientos Windpower III, LLC",LV03,"Los Vientos Windpower III, LLC",Wind,8112,Operations Wind Team 8
+75801,"Los Vientos Windpower IV, LLC",LV04,"Los Vientos Windpower IV, LLC",Wind,8112,Operations Wind Team 8
+75808,"Los Vientos Windpower V, LLC",LV05,"Los Vientos Windpower V, LLC",Wind,8112,Operations Wind Team 8
+75683,"Los Vientos Windpower IA, LLC",LV1A,"Los Vientos Windpower IA, LLC",Wind,8111,Operations Wind Team 7
+75723,"Los Vientos Windpower IB, LLC",LV1B,"Los Vientos Windpower IB, LLC",Wind,8111,Operations Wind Team 7
+75798,"Maryneal Windpower, LLC",MARY,"Maryneal Windpower, LLC",Wind,8107,Operations Wind Team 3
+75816,Mesquite Creek Wind LLC,MESQ,Mesquite Creek Wind LLC,Wind,8107,Operations Wind Team 3
+75766,"North Allegheny Wind, LLC",NAWD,"North Allegheny Wind, LLC",Wind,8109,Operations Wind Team 5
+75755,"Notrees Windpower, LP",NTBA,Notrees Battery,Wind,8107,Operations Wind Team 3
+75755,"Notrees Windpower, LP",NTRW,Notrees Windpower,Wind,8107,Operations Wind Team 3
+75715,"Shirley Wind, LLC",SHRW,"Shirley Wind, LLC",Wind,8109,Operations Wind Team 5
+75763,"Silver Sage Windpower, LLC",SLSG,"Silver Sage Windpower, LLC",Wind,8105,Operations Wind Team 1
+75764,"Three Buttes Windpower, LLC",TBWP,"Three Buttes Windpower, LLC",Wind,8105,Operations Wind Team 1
+75785,Top of the World Wind Energy LLC,TOPW,Top of the World Wind Energy LLC,Wind,8105,Operations Wind Team 1
+75752,"Deriva Energy Wind, LLC",DWOP,Wind Ops Admin,Wind,Varies,
+75551,"SoINCPower5, LLC",BATL,"SoINCPower5, LLC",Solar,8101,Operations Solar Team 2
+77021,"Black Mesa Energy, LLC",BKLM,"Black Mesa Energy, LLC",Solar,8103,Operations Solar Team 4
+75557,"Longboat Solar, LLC",BOAT,"Longboat Solar, LLC",Solar,8102,Operations Solar Team 3
+77002,"CPRE 1 Lessee, LLC",BRRV,Broad River Solar LLC Lessee,Solar,8101,Operations Solar Team 2
+75555,Caprock Solar 1 LLC,CAP1,Caprock Solar 1 LLC,Solar,8103,Operations Solar Team 4
+75553,"Conetoe II Solar, LLC",CONE,"Conetoe II Solar, LLC",Solar,8101,Operations Solar Team 2
+75812,"Creswell Alligood Solar, LLC",CRES,"Creswell Alligood Solar, LLC",Solar,8100,Operations Solar Team 1
+75717,RE Ajo 1 LLC,DAJ1,RE Ajo 1 LLC,Solar,8103,Operations Solar Team 4
+75729,"Gato Montes Solar, LLC",DATP,"Gato Montes Solar, LLC",Solar,8103,Operations Solar Team 4
+75726,"Black Mountain Solar, LLC",DBMS,"Black Mountain Solar, LLC",Solar,8103,Operations Solar Team 4
+75804,"Bethel Price Solar, LLC",DBPS,"Bethel Price Solar, LLC",Solar,8101,Operations Solar Team 2
+75718,RE Bagdad Solar 1 LLC,DBS1,RE Bagdad Solar 1 LLC,Solar,8103,Operations Solar Team 4
+75689,"CS Murphy Point, LLC",DCSM,"CS Murphy Point, LLC",Solar,8101,Operations Solar Team 2
+75738,Dogwood Solar LLC,DDWS,Dogwood Solar LLC,Solar,8101,Operations Solar Team 2
+75677,"Martins Creek Solar NC, LLC",DMCS,"Martins Creek Solar NC, LLC",Solar,8101,Operations Solar Team 2
+75678,"Murphy Farm Power, LLC",DMFP,"Murphy Farm Power, LLC",Solar,8101,Operations Solar Team 2
+75712,"North Carolina Renewable Properties, LLC",DNCR,"North Carolina Renewable Properties, LLC",Solar,8101,Operations Solar Team 2
+75674,"RP-Orlando, LLC",DRPO,"RP-Orlando, LLC",Solar,8100,Operations Solar Team 1
+75722,"RE SFCity1, LP",DSFL,"RE SFCity1, LP",Solar,8102,Operations Solar Team 3
+75673,"Solar Star North Carolina II, LLC",DSS2,"Solar Star North Carolina II, LLC",Solar,8100,Operations Solar Team 1
+75671,"Taylorsville Solar, LLC",DTAY,"Taylorsville Solar, LLC",Solar,8101,Operations Solar Team 2
+75803,"Windsor Cooper Hill Solar, LLC",DWCH,"Windsor Cooper Hill Solar, LLC",Solar,8100,Operations Solar Team 1
+75639,"Washington MIllfield Solar, LLC",DWMS,"Washington MIllfield Solar, LLC",Solar,8101,Operations Solar Team 2
+75734,Washington White Post Solar LLC,DWPS,Washington White Post Solar LLC,Solar,8101,Operations Solar Team 2
+75640,"Washington Airport Solar, LLC",DWWA,"Washington Airport Solar, LLC",Solar,8101,Operations Solar Team 2
+75993,East Blackland Solar Project I LLC,EBSL,East Blackland Solar Project I LLC,Solar,8104,Operations Solar Team 5
+75813,"Everetts Wildcat Solar, LLC",EVER,"Everetts Wildcat Solar, LLC",Solar,8101,Operations Solar Team 2
+75972,Franklin Solar LLC,FRNK,Franklin Solar LLC,Solar,8103,Operations Solar Team 4
+75558,Garysburg Solar LLC,GARY,Garysburg Solar LLC,Solar,8100,Operations Solar Team 1
+75843,Gaston Solar LLC,GAST,Gaston Solar LLC,Solar,8100,Operations Solar Team 1
+75554,"SolNCPower10, LLC",HERT,"SolNCPower10, LLC",Solar,8100,Operations Solar Team 1
+75811,"HXOap Solar One, LLC",HFAX,"HXOap Solar One, LLC",Solar,8101,Operations Solar Team 2
+75649,"Highlander Solar 1, LLC",HIS1,"Highlander Solar 1, LLC",Solar,8102,Operations Solar Team 3
+75659,"Highlander Solar 2, LLC",HIS2,"Highlander Solar 2, LLC",Solar,8102,Operations Solar Team 3
+75971,"Jackpot Holdings, LLC",JACK,"Jackpot Holdings, LLC",Solar,8103,Operations Solar Team 4
+75807,"Colonial Eagle Solar, LLC",KELF,Kelford,Solar,8100,Operations Solar Team 1
+75840,"Long Farm 46 Solar, LLC",LONG,"Long Farm 46 Solar, LLC",Solar,8100,Operations Solar Team 1
+75881,"Lapetus Energy Project, LLC",LPTS,"Lapetus Energy Project, LLC",Solar,8104,Operations Solar Team 5
+75885,"North Rosamond Solar, LLC",NROS,"North Rosamond Solar, LLC",Solar,8102,Operations Solar Team 3
+75941,Palmer Solar LLC,PALM,Palmer Solar LLC,Solar,8103,Operations Solar Team 4
+75807,"Colonial Eagle Solar, LLC",PASQ,Pasquotank,Solar,8100,Operations Solar Team 1
+77038,Pike Solar LLC,PIKE,Pike Solar LLC,Solar,8103,Operations Solar Team 4
+75977,"Pisgah Ridge Solar, LLC",PISG,"Pisgah Ridge Solar, LLC",Solar,8104,Operations Solar Team 5
+75550,"Pumpjack Solar I, LLC",PPJK,"Pumpjack Solar I, LLC",Solar,8102,Operations Solar Team 3
+75947,RE Rambler LLC,RAMB,RE Rambler LLC,Solar,8104,Operations Solar Team 5
+75561,"Rio Bravo Solar I, LLC",RBS1,"Rio Bravo Solar I, LLC",Solar,8102,Operations Solar Team 3
+75562,"Rio Bravo Solar II, LLC",RBS2,"Rio Bravo Solar II, LLC",Solar,8102,Operations Solar Team 3
+75848,"River Road Solar, LLC",RVRD,"River Road Solar, LLC",Solar,8100,Operations Solar Team 1
+75559,Seaboard Solar LLC,SEAB,Seaboard Solar LLC,Solar,8100,Operations Solar Team 1
+75818,"Fresh Air Energy X, LLC",SHAW,"Fresh Air Energy X, LLC",Solar,8100,Operations Solar Team 1
+75872,Shoreham Solar Commons LLC,SHSC,Shoreham Solar Commons LLC,Solar,8100,Operations Solar Team 1
+77086,Spanish Peaks Solar LLC,SPSL,Spanish Peaks Solar LLC,Solar,8103,Operations Solar Team 4
+77002,"CPRE 1 Lessee, LLC",SPWY,Speedway Solar LLC Lessee,Solar,8101,Operations Solar Team 2
+75747,"Solar Star North Carolina I, LLC",STNC,"Solar Star North Carolina I, LLC",Solar,8101,Operations Solar Team 2
+77002,"CPRE 1 Lessee, LLC",STNY,Stony Knoll Solar LLC Lessee,Solar,8101,Operations Solar Team 2
+75552,SoINCPower6 LLC,SUNB,SoINCPower6 LLC,Solar,8100,Operations Solar Team 1
+75822,Seville Solar One LLC,SVS1,Seville Solar One LLC,Solar,8102,Operations Solar Team 3
+75821,"Seville Solar Two, LLC",SVS2,"Seville Solar Two, LLC",Solar,8102,Operations Solar Team 3
+75823,Tallbear Seville LLC,SVTB,Tallbear Seville LLC,Solar,8102,Operations Solar Team 3
+75841,Tarboro Solar LLC,TARB,Tarboro Solar LLC,Solar,8101,Operations Solar Team 2
+75745,TX Solar I LLC,TXS1,TX Solar I LLC,Solar,8104,Operations Solar Team 5
+75849,Victory Solar LLC,VICT,Victory Solar LLC,Solar,8103,Operations Solar Team 4
+75563,"Wildwood Solar II, LLC",WDW2,"Wildwood Solar II, LLC",Solar,8102,Operations Solar Team 3
+75780,"Wildwood Solar I, LLC",WDWD,"Wildwood Solar I, LLC",Solar,8102,Operations Solar Team 3
+75807,"Colonial Eagle Solar, LLC",WHTK,Whitakers,Solar,8101,Operations Solar Team 2
+75842,Winton Solar LLC,WINT,Winton Solar LLC,Solar,8100,Operations Solar Team 1
+77031,Wildflower Solar LLC,WLDF,Wildflower Solar LLC,Solar,8101,Operations Solar Team 2
+75560,Woodland Solar LLC,WOOD,Woodland Solar LLC,Solar,8100,Operations Solar Team 1
+77079,"Deriva Energy Sub I, LLC",DSOP,Solar Ops Admin,Solar,Varies,
+75736,"Deriva Energy Services, LLC",CFST,"Deriva Energy Services, LLC",Services,8130,Mobile Service Team - Field Services
+75736,"Deriva Energy Services, LLC",CGBT,Central Services Gearbox Repair,Services,8131,Mobile Service Team  - Gearbox Repair
+75736,"Deriva Energy Services, LLC",CLCT,Central Services Large Corrective,Services,8132,Mobile Service Team  - Large Corrective
+75736,"Deriva Energy Services, LLC",DBMT,Blade Maintenance Team,Services,8133,Blade Maintenance
+75736,"Deriva Energy Services, LLC",DCSV,Central Services Support,Services,Varies,
+75736,"Deriva Energy Services, LLC",DGRM,Renew Services-Grand Meadows,Services,N/A,
+75736,"Deriva Energy Services, LLC",DISN,Disney: Ready Creek,Services,,
+75736,"Deriva Energy Services, LLC",DMRE,Renew Services-MRES,Services,N/A,
+75736,"Deriva Energy Services, LLC",DMSO,DER Mgmt Services Solar,Services,,
+75736,"Deriva Energy Services, LLC",DMST,MST Ops Admin,Services,N/A,
+75736,"Deriva Energy Services, LLC",DMSV,DER Management Services,Services,,
+75736,"Deriva Energy Services, LLC",DMSY,DER Mgmt Services Symphony,Services,,
+75736,"Deriva Energy Services, LLC",DMWD,Renew Services-Minwind,Services,N/A,
+75736,"Deriva Energy Services, LLC",DNOB,Renew Services-Nobles,Services,N/A,
+75736,"Deriva Energy Services, LLC",DOES,Third Party Services,Services,N/A,
+75736,"Deriva Energy Services, LLC",DSOL,General & Admin,Services,Varies,
+75736,"Deriva Energy Services, LLC",DWCC,Renewable Control Center,Services,8123,Renewable Control Center
+75736,"Deriva Energy Services, LLC",GRAT,DTE Gratiot Wind Park,Services,N/A,
+75736,"Deriva Energy Services, LLC",HVLT,High Voltage Team,Services,8134,High Voltage Repair Team
+75736,"Deriva Energy Services, LLC",MESZ,Mesquite Creek BOP,Services,N/A,
+75736,"Deriva Energy Services, LLC",MGEC,Madison Gas & Electric Company,Services,8109,Operations Wind Team 5
+75736,"Deriva Energy Services, LLC",OVER,DMST Technician Overhead,Services,N/A,
+75736,"Deriva Energy Services, LLC",PIRI,Pine River,Services,N/A,
+75736,"Deriva Energy Services, LLC",ROMM,Renewable Ops Material Management,Services,8054,Tech Services Procurement
+75736,"Deriva Energy Services, LLC",RSBW,Xcel-Border Wind,Services,N/A,
+75736,"Deriva Energy Services, LLC",RSGW,Gulf Winds,Services,N/A,
+75736,"Deriva Energy Services, LLC",RSPV,Xcel - Pleasant Valley,Services,N/A,
+75736,"Deriva Energy Services, LLC",THMB,Thumb Wind Park,Services,N/A,
+75736,"Deriva Energy Services, LLC",XBMS,DER Services Black Mesa,Services,8103,Operations Solar Team 4
+75736,"Deriva Energy Services, LLC",XBRV,DER Services Broad River,Services,8101,Operations Solar Team 2
+75736,"Deriva Energy Services, LLC",XDER,DER Services Mtce,Services,,
+75736,"Deriva Energy Services, LLC",XFN2,DER Services Frontier 2 Mtce,Services,,
+75736,"Deriva Energy Services, LLC",XHOL,DER Services Holstein Mtce,Services,8104,Operations Solar Team 5
+75736,"Deriva Energy Services, LLC",XJCK,DER Services Jackpot Mtce,Services,8103,Operations Solar Team 4
+75736,"Deriva Energy Services, LLC",XLAP,DER Services Lapetus Mtce,Services,8104,Operations Solar Team 5
+75736,"Deriva Energy Services, LLC",XLED,DER Services Ledyard Mtce,Services,,
+75736,"Deriva Energy Services, LLC",XMAR,DER Services Maryneal Mtce,Services,,
+75736,"Deriva Energy Services, LLC",XMES,DER Services Mesteno Mtce,Services,8112,Operations Wind Team 8
+75736,"Deriva Energy Services, LLC",XPAL,DER Services Palmer Mtce,Services,8103,Operations Solar Team 4
+75736,"Deriva Energy Services, LLC",XPFL,DER Services Pflugerville Mtce,Services,8104,Operations Solar Team 5
+75736,"Deriva Energy Services, LLC",XPIK,DER Services Pike,Services,8103,Operations Solar Team 4
+75736,"Deriva Energy Services, LLC",XPIS,DER Services Pisgah Mtce,Services,8104,Operations Solar Team 5
+75736,"Deriva Energy Services, LLC",XRAM,DER Services Rambler Mtce,Services,8104,Operations Solar Team 5
+75736,"Deriva Energy Services, LLC",XSTN,DER Services Stony Knoll,Services,8101,Operations Solar Team 2
+75736,"Deriva Energy Services, LLC",XSWY,DER Services Speedway,Services,8101,Operations Solar Team 2
+77079,"Deriva Energy Sub I, LLC",DCS4,"DE Renewables Solar, LLC",Development,Varies,
+75752,"Deriva Energy Wind, LLC",DWE1,"Deriva Energy Wind, LLC",Development,Varies,
+75969,"Deriva Energy Storage, LLC",STRG,"Deriva Energy Storage, LLC",Development,Varies,
+77071,Atticus Borrower LLC,ATBL,Atticus Borrower LLC,Other,,
+77047,"Atticus Energy Holdings, LLC",ATEH,"Atticus Energy Holdings, LLC",Other,,
+77013,"Athenian Sky Solar, LLC",ATSK,"Athenian Sky Solar, LLC",Other,,
+77018,"Atticus Energy, LLC",ATTE,"Atticus Energy, LLC",Other,,
+77019,"Atticus Holdings, LLC",ATTH,"Atticus Holdings, LLC",Other,,
+75898,"Broad River Solar, LLC",BDRV,"Broad River Solar, LLC",Other,,
+77061,"Bessie Energy Storage, LLC",BESL,"Bessie Energy Storage, LLC",Other,,
+77025,"Black Mesa Interconnection, LLC",BLKI,"Black Mesa Interconnection, LLC",Other,,
+77021,"Black Mesa Energy, LLC",BLKM,Black Mesa Construction Margin,Other,,
+75978,"Blue Rose Wind, LLC",BLUE,"Blue Rose Wind, LLC",Other,,
+77055,"Black Mesa Energy Holdings, LLC",BMEH,"Black Mesa Energy Holdings, LLC",Other,,
+77054,"Black Mesa Solar Energy, LLC",BMSE,"Black Mesa Solar Energy, LLC",Other,,
+75804,"Bethel Price Solar, LLC",BPTX,TAX - Windsor Cooper Hill Sola,Other,,
+77076,Blue Rose Borrower LLC,BRBL,Blue Rose Borrower LLC,Other,,
+75979,"Blue Rose Wind Holdings, LLC",BRWH,"Blue Rose Wind Holdings, LLC",Other,,
+75527,Deriva Energy Beckjord Storage LLC,BS01,Beckjord Battery Storage Unit 1,Other,,
+75527,Deriva Energy Beckjord Storage LLC,BSBJ,Deriva Energy Beckjord Storage LLC,Other,,
+75551,"SoINCPower5, LLC",BTTX,"TAX - SolNCPower5, LLC",Other,,
+77003,"Cannon Solar, LLC",CANS,"Cannon Solar, LLC",Other,,
+75556,"Caprock Solar Holdings 1, LLC",CAPH,"Caprock Solar Holdings 1, LLC",Other,,
+75807,"Colonial Eagle Solar, LLC",CESL,"Colonial Eagle Solar, LLC",Other,,
+75650,"Deriva Energy, LLC",CMPR,Commercial Power Services,Other,,
+75650,"Deriva Energy, LLC",CMPS,Comm Bus Policy & Strategy,Other,,
+75553,"Conetoe II Solar, LLC",CNTX,"TAX - Conetoe II Solar, LLC",Other,,
+75736,"Deriva Energy Services, LLC",COUR,Xcel - Courtenay,Other,,
+75990,"CPRE 1 Holdings, LLC",CP1H,"CPRE 1 Holdings, LLC",Other,,
+77002,"CPRE 1 Lessee, LLC",CP1L,"CPRE 1 Lessee, LLC",Other,,
+77073,CPRE Borrower LLC,CPBL,CPRE Borrower LLC,Other,,
+75989,"CPRE 1, LLC",CPRE,"CPRE 1, LLC",Other,,
+75812,"Creswell Alligood Solar, LLC",CSTX,TAX - Creswell Alligood Solar,Other,,
+77017,"Deriva Atticus, LLC",DATT,"Deriva Atticus, LLC",Other,,
+75716,RE AZ Holdings LLC,DAZH,RE AZ Holdings LLC,Other,,
+77066,"Durant Bend Solar, LLC",DBSL,"Durant Bend Solar, LLC",Other,,
+75988,"Deriva CPRE 1, LLC",DCP1,"Deriva CPRE 1, LLC",Other,,
+75652,"Clear Skies Solar Holdings, LLC",DCSH,"Clear Skies Solar Holdings, LLC",Other,,
+75656,"Clear Skies Solar, LLC",DCSS,"Clear Skies Solar, LLC",Other,,
+77091,"Deriva DevCo, LLC",DDEV,"Deriva DevCo, LLC",Other,,
+77033,"Symphony Breeze Holdings, LLC",DEBR,"Duke Energy Breeze Holdings, LLC",Other,,
+75966,"Deriva Energy Golden Vista, LLC",DEGV,"Deriva Energy Golden Vista, LLC",Other,,
+77097,Deriva Energy Management Solutions LLC,DEMSL,77097 - Company,Other,,
+75946,"Deriva Energy PP Portfolio 1 Borrower, LLC",DEPB,75946 - Company,Other,,
+75948,"Deriva Energy PP Portfolio 1 Pledgor, LLC",DEPP,75948 - Company,Other,,
+75889,"Deriva Energy Solar I, LLC",DES1,"Deriva Energy Solar I, LLC",Other,,
+75876,"Deriva Energy Shoreham Holdings, LLC",DESH,"Deriva Energy Shoreham Holdings, LLC",Other,,
+77080,"Hollywood Merger Sub II, LLC",DESU,"DE Sun Holdings, LLC",Other,,
+75891,"Deriva Energy Wind I, LLC",DEW1,"Deriva Energy Wind I, LLC",Other,,
+77079,"Deriva Energy Sub I, LLC",DGSL,"DEGS Solar, LLC",Other,,
+75738,Dogwood Solar LLC,DGTX,TAX - Dogwood Solar LLC,Other,,
+75746,"Duke Energy Renewables NC Solar, LLC",DNCS,"Duke Energy Renewables NC Solar, LLC",Other,,
+75650,"Deriva Energy, LLC",DOMS,DER Management Services,Other,,
+75650,"Deriva Energy, LLC",DORS,DEGS Ops Supply Chain Allocati,Other,,
+77096,Deriva Operations Solutions LLC,DOSL,77096 - Company,Other,,
+75719,"RE SFCity1 Holdco, LLC",DSFC,"RE SFCity1 Holdco, LLC",Other,,
+75721,"RE SFCity1 GP, LLC",DSFG,"RE SFCity1 GP, LLC",Other,,
+75650,"Deriva Energy, LLC",DSSO,"Deriva Energy, LLC",Other,,
+75672,Top of the World Wind Energy Holdings LLC,DTWH,Top of the World Wind Energy Holdings LLC,Other,,
+75650,"Deriva Energy, LLC",DW01,Monitoring Center Allocations,Other,,
+75992,East Blackland Holdings LLC,EBHD,East Blackland Holdings LLC,Other,,
+75993,East Blackland Solar Project I LLC,EBKM,East Blackland Margin,Other,,
+75599,"Emerald State Solar Holdings, LLC",EHLD,"Emerald State Solar Holdings, LLC",Other,,
+75598,"Emerald State Solar, LLC",ESLR,"Emerald State Solar, LLC",Other,,
+75813,"Everetts Wildcat Solar, LLC",EVTX,TAX - Everetts Wildcar Solar,Other,,
+75818,"Fresh Air Energy X, LLC",FATX,"TAX - Fresh Air Energy X, LLC",Other,,
+77036,"Franklin Battery Storage, LLC",FBCM,Franklin Battery Constr Margin,Other,,
+77036,"Franklin Battery Storage, LLC",FKBT,"Franklin Battery Storage, LLC",Other,,
+77037,"Franklin Interconnection, LLC",FKIC,"Franklin Interconnection, LLC",Other,,
+75972,Franklin Solar LLC,FMRG,Franklin Constr Margin,Other,,
+75727,"Free State Windpower, LLC",FSWP,"Free State Windpower, LLC",Other,,
+75769,"Green Frontier Windpower Holdings, LLC",GFWH,"Green Frontier Windpower Holdings, LLC",Other,,
+75768,"Green Frontier Windpower, LLC",GFWP,"Green Frontier Windpower, LLC",Other,,
+75650,"Deriva Energy, LLC",GO32,Duke Gen Svcs Hldg Gov Special,Other,,
+75650,"Deriva Energy, LLC",GOSG,Generation Services Corp Gov,Other,,
+75558,Garysburg Solar LLC,GRTX,TAX - Garysburg Solar LLC,Other,,
+75843,Gaston Solar LLC,GSTX,"TAX - Gaston Solar, LLC",Other,,
+75967,"Golden Vista Energy Holdings, LLC",GVEH,"Golden Vista Energy Holdings, LLC",Other,,
+75967,"Golden Vista Energy Holdings, LLC",GVTX,TAX - Golden Vista,Other,,
+77048,"Hoosier Jack Solar, LLC",HJCM,Hoosier Jack Constr Margin,Other,,
+75867,"High Noon Solar Holdings, LLC",HNHD,"High Noon Solar Holdings, LLC",Other,,
+75868,"High Noon Solar, LLC",HNSL,"High Noon Solar, LLC",Other,,
+77048,"Hoosier Jack Solar, LLC",HOJK,"Hoosier Jack Solar, LLC",Other,,
+75650,"Deriva Energy, LLC",HOL1,DEGS Holding Co Other,Other,,
+75554,"SolNCPower10, LLC",HTTX,"TAX - SolNPower10, LLC",Other,,
+77064,Hollywood Holdco I LLC,HWH1,Hollywood Holdco I LLC,Other,,
+77065,"Deriva Energy Holdco II, LLC",HWH2,"Deriva Energy Holdco II, LLC",Other,,
+77079,"Deriva Energy Sub I, LLC",HWM1,"Deriva Energy Sub I, LLC",Other,,
+77080,"Hollywood Merger Sub II, LLC",HWM2,"Hollywood Merger Sub II, LLC",Other,,
+77079,"Deriva Energy Sub I, LLC",HWMI,"Deriva Energy Sub I, LLC",Other,,
+77063,"Deriva Energy Parent, LLC",HWTL,"Deriva Energy Parent, LLC",Other,,
+75811,"HXOap Solar One, LLC",HXTX,"TAX - HXOap Solar One, LLC",Other,,
+75728,"DS Cornerstone, LLC",ICJV,"DS Cornerstone, LLC",Other,,
+75675,"Ironwood-Cimarron Windpower Holdings, LLC",IWHC,"Ironwood-Cimarron Windpower Holdings, LLC",Other,,
+77072,Jackpot Borrower LLC,JPBL,Jackpot Borrower LLC,Other,,
+77045,"Jackpot Solar Energy, LLC",JPTE,"Jackpot Solar Energy, LLC",Other,,
+77046,"Jackpot Solar Holdings, LLC",JSPE,"Jackpot Solar Holdings, LLC",Other,,
+75807,"Colonial Eagle Solar, LLC",KFTX,TAX - Kelford-Colonial Eagle,Other,,
+75840,"Long Farm 46 Solar, LLC",LFTX,TAX - Long Farm 46 Solar,Other,,
+75740,"Los Vientos Windpower IB Holdings, LLC",LVBH,"Los Vientos Windpower IB Holdings, LLC",Other,,
+75713,"Los Vientos Windpower IA Holdings, LLC",LVHA,"Los Vientos Windpower IA Holdings, LLC",Other,,
+77077,"North Allegheny Wind Energy, LLC",NAWE,"North Allegheny Wind Energy, LLC",Other,,
+77078,"North Allegheny Wind Holdings, LLC",NAWH,"North Allegheny Wind Holdings, LLC",Other,,
+75600,"Deriva Energy Holding Company, LLC",NONI,"Deriva Energy Holding Company, LLC",Other,,
+75755,"Notrees Windpower, LP",NTRB,Notrees Phase 1B,Other,,
+75755,"Notrees Windpower, LP",NTRC,NoTrees Phase 1C,Other,,
+75995,RE Inverness Holdings LLC,PFTX,TAX - RE Inverness,Other,,
+77038,Pike Solar LLC,PKMR,Pike Construction Margin,Other,,
+75997,"Pleasant Grove Solar, LLC",PLGR,"Pleasant Grove Solar, LLC",Other,,
+77041,"Pisgah Ridge Solar 2, LLC",PR2M,Pisgah Ridge 2 Constr Margin,Other,,
+77043,"Pisgah Ridge 3, LLC",PR3M,Pisgah Ridge 3 Constr Margin,Other,,
+75977,"Pisgah Ridge Solar, LLC",PRCM,Pisgah Ridge Constr Margin,Other,,
+77041,"Pisgah Ridge Solar 2, LLC",PRS2,"Pisgah Ridge Solar 2, LLC",Other,,
+77043,"Pisgah Ridge 3, LLC",PRS3,"Pisgah Ridge 3, LLC",Other,,
+77082,"Pike Solar Energy Holdings, LLC",PSEH,"Pike Solar Energy Holdings, LLC",Other,,
+75650,"Deriva Energy, LLC",R440,DEGS HOLDING CO INC,Other,,
+75950,"Deriva Rambler Solar, LLC",RAMS,"Deriva Rambler Solar, LLC",Other,,
+75950,"Deriva Rambler Solar, LLC",RAMT,TAX - DER Rambler,Other,,
+75951,"Rambler Solar Holdings, LLC",RASH,"Rambler Solar Holdings, LLC",Other,,
+75996,RE Gattaca Holdings LLC,REGA,RE Gattaca Holdings LLC,Other,,
+75994,RE Haast Holdings LLC,REHA,RE Haast Holdings LLC,Other,,
+75995,RE Inverness Holdings LLC,REIN,RE Inverness Holdings LLC,Other,,
+75882,"Rosamond Renewables, LLC",RORW,"Rosamond Renewables, LLC",Other,,
+75884,"Rosamond Solar Holdings, LLC",ROSH,"Rosamond Solar Holdings, LLC",Other,,
+75883,"Rosamond Solar Portfolio, LLC",ROSP,"Rosamond Solar Portfolio, LLC",Other,,
+75882,"Rosamond Renewables, LLC",ROST,TAX - Rosamond Renewables,Other,,
+75947,RE Rambler LLC,RSMA,Rambler Solar Margin,Other,,
+77075,Symphony Breeze Borrower LLC,SBBL,Symphony Breeze Borrower LLC,Other,,
+77033,"Symphony Breeze Holdings, LLC",SBHL,"Symphony Breeze Holdings, LLC",Other,,
+75887,"Symphony Breeze, LLC",SBRE,"Symphony Breeze, LLC",Other,,
+75552,SoINCPower6 LLC,SBTX,"TAX - SolNCPower6, LLC",Other,,
+75991,"South Dixon Solar, LLC",SDIX,"South Dixon Solar, LLC",Other,,
+75896,"Speedway Solar NC, LLC",SDWY,"Speedway Solar NC, LLC",Other,,
+75559,Seaboard Solar LLC,SETX,TAX - Seaboard Solar LLC,Other,,
+75871,"Shoreham Energy Holdings, LLC",SHEH,"Shoreham Energy Holdings, LLC",Other,,
+75869,"Deriva Energy Shoreham, LLC",SHOR,"Deriva Energy Shoreham, LLC",Other,,
+77079,"Deriva Energy Sub I, LLC",SLAR,Solar - DER Solar Allocations,Other,,
+75949,"Deriva Energy Solar Holdings, Inc",SOHO,"Deriva Energy Solar Holdings, Inc",Other,,
+77086,Spanish Peaks Solar LLC,SPCM,Spanish Peaks Const Margin,Other,,
+77094,"Spanish Peaks Energy, LLC",SPKE,"Spanish Peaks Energy, LLC",Other,,
+77095,"Spanish Peaks Solar Holdings, LLC",SPSH,"Spanish Peaks Energy, LLC",Other,,
+77074,Symphony Sun Borrower LLC,SSBL,Symphony Sun Borrower LLC,Other,,
+77093,"Sunrise Solar DevCo Borrower, LLC",SSDB,"Sunrise Solar DevCo Borrower, LLC",Other,,
+77092,"Sunrise Solar DevCo Pledgor, LLC",SSDP,"Sunrise Solar DevCo Pledgor, LLC",Other,,
+77083,"Sunrise Solar Opco Borrower, LLC",SSOB,Sunrise Solar OpCo Borrower LLC,Other,,
+77090,"Sunrise Solar Opco Pledgor, LLC",SSOP,"Sunrise Solar Opco Pledgor, LLC",Other,,
+75893,"Symphony Sun, LLC",SSUN,"Symphony Sun, LLC",Other,,
+75897,"Stony Knoll Solar, LLC",STLR,Stony Knoll LLC Lessor,Other,,
+75897,"Stony Knoll Solar, LLC",STON,"Stony Knoll Solar, LLC",Other,,
+75819,"Seville Solar Holding Company, LLC",SVHO,"Seville Solar Holding Company, LLC",Other,,
+75894,"Symphony Wind Holdings, LLC",SWHO,"Symphony Wind Holdings, LLC",Other,,
+75817,"Summit Wind Energy Mesquite Creek, LLC",SWMC,"Summit Wind Energy Mesquite Creek, LLC",Other,,
+77050,"Turtle Creek Solar 2, LLC",T2CM,Turtle Creek 2 Constr Margin,Other,,
+75841,Tarboro Solar LLC,TBTX,TAX - Long Farm 46 Solar,Other,,
+77050,"Turtle Creek Solar 2, LLC",TCR2,"Turtle Creek Solar 2, LLC",Other,,
+75757,"TE Notrees, LLC",TENL,"TE Notrees, LLC",Other,,
+77015,"Turtle Creek Solar, LLC",TRMG,Turtle Creek Construction Marg,Other,,
+77015,"Turtle Creek Solar, LLC",TRTL,"Turtle Creek Solar, LLC",Other,,
+75859,"Texoma Wind Holdings, LLC",TWHD,"Texoma Wind Holdings, LLC",Other,,
+75860,"Texoma Wind, LLC",TXWD,"Texoma Wind, LLC",Other,,
+75803,"Windsor Cooper Hill Solar, LLC",WCTX,TAX - Windsor Cooper Hill Sola,Other,,
+75560,Woodland Solar LLC,WDTX,TAX - Woodland Solar LLC,Other,,
+77085,"Magnolia Falls Solar Holdings, LLC",WFHL,"Wildflower Solar Holdings, LLC",Other,,
+75845,Wild Jack Solar Holdings LLC,WILD,Wild Jack Solar Holdings LLC,Other,,
+75752,"Deriva Energy Wind, LLC",WIND,WIND-DER Wind Allocations,Other,,
+75844,Wild Jack Solar LLC,WJRN,Wild Jack Solar LLC,Other,,
+77031,Wildflower Solar LLC,WLDM,Wildflower Construction Margin,Other,,
+75842,Winton Solar LLC,WNTX,"TAX - Winton Solar, LLC",Other,,
+77056,"Pike Solar Energy, LLC",WPSE,"Pike Solar Energy, LLC",Other,,
+77057,"Pike Solar Holdings, LLC",WPSH,"Wild Pike Solar Holdings, LLC",Other,,
+75734,Washington White Post Solar LLC,WPTX,TAX - Washington White Post,Other,,
+77083,"Sunrise Solar Opco Borrower, LLC",WSEH,"Wildflower Solar Energy Holdings, LLC",Other,,
+77084,"Magnolia Falls Solar Energy, LLC",WSEL,"Wildflower Solar Energy, LLC",Other,,
+75805,"Wind Star Holdings, LLC",WSHO,"Wind Star Holdings, LLC",Other,,
+75806,"Wind Star Renewables, LLC",WSRE,"Wind Star Renewables, LLC",Other,,
+75976,"Western Vista Solar Holdings, LLC",WVSH,"Western Vista Solar Holdings, LLC",Other,,
+75975,"Western Vista Solar, LLC",WVSO,"Western Vista Solar, LLC",Other,,

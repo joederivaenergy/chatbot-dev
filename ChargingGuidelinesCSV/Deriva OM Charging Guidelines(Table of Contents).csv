@@ -1,0 +1,38 @@
+Tabs within workbook,Section,Description,FP&A Contact,,DUKE (code block),DERIVA (cost mapping)
+,,,,,,
+Route Code Map,,List of CAPS route codes transitioned to Baseware route codes,,,,
+RC to Dept,,List of responsibility centers with corresponding department,,,,
+IT,SG&A,IT (Information Technology) - Frank Cook,Jackie Duis,,Responsibility Center,Department
+HR,SG&A,HR (Human Resources) - Tom Dukes,Jackie Duis,,Operating Unit,Location
+Legal,SG&A,Legal - Jacob Pollack,Tyler Mulcahy,,Business Unit,Company id
+Corporate,SG&A,Corporate - John Clapp,Daniel Coward,,Project,Project
+CFO Groups,SG&A,CFO Groups - Paul Tivnan,Daniel Coward,,Activity,Activity
+Land Services,SG&A,Land Services - Graham Furlong,Tyler Mulcahy,,Process,N/A
+Commercial,SG&A,Commercial - Heath Norrick,Tyler Mulcahy,,Resource Type,Account
+Development,SG&A,Development - Graham Furlong,Tyler Mulcahy,,,
+Tech Services,SG&A,Technical Services - Matt Johnson,Tyler Mulcahy,,,
+Dept List,Deriva Systems,Listing of Departments,Jackie Duis,,,
+Employee Dept List,,Accessible now via Workday,,,,
+Employee Dept List,Deriva Systems,List of Departments by Employee,Jackie Duis,,,
+Comp IDs_Locations,Deriva Systems,List of Company ID's & Locations by Segment,Jackie Duis,,,
+Project Activity Sequence,Deriva Systems,List of Projects with Activities and Activity Sequences,Jackie Duis,,,
+Ops Support,Operations,"Ops Support Groups (Renew Ops, EHS, Op Ex, RCC, Perf Svcs)",Jackie Duis,,,
+IFS Account,Operations,"Common Resource Types, Process Codes and IFS Accounts",Jackie Duis,,,
+Wind Sites,Operations,Wind Sites and Central Services Wind Site Support specific charging guidelines,Jackie Duis,,,
+Solar Sites,Operations,Solar Sites and Central Services Solar Site Support specific charging guidelines,Jackie Duis,,,
+MST_FS,Operations,MST-Field Services specific charging guidelines,Jackie Duis,,,
+MST_GBX,Operations,MST-Gearbox Repair specific charging guidelines,Jackie Duis,,,
+MST_LC,Operations,MST-Large Corrective specific charging guidelines,Jackie Duis,,,
+Blade Maintenance_Repair,Operations,Blade Maintenance Team specific charging guidelines,Jackie Duis,,,
+High Voltage,Operations,High Voltage Team specific charging guidelines,Jackie Duis,,,
+"Ops RC's, BU's & OU's",Operations,"Operations RC's, BU's and OU's listing - OLD REFERNCE ONLY",Jackie Duis,,,
+,,,,,,
+,,,,,,
+Questions - email below or FP&A Contact,,,,,,
+codingquestions@derivaenergy.com,,,,,,
+,,,,,,
+,,,,,,
+Notes,,,,,,
+"EOWINSP, OILEXP, BLADEIN, BLADES, GEARBOX, GENERAT, MAINBEA, HVMTC, PADMNT, HGHVOLT, TDSYDMT now have projects that should be used in Concur and on Dervica Timesheets when applicable",,,,,,
+"DERSOPS Process Code is not available in Concur or on Deriva Timesheet - user will have to manually allocate 50% to team location (CFST, CGBT, CLCT) and 50% to DWOP location",,,,,,
+TOOLPUR Process Code with CLCT Oper Unit is not available in Concur - user will have to manually allocate 35% to CLCT location and 65% to DWOP location - project and activity can still be used,,,,,,
