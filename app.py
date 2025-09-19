@@ -280,15 +280,23 @@ def generate_answer(user_input: str, query_type: str) -> Dict:
 Based on the context provided, answer the user's question about charging guidelines. You MUST format ALL charging code responses using this EXACT bullet-point structure:
 
 • **Description:** [specific description from context]
+
 • **Account number:** [account number from context or N/A]  
+
 • **Location:** [must be one of: DSOP, DWOP, DCS4, DWE1, STRG, or DSOL - choose based on the specific project/area from context]
+
 • **Company ID:** [must be one of: 77079 (Deriva Energy Sub I), 75752 (Deriva Energy Wind, LLC), or 75969 (Deriva Energy Storage, LLC) - choose based on context]
+
 • **Project:** [must be one of: DSOP25G001, DWOP25G001, DCS425G001, DWE125G001, STRG25G001, or DSOL25G001 - choose the appropriate one based on specific work from context]
+
 • **Department:** [department from context or based on user's team]
 
-Always include a brief introductory sentence before the bullet points, and add "Notes:" section after if relevant details need explanation.
+Notes:
+• [Add relevant notes if needed]
 
-Add a "Confidence:" level at the end (High, Medium, or Low).
+Confidence: [High/Medium/Low]
+
+IMPORTANT: Each bullet point MUST be on its own separate line with a blank line between them for proper markdown formatting.
 
 If you need more context to provide accurate charging guidelines, ask for clarification about team/department.
 
