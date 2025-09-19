@@ -4,6 +4,7 @@ import uuid
 import boto3
 import streamlit as st
 from typing import List, Dict
+import re
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
@@ -136,7 +137,7 @@ if not create_dynamodb_table_if_not_exists():
     st.stop()
 
 # --- Streamlit Page ---
-st.set_page_config(page_icon="⚡", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
+st.set_page_config(page_icon="🤖", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
 
 st.sidebar.title("⚙️ Settings")
 
@@ -153,8 +154,8 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("Tools", expanded=True):
-    if st.button("Clear Chat"):
+with st.sidebar.expander("🧹 Tools", expanded=True):
+    if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
 
@@ -201,7 +202,7 @@ def retrieve_from_kb(query: str, max_results: int = 6) -> Dict:
             chunks.append(txt.strip())
         if loc:
             sources.append({"location": loc, "score": score})
-    return {"context": "\n\n---\n\n".join(chunks), "sources": sources, "relevance_score": max([s.get("score", 0) for s in sources]) if sources else 0}
+    return {"context": "\n\n---\n\n".join(chunks), "sources": sources}
 
 # --- Detect if query is about charging guidelines ---
 def is_charging_related(query: str) -> bool:
@@ -214,135 +215,250 @@ def is_charging_related(query: str) -> bool:
     query_lower = query.lower()
     return any(keyword in query_lower for keyword in charging_keywords)
 
-# --- Improved Query Classification ---
-def classify_and_respond(user_input: str) -> Dict:
-    """
-    Classify the query and determine response strategy:
-    1. Greeting -> Simple greeting response
-    2. Charging-related -> Try KB first, then clarify if needed
-    3. General knowledge -> Use LLM directly
-    """
+# --- Clarifying Router (FROM FIRST VERSION) ---
+ROUTER_POLICY = """
+You are Diva, Deriva's internal charging-guidelines assistant.
+ 
+DEFAULT: Clarify first for any query about policies, charging, codes, expenses, departments, projects, or sites. Only skip clarification for pure greetings or when the message + history already contains all critical fields.
+ 
+Critical fields (generic):
+- team/department (ask: "Which team or department do you work in?")
+- if the provided team is umbrella-level (e.g., an org name), ask for the specific sub-team/department within it
+- site/plant if policy can vary by site
+- any other column implied by the retrieved context that changes the code (category, activity, etc.)
+ 
+Rules:
+1) Greetings → intent: "answer".
+2) Prefer intent: "clarify" and ask at most TWO concise, targeted questions for missing fields.
+3) If prior chat history already contains what's needed, intent: "answer".
+4) Never invent values; if unsure, ask.
+5) Keep questions short and friendly.
+ 
+Return ONLY JSON:
+{
+  "intent": "clarify" | "answer",
+  "questions": ["q1","q2"],
+  "known": {"team": "...", "department": "...", "site": "..."},
+  "notes": "if IT, which IT department or team; if operations, is it wind, solar, or battery?"
+}
+"""
+
+router_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", ROUTER_POLICY),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{input}")
+    ]
+)
+
+def route_turn(user_input: str) -> Dict:
+    """Route charging-related queries (FROM FIRST VERSION)"""
+    import re, json as _json
+
+    # 0) Quick greeting bypass
+    text_raw = (user_input or "").strip()
+    text = text_raw.lower()
+    GREETINGS = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
+    if text in GREETINGS or any(text.startswith(g) for g in GREETINGS):
+        return {"intent": "answer", "questions": [], "known": {"reason": "greeting"}, "notes": ""}
+
+    # 1) Heuristic: detect explicit team in the current input
+    TEAM_KEYWORDS = {
+        "it": "IT",
+        "finance": "Finance",
+        "engineering": "Engineering",
+        "ops": "Operations",
+        "operations": "Operations",
+        "data analytics": "IT",
+    }
+    team_guess = None
+    for kw, norm in TEAM_KEYWORDS.items():
+        if re.search(rf"\b{re.escape(kw)}\b", text):
+            team_guess = norm
+            break
+
+    # 2) Ask the LLM router
+    try:
+        mv = memory.load_memory_variables({})
+        msgs = router_prompt.format_messages(chat_history=mv.get("chat_history", []), input=user_input)
+        resp = chat_model.invoke(msgs)
+        content = resp.content.strip()
+
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+
+        m = re.search(r'\{.*\}', content, re.DOTALL)
+        data = _json.loads(m.group() if m else content)
+    except Exception:
+        data = {"intent": "clarify", "questions": [], "known": {}, "notes": "router_exception_fallback"}
+
+    # 3) Consolidate knowns
+    known = data.get("known", {}) or {}
+    if team_guess and not known.get("team"):
+        known["team"] = team_guess
+
+    team = (known.get("team") or "").strip().lower()
+    asset_type = (known.get("asset_type") or "").strip().lower()
+    site = (known.get("site") or "").strip()
+
+    # 4) Compute what's still missing
+    missing_questions = []
+    if not team:
+        missing_questions.append("which team you're with (Operations, Engineering, Finance, or IT)")
+    if team == "operations" and not asset_type:
+        missing_questions.append("if it's for Wind, Solar, or Battery")
+    if team == "operations" and not site:
+        missing_questions.append("the site/plant (if applicable)")
+
+    # 5) Sufficiency rule
+    sufficient = False
+    if team:
+        if team == "operations":
+            sufficient = bool(asset_type)
+        else:
+            sufficient = True
+
+    # 6) Force answer when sufficient
+    if sufficient:
+        return {
+            "intent": "answer",
+            "questions": [],
+            "known": known,
+            "notes": "forced_answer_minimum_context"
+        }
+
+    # 7) Otherwise clarify
+    qs = missing_questions[:2] or (data.get("questions", [])[:2] if isinstance(data.get("questions"), list) else [])
+    return {
+        "intent": "clarify",
+        "questions": qs,
+        "known": known,
+        "notes": data.get("notes", "")
+    }
+
+# --- Answer Prompts ---
+# CHARGING-RELATED SYSTEM INSTRUCTIONS (FROM FIRST VERSION)
+CHARGING_SYSTEM_INSTRUCTIONS = (
+    "You are Diva, an internal Deriva Energy assistant for charging guidelines. "
+    "If the user is just greeting you (like 'hi', 'hello', 'hey', etc.), respond with a simple, friendly greeting and ask how you can help with charging guidelines. Do NOT use bullet points for greetings.\n\n"
+    "For all other queries about guidelines, codes, departments, projects, etc., return a markdown bulleted list with exactly these fields:\n"
+    "- **Description:**\n- **Account number:**\n- **Location:**\n- **Company ID:**\n- **Project:**\n- **Department:**\n"
+    "Use 'N/A' when unavailable. Finish with 1-2 short notes if needed."
+)
+
+charging_answer_prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", CHARGING_SYSTEM_INSTRUCTIONS + "\n\nContext:\n{context}"),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{input}")
+    ]
+)
+
+# GENERAL KNOWLEDGE SYSTEM INSTRUCTIONS (FROM SECOND VERSION)
+GENERAL_SYSTEM_INSTRUCTIONS = """You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge.
+
+Current facts (as of 2025):
+- Donald Trump is the current President of the United States (inaugurated January 20, 2025)
+- Trump won the 2024 presidential election against Kamala Harris"""
+
+general_answer_prompt = ChatPromptTemplate.from_messages([
+    ("system", GENERAL_SYSTEM_INSTRUCTIONS),
+    MessagesPlaceholder(variable_name="chat_history"),
+    ("human", "{input}")
+])
+
+# --- Clarification Generation (FROM FIRST VERSION) ---
+def generate_clarification(user_input: str, questions: List[str], notes: str = "") -> str:
+    qs = [q.strip().rstrip("?") for q in (questions or []) if q and q.strip()]
     
-    # Check for greetings
+    if "if IT, which IT department or team" in notes.lower() and "it" in user_input.lower():
+        return "I can help with that! To give you the right charging guideline, could you tell me which specific IT department or team you're with?"
+    
+    if "if operations, is it wind, solar, or battery" in notes.lower() and "operations" in user_input.lower():
+        return "I can help with that! Could you specify if this is for Wind, Solar, or Battery Operations?"
+        
+    if not qs:
+        return "I'd be happy to help! To give you the right charging guidelines, could you tell me which team you're with (Operations, Engineering, Finance, or IT)?"
+        
+    if len(qs) == 1:
+        q_text = qs[0] + "?"
+    else:
+        q_text = f"{qs[0]} and {qs[1]}?"
+        
+    return f"I can help with that. To point you to the right charging guideline, could you tell me {q_text}"
+
+# --- Answer Generation Functions ---
+def generate_charging_answer(user_input: str) -> Dict:
+    """Generate charging-related answer using first version's logic"""
+    retrieval = retrieve_from_kb(user_input)
+    context = retrieval["context"]
+    mv = memory.load_memory_variables({})
+    messages = charging_answer_prompt.format_messages(context=context, chat_history=mv["chat_history"], input=user_input)
+    llm_resp = chat_model.invoke(messages)
+    
+    memory.chat_memory.add_user_message(user_input)
+    memory.chat_memory.add_ai_message(llm_resp.content)
+    
+    return {"answer_md": llm_resp.content, "sources": retrieval["sources"]}
+
+def generate_general_answer(user_input: str) -> Dict:
+    """Generate general knowledge answer using second version's logic"""
+    mv = memory.load_memory_variables({})
+    messages = general_answer_prompt.format_messages(
+        chat_history=mv["chat_history"],
+        input=user_input
+    )
+    llm_resp = chat_model.invoke(messages)
+    
+    memory.chat_memory.add_user_message(user_input)
+    memory.chat_memory.add_ai_message(llm_resp.content)
+    
+    return {"answer_md": llm_resp.content, "sources": []}
+
+# --- Main Query Processing ---
+def process_query(user_input: str):
+    """Main query processing logic"""
+    
+    # 1) Check for simple greetings first
     text_lower = user_input.lower().strip()
     greetings = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
     if text_lower in greetings or any(text_lower.startswith(g) for g in greetings):
-        return {
-            "type": "greeting",
-            "response": "Hello! I'm Diva, your AI assistant for Deriva Energy's charging guidelines. I can help you find expense codes, department information, and charging policies. I can also answer general questions. How can I help you today?"
-        }
+        greeting_response = "Hello! I'm Diva, your AI assistant for Deriva Energy's charging guidelines. I can help you find expense codes, department information, and charging policies. I can also answer general questions. How can I help you today?"
+        
+        memory.chat_memory.add_user_message(user_input)
+        memory.chat_memory.add_ai_message(greeting_response)
+        
+        return {"type": "greeting", "response": greeting_response}
     
-    # Check if it's charging-related
+    # 2) Determine if it's charging-related
     if is_charging_related(user_input):
-        return {"type": "charging", "query": user_input}
-    
-    # General knowledge query
-    return {"type": "general", "query": user_input}
-
-# --- Enhanced Answer Generation ---
-def generate_answer(user_input: str, query_type: str) -> Dict:
-    """Generate answer based on query type"""
-    
-    if query_type == "charging":
-        # Try knowledge base first
-        retrieval = retrieve_from_kb(user_input)
+        # Use first version's routing logic for charging questions
+        try:
+            decision = route_turn(user_input)
+        except:
+            decision = {"intent": "answer", "questions": [], "known": {}, "notes": ""}
         
-        # If we have good relevance, provide answer
-        if retrieval["relevance_score"] > 0.3:  # Lowered threshold
-            # Check if we have enough context from conversation
-            mv = memory.load_memory_variables({})
-            history = mv.get("chat_history", [])
+        if decision["intent"] == "clarify" and decision.get("questions"):
+            clarifier = generate_clarification(user_input, decision["questions"], decision["notes"])
             
-            # Extract any team/department info from history
-            team_context = ""
-            for msg in reversed(history[-10:]):  # Check last 10 messages
-                content = msg.content.lower()
-                if "operations" in content:
-                    team_context = "Operations team"
-                elif "finance" in content:
-                    team_context = "Finance team"
-                elif "engineering" in content:
-                    team_context = "Engineering team"
-                elif "it" in content:
-                    team_context = "IT team"
-                if team_context:
-                    break
+            memory.chat_memory.add_user_message(user_input)
+            memory.chat_memory.add_ai_message(clarifier)
             
-            # Build enhanced context
-            enhanced_context = retrieval["context"]
-            if team_context:
-                enhanced_context = f"User context: {team_context}\n\n{enhanced_context}"
-            
-            # Generate structured answer
-            answer_prompt = ChatPromptTemplate.from_messages([
-                ("system", """You are Diva, Deriva Energy's internal charging guidelines assistant.
-
-Based on the context provided, answer the user's question about charging guidelines. You MUST format ALL charging code responses using this EXACT bullet-point structure:
-
-• **Description:** [specific description from context]
-• **Account number:** [account number from context or N/A]  
-• **Location:** [must be one of: DSOP, DWOP, DCS4, DWE1, STRG, or DSOL - choose based on the specific project/area from context]
-• **Company ID:** [must be one of: 77079 (Deriva Energy Sub I), 75752 (Deriva Energy Wind, LLC), or 75969 (Deriva Energy Storage, LLC) - choose based on context]
-• **Project:** [must be one of: DSOP25G001, DWOP25G001, DCS425G001, DWE125G001, STRG25G001, or DSOL25G001 - choose the appropriate one based on specific work from context]
-• **Department:** [department from context or based on user's team]
-
-Notes:
-[Add relevant notes if needed]
-
-IMPORTANT: Each bullet point MUST be on its own separate line with a blank line between them for proper markdown formatting.
-
-If you need more context to provide accurate charging guidelines, ask for clarification about team/department.
-
-Context: {context}"""),
-                MessagesPlaceholder(variable_name="chat_history"),
-                ("human", "{input}")
-            ])
-            
-            messages = answer_prompt.format_messages(
-                context=enhanced_context,
-                chat_history=mv["chat_history"], 
-                input=user_input
-            )
-            llm_resp = chat_model.invoke(messages)
-            
-            return {
-                "answer": llm_resp.content,
-                "sources": retrieval["sources"],
-                "type": "structured"
-            }
-        
+            return {"type": "clarification", "response": clarifier}
         else:
-            # Low relevance - ask for clarification
-            return {
-                "answer": "I can help you with charging guidelines! To give you the most accurate information, could you tell me which team you're with (Operations, Engineering, Finance, or IT)?",
-                "sources": [],
-                "type": "clarification"
-            }
+            # Generate charging answer
+            result = generate_charging_answer(user_input)
+            return {"type": "charging", "response": result["answer_md"], "sources": result["sources"]}
     
-    else:  # General knowledge
-        # Use LLM for general questions
-        general_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge.
-            
-Current facts (as of 2025):
-- Donald Trump is the current President of the United States (inaugurated January 20, 2025)
-- Trump won the 2024 presidential election against Kamala Harris"""),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("human", "{input}")
-        ])
-        
-        mv = memory.load_memory_variables({})
-        messages = general_prompt.format_messages(
-            chat_history=mv["chat_history"],
-            input=user_input
-        )
-        llm_resp = chat_model.invoke(messages)
-        
-        return {
-            "answer": llm_resp.content,
-            "sources": [],
-            "type": "general"
-        }
+    else:
+        # Use second version's logic for general questions
+        result = generate_general_answer(user_input)
+        return {"type": "general", "response": result["answer_md"]}
 
 # --- Render existing history ---
 for m in chat_history_store.messages:
@@ -356,39 +472,28 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Classify the query
-    classification = classify_and_respond(user_input)
-    
-    if classification["type"] == "greeting":
-        # Simple greeting response
-        response = classification["response"]
-        
-        memory.chat_memory.add_user_message(user_input)
-        memory.chat_memory.add_ai_message(response)
-        
-        with st.chat_message("assistant"):
-            st.markdown(response)
-    
-    else:
-        # Generate answer based on type
-        with st.chat_message("assistant"):
+    with st.chat_message("assistant"):
+        if not is_charging_related(user_input) and not any(user_input.lower().strip().startswith(g) for g in ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]):
+            # For non-charging questions, no spinner
+            try:
+                result = process_query(user_input)
+                st.markdown(result["response"])
+            except Exception as e:
+                st.error(f"⚠️ Error: {e}")
+        else:
+            # For charging questions, show spinner
             with st.spinner("Thinking…"):
                 try:
-                    result = generate_answer(user_input, classification["type"])
+                    result = process_query(user_input)
+                    st.markdown(result["response"])
                     
-                    memory.chat_memory.add_user_message(user_input)
-                    memory.chat_memory.add_ai_message(result["answer"])
-                    
-                    st.markdown(result["answer"])
-                    
-                    # Show sources for charging-related queries if in debug mode
-                    # if result.get("sources") and result["type"] == "structured":
+                    # Show sources for charging queries if needed (uncomment for dev)
+                    # if result.get("sources"):
                     #     with st.expander("Sources"):
                     #         for i, s in enumerate(result["sources"], 1):
                     #             loc = s.get("location", {})
                     #             score = s.get("score")
                     #             st.markdown(f"- {i}. `{json.dumps(loc)}`" + (f"  (score: {score:.3f})" if score is not None else ""))
-                            
                 except Exception as e:
                     st.error(f"⚠️ Error: {e}")
 
