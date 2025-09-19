@@ -319,15 +319,15 @@ Context: {context}"""),
     else:  # General knowledge
         # Use LLM for general questions
         general_prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge.
-             
+            ("system", """You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge.
+            
 Current facts (as of 2025):
 - Donald Trump is the current President of the United States (inaugurated January 20, 2025)
 - Trump won the 2024 presidential election against Kamala Harris"""),
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}")
         ])
-                   
+        
         mv = memory.load_memory_variables({})
         messages = general_prompt.format_messages(
             chat_history=mv["chat_history"],
