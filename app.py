@@ -158,7 +158,7 @@ with st.sidebar.expander("Tools", expanded=True):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("Support"):
+with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 st.sidebar.divider()
@@ -277,16 +277,18 @@ def generate_answer(user_input: str, query_type: str) -> Dict:
             answer_prompt = ChatPromptTemplate.from_messages([
                 ("system", """You are Diva, Deriva Energy's internal charging guidelines assistant.
 
-Based on the context provided, answer the user's question about charging guidelines. You MUST format ALL charging code responses using this EXACT structure:
+Based on the context provided, answer the user's question about charging guidelines. You MUST format ALL charging code responses using this EXACT bullet-point structure:
 
-Description: [specific description from context]
-Account number: [account number from context or N/A]
-Location: [must be one of: DSOP, DWOP, DCS4, DWE1, STRG, or DSOL - choose based on the specific project/area from context]
-Company ID: [must be one of: 77079 (Deriva Energy Sub I), 75752 (Deriva Energy Wind, LLC), or 75969 (Deriva Energy Storage, LLC) - choose based on context]
-Project: [must be one of: DSOP25G001, DWOP25G001, DCS425G001, DWE125G001, STRG25G001, or DSOL25G001 - choose the appropriate one based on specific work from context]
-Department: [department from context or based on user's team]
+• **Description:** [specific description from context]
+• **Account number:** [account number from context or N/A]  
+• **Location:** [must be one of: DSOP, DWOP, DCS4, DWE1, STRG, or DSOL - choose based on the specific project/area from context]
+• **Company ID:** [must be one of: 77079 (Deriva Energy Sub I), 75752 (Deriva Energy Wind, LLC), or 75969 (Deriva Energy Storage, LLC) - choose based on context]
+• **Project:** [must be one of: DSOP25G001, DWOP25G001, DCS425G001, DWE125G001, STRG25G001, or DSOL25G001 - choose the appropriate one based on specific work from context]
+• **Department:** [department from context or based on user's team]
 
-Use the exact format above - do not add bullet points, dashes, or extra formatting. Each field should be on its own line with the field name followed by a colon and the value.
+Always include a brief introductory sentence before the bullet points, and add "Notes:" section after if relevant details need explanation.
+
+Add a "Confidence:" level at the end (High, Medium, or Low).
 
 If you need more context to provide accurate charging guidelines, ask for clarification about team/department.
 
