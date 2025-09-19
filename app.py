@@ -136,7 +136,7 @@ if not create_dynamodb_table_if_not_exists():
     st.stop()
 
 # --- Streamlit Page ---
-st.set_page_config(page_icon="", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
+st.set_page_config(page_icon="⚡", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
 
 st.sidebar.title("⚙️ Settings")
 
