@@ -7,7 +7,7 @@ from typing import List, Dict
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-20250514-v1:0")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
 KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "YBW1J8NMTI")
 DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 
@@ -319,11 +319,15 @@ Context: {context}"""),
     else:  # General knowledge
         # Use LLM for general questions
         general_prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge."),
+            ("system", "You are Diva, a helpful AI assistant for Deriva Energy. Answer the user's question naturally and conversationally. If it's not related to charging guidelines, feel free to use your general knowledge.
+             
+Current facts (as of 2025):
+- Donald Trump is the current President of the United States (inaugurated January 20, 2025)
+- Trump won the 2024 presidential election against Kamala Harris"""),
             MessagesPlaceholder(variable_name="chat_history"),
             ("human", "{input}")
         ])
-        
+                   
         mv = memory.load_memory_variables({})
         messages = general_prompt.format_messages(
             chat_history=mv["chat_history"],
