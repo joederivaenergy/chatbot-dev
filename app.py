@@ -7,7 +7,7 @@ from typing import List, Dict
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
+BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-20250514-v1:0")
 KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "YBW1J8NMTI")
 DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 
@@ -153,7 +153,7 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander(" Tools", expanded=True):
+with st.sidebar.expander("Tools", expanded=True):
     if st.button("Clear Chat"):
         reset_history()
         st.rerun()
@@ -277,18 +277,18 @@ def generate_answer(user_input: str, query_type: str) -> Dict:
             answer_prompt = ChatPromptTemplate.from_messages([
                 ("system", """You are Diva, Deriva Energy's internal charging guidelines assistant.
 
-Based on the context provided, answer the user's question about charging guidelines. If you have specific information, format it as:
+Based on the context provided, answer the user's question about charging guidelines. You MUST format ALL charging code responses using this EXACT structure:
 
-- **Description:** [specific description]
-- **Account number:** [number or N/A]
-- **Location:** [location or N/A]  
-- **Company ID:** [ID or N/A]
-- **Project:** [project or N/A]
-- **Department:** [department or N/A]
+Description: [specific description from context]
+Account number: [account number from context or N/A]
+Location: [must be one of: DSOP, DWOP, DCS4, DWE1, STRG, or DSOL - choose based on the specific project/area from context]
+Company ID: [must be one of: 77079 (Deriva Energy Sub I), 75752 (Deriva Energy Wind, LLC), or 75969 (Deriva Energy Storage, LLC) - choose based on context]
+Project: [must be one of: DSOP25G001, DWOP25G001, DCS425G001, DWE125G001, STRG25G001, or DSOL25G001 - choose the appropriate one based on specific work from context]
+Department: [department from context or based on user's team]
 
-If the context doesn't have complete information but is relevant, provide what you can and mention what additional details might be helpful.
+Use the exact format above - do not add bullet points, dashes, or extra formatting. Each field should be on its own line with the field name followed by a colon and the value.
 
-If you need more context to give accurate charging guidelines, ask for clarification about team/department.
+If you need more context to provide accurate charging guidelines, ask for clarification about team/department.
 
 Context: {context}"""),
                 MessagesPlaceholder(variable_name="chat_history"),
