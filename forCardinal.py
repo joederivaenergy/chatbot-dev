@@ -20,7 +20,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 # --- Environment Variables ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
-KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "9DB3QUTETF")
+KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "AENHTAQLXV")
 DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 
 # --- Boto3 Clients ---
@@ -417,3 +417,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
