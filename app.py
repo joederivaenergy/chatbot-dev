@@ -18,8 +18,6 @@ CSV_FILES = {
     'IT': 'csvs/Guidelines_cleaned_it.csv',
     'Finance': 'csvs/Guidelines_cleaned_finance.csv',
     'HR': 'csvs/Guidelines_cleaned_hr.csv',
-    'Operations': 'csvs/operations.csv',
-    'Engineering': 'csvs/engineering.csv',
 }
 
 # --- LangChain ---
