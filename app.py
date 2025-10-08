@@ -8,7 +8,7 @@ from typing import List, Dict
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
-KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "YBW1J8NMTI")
+KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "AENHTAQLXV")
 DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 
 # --- LangChain (custom implementation for existing table) ---
