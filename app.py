@@ -3,24 +3,36 @@ import json
 import uuid
 import boto3
 import streamlit as st
+import pandas as pd
 from typing import List, Dict
+import time
+import re
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
-KNOWLEDGE_BASE_ID = os.getenv("KNOWLEDGE_BASE_ID", "AENHTAQLXV")
 DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 
-# --- LangChain (custom implementation for existing table) ---
+# --- CSV File Paths ---
+CSV_FILES = {
+    'IT': 'csvs/Guidelines_cleaned_it.csv',
+    'Finance': 'csvs/finance.csv',
+    'HR': 'csvs/hr.csv',
+    'Operations': 'csvs/operations.csv',
+    'Engineering': 'csvs/engineering.csv',
+}
+
+# --- LangChain ---
 from langchain_aws.chat_models import ChatBedrock
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import BaseMessage, HumanMessage, AIMessage
-from langchain_core.chat_history import BaseChatMessageHistory  # Correct import path
+from langchain_core.chat_history import BaseChatMessageHistory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-import time
-from typing import List
 
-# Custom DynamoDB Chat History for your existing table schema
+# ============================================
+# CUSTOM DYNAMODB CHAT HISTORY
+# ============================================
+
 class CustomDynamoDBChatHistory(BaseChatMessageHistory):
     def __init__(self, table_name: str, session_id: str):
         super().__init__()
@@ -35,7 +47,7 @@ class CustomDynamoDBChatHistory(BaseChatMessageHistory):
         try:
             response = self.table.query(
                 KeyConditionExpression=boto3.dynamodb.conditions.Key('session_id').eq(self.session_id),
-                ScanIndexForward=True  # Sort by timestamp ascending
+                ScanIndexForward=True
             )
             
             messages = []
@@ -60,7 +72,7 @@ class CustomDynamoDBChatHistory(BaseChatMessageHistory):
             self.table.put_item(
                 Item={
                     'session_id': self.session_id,
-                    'message_timestamp': str(int(time.time() * 1000)),  # Convert to string
+                    'message_timestamp': str(int(time.time() * 1000)),
                     'message_type': msg_type,
                     'content': message.content
                 }
@@ -69,59 +81,78 @@ class CustomDynamoDBChatHistory(BaseChatMessageHistory):
             st.error(f"Failed to save message: {e}")
     
     def add_user_message(self, message: str):
-        """Add user message to DynamoDB"""
         self.add_message(HumanMessage(content=message))
     
     def add_ai_message(self, message: str):
-        """Add AI message to DynamoDB"""
         self.add_message(AIMessage(content=message))
     
     def clear(self):
         """Clear all messages for this session"""
         try:
-            # Query all items for this session
             response = self.table.query(
                 KeyConditionExpression=boto3.dynamodb.conditions.Key('session_id').eq(self.session_id)
             )
             
-            # Delete each item
             for item in response.get('Items', []):
                 self.table.delete_item(
                     Key={
                         'session_id': item['session_id'],
-                        'message_timestamp': str(item['message_timestamp'])  # Ensure string format
+                        'message_timestamp': str(item['message_timestamp'])
                     }
                 )
         except Exception as e:
             st.error(f"Failed to clear history: {e}")
 
-# --- AWS Clients ---
+# ============================================
+# LOAD CSV DATA
+# ============================================
+
+@st.cache_data
+def load_all_csvs():
+    """Load all CSV files into memory"""
+    data = {}
+    for team, filepath in CSV_FILES.items():
+        if os.path.exists(filepath):
+            try:
+                df = pd.read_csv(filepath)
+                # Strip whitespace from all string columns
+                for col in df.columns:
+                    if df[col].dtype == 'object':
+                        df[col] = df[col].str.strip()
+                data[team] = df
+                print(f"✅ Loaded {team}: {len(df)} rows")
+            except Exception as e:
+                print(f"⚠️ Error loading {team} CSV: {e}")
+                data[team] = pd.DataFrame()
+        else:
+            print(f"⚠️ CSV not found for {team}: {filepath}")
+            data[team] = pd.DataFrame()
+    return data
+
+# Load CSVs at startup
+ALL_TEAM_DATA = load_all_csvs()
+
+# ============================================
+# AWS CLIENTS & TABLE SETUP
+# ============================================
+
 bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
-bedrock_agent_runtime = boto3.client("bedrock-agent-runtime", region_name=AWS_REGION)
 dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
 
-# --- Create DynamoDB table if it doesn't exist ---
 def create_dynamodb_table_if_not_exists():
     try:
         table = dynamodb.Table(DDB_TABLE_NAME)
-        table.load()  # Check if table exists
-        # st.success(f"✅ DynamoDB table '{DDB_TABLE_NAME}' exists")
+        table.load()
     except dynamodb.meta.client.exceptions.ResourceNotFoundException:
         st.warning(f"Creating DynamoDB table '{DDB_TABLE_NAME}'...")
         try:
             table = dynamodb.create_table(
                 TableName=DDB_TABLE_NAME,
                 KeySchema=[
-                    {
-                        'AttributeName': 'SessionId',
-                        'KeyType': 'HASH'
-                    }
+                    {'AttributeName': 'SessionId', 'KeyType': 'HASH'}
                 ],
                 AttributeDefinitions=[
-                    {
-                        'AttributeName': 'SessionId',
-                        'AttributeType': 'S'
-                    }
+                    {'AttributeName': 'SessionId', 'AttributeType': 'S'}
                 ],
                 BillingMode='PAY_PER_REQUEST'
             )
@@ -135,22 +166,31 @@ def create_dynamodb_table_if_not_exists():
         return False
     return True
 
-# Check/create table on startup
 if not create_dynamodb_table_if_not_exists():
     st.stop()
 
-# --- Streamlit Page ---
-st.set_page_config(page_icon = "deriva.jpg", page_title="Diva the Chatbot", layout="centered", initial_sidebar_state="expanded")
+# ============================================
+# STREAMLIT PAGE CONFIG
+# ============================================
+
+st.set_page_config(
+    page_icon="deriva.jpg", 
+    page_title="Diva the Chatbot", 
+    layout="centered", 
+    initial_sidebar_state="expanded"
+)
+
+# ============================================
+# SIDEBAR
+# ============================================
 
 st.sidebar.title("⚙️ Settings")
 
-# Session / User identity (swap with SSO user if you have it)
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
 def reset_history():
     try:
-        # Use custom history class
         hist = CustomDynamoDBChatHistory(
             table_name=DDB_TABLE_NAME, 
             session_id=st.session_state["session_id"]
@@ -159,29 +199,34 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("🧹 Tools", expanded=True):
-    if st.button("🗑️ Clear Chat"):
+with st.sidebar.expander("�� Tools", expanded=True):
+    if st.button("��️ Clear Chat"):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("📧 Support"):
+with st.sidebar.expander("�� Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 st.sidebar.divider()
 st.sidebar.caption("Diva The Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
+# ============================================
+# HEADER
+# ============================================
+
 st.markdown("<h1 style='text-align: center;'>⚡Meet Diva!</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines.</p>", unsafe_allow_html=True)
 
-# --- LLM + Memory (simplified approach) ---
+# ============================================
+# LLM & MEMORY SETUP
+# ============================================
+
 chat_model = ChatBedrock(
     client=bedrock_runtime,
     model_id=BEDROCK_MODEL_ID,
     region_name=AWS_REGION,
-    # model_kwargs={"temperature": 0.2}
 )
 
-# Use custom DynamoDB chat history that works with your table schema
 chat_history_store = CustomDynamoDBChatHistory(
     table_name=DDB_TABLE_NAME,
     session_id=st.session_state["session_id"]
@@ -193,96 +238,130 @@ memory = ConversationBufferMemory(
     return_messages=True
 )
 
-# --- Retrieval from Bedrock KB ---
-def retrieve_from_kb(query: str, max_results: int = 6) -> Dict:
-    resp = bedrock_agent_runtime.retrieve(
-        knowledgeBaseId=KNOWLEDGE_BASE_ID,
-        retrievalQuery={"text": query},
-        retrievalConfiguration={"vectorSearchConfiguration": {"numberOfResults": max_results}}
-    )
-    chunks, sources = [], []
-    for item in resp.get("retrievalResults", []):
-        txt = item.get("content", {}).get("text", "")
-        loc = item.get("location", {})
-        score = item.get("score", None)
-        if txt:
-            chunks.append(txt.strip())
-        if loc:
-            sources.append({"location": loc, "score": score})
-    return {"context": "\n\n---\n\n".join(chunks), "sources": sources}
+# ============================================
+# CSV QUERY FUNCTIONS
+# ============================================
 
-# --- Clarifying Router ---
+def query_csv_data(team: str, description_query: str, location: str = None) -> pd.DataFrame:
+    """Query CSV data for specific team and description"""
+    
+    if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
+        return pd.DataFrame()
+    
+    df = ALL_TEAM_DATA[team].copy()
+    
+    # Fuzzy match on description
+    description_query_lower = description_query.lower()
+    
+    # Try exact match first
+    matches = df[df['Description'].str.lower() == description_query_lower]
+    
+    # If no exact match, try partial match
+    if matches.empty:
+        matches = df[df['Description'].str.lower().str.contains(description_query_lower, na=False)]
+    
+    # Filter by location if specified
+    if location and not matches.empty and 'Location' in matches.columns:
+        location_matches = matches[matches['Location'].str.lower() == location.lower()]
+        if not location_matches.empty:
+            matches = location_matches
+    
+    return matches
 
-ROUTER_POLICY = """
-You are Diva, Deriva's internal charging-guidelines assistant.
+def format_csv_results(team: str, matches: pd.DataFrame) -> str:
+    """Format CSV query results into readable text"""
+    
+    if matches.empty:
+        return ""
+    
+    # Check if multiple variants exist
+    num_variants = len(matches)
+    
+    if num_variants == 1:
+        # Single result - format as simple answer
+        row = matches.iloc[0]
+        result = f"""
+Found charging guideline for **{team} Team - {row['Description']}**:
 
-DEFAULT: Clarify first for any query about policies, charging, codes, expenses, departments, projects, or sites.
-Only skip clarification for pure greetings or when the message + history already contains all critical fields.
+- **Description:** {row['Description']}
+- **Company ID:** {row['Company ID']}
+- **Location:** {row['Location']}
+- **Department:** {row['Department']}
+- **Project:** {row['Project']}
+- **Account:** {row['Account'] if pd.notna(row['Account']) else 'Not specified'}
+- **Account Name:** {row['Account Name'] if pd.notna(row['Account Name']) else 'Not specified'}
+"""
+    else:
+        # Multiple variants - show all options
+        result = f"""
+Found **{num_variants} variants** for **{team} Team - {matches.iloc[0]['Description']}**:
 
-Critical fields (generic):
-- team/department (ask: “Which team or department do you work in?”)
-- if the provided team is umbrella-level (e.g., an org name), ask for the specific sub-team/department within it
-- site/plant if policy can vary by site
-- any other column implied by the retrieved context that changes the code (category, activity, etc.)
+⚠️ **Please specify which option applies to you:**
 
-Rules:
-1) Greetings → intent: "answer".
-2) Prefer intent: "clarify" and ask at most TWO concise, targeted questions for missing fields.
-3) If prior chat history already contains what's needed, intent: "answer".
-4) Never invent values; if unsure, ask.
-5) Keep questions short and friendly.
+"""
+        for idx, (_, row) in enumerate(matches.iterrows(), 1):
+            result += f"""
+**Option {idx}** - {row['Location']}:
+- **Description:** {row['Description']}
+- **Company ID:** {row['Company ID']}
+- **Location:** {row['Location']}
+- **Department:** {row['Department']}
+- **Project:** {row['Project']}
+- **Account:** {row['Account'] if pd.notna(row['Account']) else 'Not specified'}
+- **Account Name:** {row['Account Name'] if pd.notna(row['Account Name']) else 'Not specified'}
 
-Return ONLY JSON:
+"""
+    
+    return result.strip()
+
+# ============================================
+# EXTRACTION PROMPT
+# ============================================
+
+EXTRACTION_PROMPT = """
+You are Diva, a charging guidelines assistant. Your job is to extract key information from the user's query.
+
+Extract the following from the user's message and conversation history:
+1. **team**: Which team (IT, Finance, HR, Operations, Engineering)
+2. **description**: What they want to charge for (e.g., "Core ERP", "HR Labor", "Wind Maintenance")
+3. **location**: Specific location/site if mentioned (e.g., "Houston", "DSOL", "Wind Site A")
+
+Return ONLY valid JSON with this exact format:
 {
-  "intent": "clarify" | "answer",
-  "questions": ["q1","q2"],
-  "known": {"team": "...", "department": "...", "site": "..."},
-  "notes": ""
+  "team": "IT" | "Finance" | "HR" | "Operations" | "Engineering" | null,
+  "description": "extracted description" | null,
+  "location": "extracted location" | null
 }
+
+Examples:
+- "how to charge core erp" → {"team": "IT", "description": "Core ERP", "location": null}
+- "HR labor in Houston" → {"team": "HR", "description": "HR Labor", "location": "Houston"}
+- "IT team DSOP support" → {"team": "IT", "description": "DSOP", "location": null}
+
+If information is missing, use null. Be generous with partial matches on description.
 """
 
-router_prompt = ChatPromptTemplate.from_messages(
+extraction_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", ROUTER_POLICY),
+        ("system", EXTRACTION_PROMPT),
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{input}")
     ]
 )
 
-
-def route_turn(user_input: str) -> Dict:
-    import re, json as _json
-
-    # 0) Quick greeting bypass
-    text_raw = (user_input or "").strip()
-    text = text_raw.lower()
-    GREETINGS = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
-    if text in GREETINGS or any(text.startswith(g) for g in GREETINGS):
-        return {"intent": "answer", "questions": [], "known": {"reason": "greeting"}, "notes": ""}
-
-    # 1) Heuristic: detect explicit team in the current input (so we don't rely solely on the LLM)
-    TEAM_KEYWORDS = {
-        "it": "IT",
-        "finance": "Finance",
-        "engineering": "Engineering",
-        "ops": "Operations",
-        "operations": "Operations",
-        "data analytics": "IT",  # treat as IT umbrella; you can specialize later
-    }
-    team_guess = None
-    for kw, norm in TEAM_KEYWORDS.items():
-        if re.search(rf"\b{re.escape(kw)}\b", text):
-            team_guess = norm
-            break
-
-    # 2) Ask the LLM router (for broader detection like site or asset_type)
+def extract_query_info(user_input: str) -> Dict:
+    """Extract team, description, and location from user query using LLM"""
+    
     try:
         mv = memory.load_memory_variables({})
-        msgs = router_prompt.format_messages(chat_history=mv.get("chat_history", []), input=user_input)
+        msgs = extraction_prompt.format_messages(
+            chat_history=mv.get("chat_history", []), 
+            input=user_input
+        )
         resp = chat_model.invoke(msgs)
         content = resp.content.strip()
-
-        # strip code fences if present
+        
+        # Strip code fences
         if content.startswith("```json"):
             content = content[7:]
         if content.startswith("```"):
@@ -290,181 +369,191 @@ def route_turn(user_input: str) -> Dict:
         if content.endswith("```"):
             content = content[:-3]
         content = content.strip()
-
+        
+        # Parse JSON
         m = re.search(r'\{.*\}', content, re.DOTALL)
-        data = _json.loads(m.group() if m else content)
-    except Exception:
-        data = {"intent": "clarify", "questions": [], "known": {}, "notes": "router_exception_fallback"}
-
-    # 3) Consolidate knowns (prefer explicit user hint)
-    known = data.get("known", {}) or {}
-    if team_guess and not known.get("team"):
-        known["team"] = team_guess
-
-    team = (known.get("team") or "").strip().lower()
-    asset_type = (known.get("asset_type") or "").strip().lower()
-    site = (known.get("site") or "").strip()
-
-    # 4) Compute what’s still missing
-    missing_questions = []
-    if not team:
-        missing_questions.append("which team you're with (Operations, Engineering, Finance, or IT)")
-    if team == "operations" and not asset_type:
-        missing_questions.append("if it's for Wind, Solar, or Battery")
-    if team == "operations" and not site:
-        # only ask site for Ops to keep it short; include if we still have space
-        missing_questions.append("the site/plant (if applicable)")
-
-    # 5) Sufficiency rule
-    sufficient = False
-    if team:
-        if team == "operations":
-            sufficient = bool(asset_type)  # site can still be asked later in the answer if truly required
-        else:
-            sufficient = True
-
-    # 6) Force **answer** when sufficient, even if the LLM said "clarify"
-    if sufficient:
+        data = json.loads(m.group() if m else content)
+        
         return {
-            "intent": "answer",
-            "questions": [],
-            "known": known,
-            "notes": "forced_answer_minimum_context"
+            "team": data.get("team"),
+            "description": data.get("description"),
+            "location": data.get("location")
         }
+    except Exception as e:
+        st.warning(f"Extraction error: {e}")
+        return {"team": None, "description": None, "location": None}
 
-    # 7) Otherwise clarify with only the missing pieces (max 2)
-    qs = missing_questions[:2] or (data.get("questions", [])[:2] if isinstance(data.get("questions"), list) else [])
-    return {
-        "intent": "clarify",
-        "questions": qs,
-        "known": known,
-        "notes": data.get("notes", "")
-    }
+# ============================================
+# ROUTER SYSTEM
+# ============================================
 
+def route_turn(user_input: str) -> Dict:
+    """Route user input to either clarify or answer"""
+    
+    text = user_input.lower().strip()
+    
+    # Quick greeting bypass
+    GREETINGS = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
+    if text in GREETINGS or any(text.startswith(g) for g in GREETINGS):
+        return {"intent": "answer", "missing": [], "extracted": {}}
+    
+    # Extract information from query
+    extracted = extract_query_info(user_input)
+    
+    # Determine what's missing
+    missing = []
+    if not extracted.get("team"):
+        missing.append("which team you're with (Operations, Engineering, Finance, IT, or HR)")
+    if not extracted.get("description"):
+        missing.append("what you're charging for (project name, activity, or work type)")
+    
+    # If we have team and description, we can answer
+    if extracted.get("team") and extracted.get("description"):
+        return {"intent": "answer", "missing": [], "extracted": extracted}
+    
+    # Otherwise, need clarification
+    return {"intent": "clarify", "missing": missing[:2], "extracted": extracted}
 
+# ============================================
+# CLARIFICATION
+# ============================================
 
-# --- Answer Prompt (only for final answers) ---
-SYSTEM_INSTRUCTIONS = (
-    "You are Diva, an internal Deriva Energy assistant for charging guidelines. "
-    "If the user is just greeting you (like 'hi', 'hello', 'hey', etc.), respond with a simple, friendly greeting and ask how you can help with charging guidelines. Do NOT use bullet points for greetings.\n\n"
-    "For all other queries about guidelines, codes, departments, projects, etc., return a markdown bulleted list with exactly these fields:\n"
-    "- **Description:**\n- **Account number:**\n- **Location:**\n- **Company ID:**\n- **Project:**\n- **Department:**\n"
-    "Use 'N/A' when unavailable. Finish with 1-2 short notes if needed."
-)
+def generate_clarification(missing: List[str]) -> str:
+    """Generate a natural clarifying response"""
+    if not missing:
+        return "I can help with that! Could you provide more details?"
+    
+    if len(missing) == 1:
+        q_text = missing[0] + "?"
+    else:
+        q_text = f"{missing[0]} and {missing[1]}?"
+    
+    return f"I can help with that! To find the right charging guideline, could you tell me {q_text}"
 
-#"""
-# If it's a greeting, greet back (your name is Diva. Made by Deriva Energy.) Else, based on the following retrieved information and the user's query, please provide the most relevant details about charging guidelines.\n\nExtract and present the following in a markdown bulleted list:\n\n- **Description:**\n- **Account number:**\n- **Location:**\n- **Company ID:**\n- **Project:**\n- **Department:**\n\nIf not available, return \"N/A\".\n\nFinish with 1-2 relevant notes if needed.
-# """
+# ============================================
+# ANSWER GENERATION
+# ============================================
 
-answer_prompt = ChatPromptTemplate.from_messages(
+ANSWER_SYSTEM = """
+You are Diva, Deriva's friendly charging guidelines assistant.
+
+If the user is greeting you, respond warmly and offer to help with charging guidelines.
+
+If providing charging information:
+- Use the structured data provided
+- Keep responses clear and concise
+- If multiple options exist, present them clearly and ask which applies
+- Always be helpful and friendly
+
+Format your response naturally based on the data provided.
+"""
+
+answer_prompt_template = ChatPromptTemplate.from_messages(
     [
-        ("system", SYSTEM_INSTRUCTIONS + "\n\nContext:\n{context}"),
+        ("system", ANSWER_SYSTEM + "\n\nData from system:\n{data}"),
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{input}")
     ]
 )
 
-# --- Clarification Prompt (for asking questions) ---
-CLARIFICATION_INSTRUCTIONS = (
-    "You are Diva, an internal Deriva Energy assistant. "
-    "Based on the conversation and the questions you need to ask, respond naturally and conversationally. "
-    "Ask the clarifying questions in a friendly, helpful manner. Do NOT provide bullet points or structured data yet."
-)
-
-clarification_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", CLARIFICATION_INSTRUCTIONS),
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "Please ask these clarifying questions: {questions}")
-    ]
-)
-
-
-# def generate_clarification(user_input: str, questions: List[str]) -> str:
-#     """Generate a natural clarifying response - simplified for speed"""
-#     # Use a simple template instead of calling the LLM for speed
-#     q_text = " ".join(questions[:2])  # Join questions naturally
-#     return f"I'd be happy to help! To give you the right charging guidelines, could you tell me {q_text}?"
-
-
-def generate_clarification(user_input: str, questions: List[str]) -> str:
-    qs = [q.strip().rstrip("?") for q in (questions or []) if q and q.strip()]
-    if not qs:
-        qs = [
-            "which team you're with (Operations, Engineering, Finance, or IT)",
-            "if it's for Wind, Solar, or Battery—and the site/plant if applicable"
-        ]
-    if len(qs) == 1:
-        q_text = qs[0] + "?"
-    else:
-        q_text = f"{qs[0]} and {qs[1]}?"
-    return f"I can help with that. To point you to the right charging guideline, could you tell me {q_text}"
-
-
-def generate_answer(user_input: str) -> Dict:
-    retrieval = retrieve_from_kb(user_input)
-    context = retrieval["context"]
+def generate_answer(user_input: str, extracted: Dict) -> str:
+    """Generate answer using CSV data"""
+    
+    # Handle greetings
+    text = user_input.lower().strip()
+    GREETINGS = {"hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"}
+    if text in GREETINGS or any(text.startswith(g) for g in GREETINGS):
+        greeting_data = "User is greeting. Respond warmly and offer to help with charging guidelines."
+        mv = memory.load_memory_variables({})
+        msgs = answer_prompt_template.format_messages(
+            data=greeting_data,
+            chat_history=mv["chat_history"],
+            input=user_input
+        )
+        resp = chat_model.invoke(msgs)
+        return resp.content
+    
+    # Query CSV data
+    team = extracted.get("team")
+    description = extracted.get("description")
+    location = extracted.get("location")
+    
+    if not team or not description:
+        return "I need more information to help you. Could you specify your team and what you're charging for?"
+    
+    matches = query_csv_data(team, description, location)
+    
+    if matches.empty:
+        return f"I couldn't find charging guidelines for **{description}** in the **{team}** team. Could you verify the project/activity name or try rephrasing?"
+    
+    # Format results
+    formatted_data = format_csv_results(team, matches)
+    
+    # Use LLM to create natural response
     mv = memory.load_memory_variables({})
-    messages = answer_prompt.format_messages(context=context, chat_history=mv["chat_history"], input=user_input)
-    llm_resp = chat_model.invoke(messages)
+    msgs = answer_prompt_template.format_messages(
+        data=formatted_data,
+        chat_history=mv["chat_history"],
+        input=user_input
+    )
+    resp = chat_model.invoke(msgs)
     
-    # Use the standard LangChain memory methods
-    memory.chat_memory.add_user_message(user_input)
-    memory.chat_memory.add_ai_message(llm_resp.content)
-    
-    return {"answer_md": llm_resp.content, "sources": retrieval["sources"]}
+    return resp.content
 
-# --- Render existing history ---
+# ============================================
+# RENDER EXISTING CHAT HISTORY
+# ============================================
+
 for m in chat_history_store.messages:
     role = "assistant" if m.type in ("ai", "assistant") else "user"
     with st.chat_message(role):
         st.markdown(m.content)
 
-# --- Chat loop ---
-user_input = st.chat_input("Ask about codes, departments, projects, etc.")
+# ============================================
+# CHAT LOOP
+# ============================================
+
+user_input = st.chat_input("Ask about charging codes, departments, projects, etc.")
+
 if user_input:
+    # Display user message
     with st.chat_message("user"):
         st.markdown(user_input)
-
-    # 1) Route: clarify or answer?
-    try:
-        decision = route_turn(user_input)
-    except:
-        # If router fails, default to answer for speed
-        decision = {"intent": "answer", "questions": [], "known": {}, "notes": ""}
-
-    if decision["intent"] == "clarify" and decision.get("questions"):
-        # Generate a natural clarifying response
-        clarifier = generate_clarification(user_input, decision["questions"])
+    
+    # Route decision
+    decision = route_turn(user_input)
+    
+    # Handle clarification
+    if decision["intent"] == "clarify" and decision.get("missing"):
+        clarifier = generate_clarification(decision["missing"])
         
         # Save to memory
         memory.chat_memory.add_user_message(user_input)
         memory.chat_memory.add_ai_message(clarifier)
-
+        
         with st.chat_message("assistant"):
             st.markdown(clarifier)
+    
+    # Handle answer
     else:
         with st.chat_message("assistant"):
-            with st.spinner("Thinking…"):
-                try:
-                    result = generate_answer(user_input)
-                    st.markdown(result["answer_md"])
-                    
-                    # Comment out sources for production, uncomment for dev
-                    # if result["sources"]:
-                    #     with st.expander("Sources"):
-                    #         for i, s in enumerate(result["sources"], 1):
-                    #             loc = s.get("location", {})
-                    #             score = s.get("score")
-                    #             st.markdown(f"- {i}. `{json.dumps(loc)}`" + (f"  (score: {score:.3f})" if score is not None else ""))
-                except Exception as e:
-                    st.error(f"⚠️ Error: {e}")
+            with st.spinner("Looking up charging guidelines..."):
+                answer = generate_answer(user_input, decision.get("extracted", {}))
+                
+                # Save to memory
+                memory.chat_memory.add_user_message(user_input)
+                memory.chat_memory.add_ai_message(answer)
+                
+                st.markdown(answer)
 
-# --- Footer ---
+# ============================================
+# FOOTER
+# ============================================
+
 st.divider()
 footer = """
 <style>
-a:link , a:visited{ color: blue; background-color: transparent; text-decoration: underline; }
+a:link, a:visited { color: blue; background-color: transparent; text-decoration: underline; }
 a:hover, a:active { color: red; background-color: transparent; text-decoration: underline; }
 .footer { position: fixed; left:0; bottom:0; width:100%; background-color:white; color:black; text-align:center; }
 </style>
