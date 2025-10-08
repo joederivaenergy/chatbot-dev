@@ -1,0 +1,63 @@
+﻿Department Number,Department Name,Direct Report,Resp Center,HR Function Group,HR Group
+8000,Operations- General,,,,
+8009,Commercial Services,Heath Norrick,HW69,Commercial Services,Commercial Services
+8010,Development Policy,Heath Norrick,HW57,Commercial Services,Commercial Services
+8020,Development Origination,Heath Norrick,HW12,Commercial Services,Commercial Services
+8001,Office of the CEO,John Clapp,HW19,Corporate,Corporate
+8021,Development,Graham Furlong,HW20,Development,Development
+8022,Development M&A,Graham Furlong,HW48,Development,Development
+8024,Development Greenfield,Graham Furlong,HW50,Development,Development
+8025,Landowner Contracts & Real Estate Management,Graham Furlong,HW65,Development,Land Cont & RE Mgmt
+8011,Underwriting,Paul Tivnan,HW58,Finance,Finance
+8012,Treasury,Paul Tivnan,HW59,Finance,Finance
+8013,Tax,Paul Tivnan,HW60,Finance,Finance
+8014,Risk Management,Paul Tivnan,HW61,Finance,Finance
+8015,Office of the CFO,Paul Tivnan,HW62,Finance,Finance
+8016,Controller,Paul Tivnan,HW15,Finance,Finance
+8017,Asset Management & Business Services,Paul Tivnan,HW24,Finance,Finance
+8018,Revenue Services,Paul Tivnan,HW68,Finance,Finance
+8023,Capital Markets,Paul Tivnan,HW49,Finance,Finance
+8060,Human Resources,Tom Dukes,HW63,Human Resources,Human Resources
+8030,Information Technology Application,Frank Cook,HW52,Information Technology,Information Technology
+8031,Information Technology Infrastructure and Operations,Frank Cook,HW01,Information Technology,Information Technology
+8032,Information Technology Data Analytics,Frank Cook,HW10,Information Technology,Information Technology
+8033,Information Technology Cyber Security,Frank Cook,HW53,Information Technology,Information Technology
+8034,Information Technology,Frank Cook,HW64,Information Technology,Information Technology
+8035,Information Technology Financial Applications,Frank Cook,HW64,Information Technology,Information Technology
+8040,Legal,Jacob Pollack,HW54,Legal,Legal
+8100,Operations Solar Team 1,Ernie,Various - see Employee Dept List tab,Renewable Operations,Solar Operations
+8101,Operations Solar Team 2,Ernie,Various - see Employee Dept List tab,Renewable Operations,Solar Operations
+8102,Operations Solar Team 3,Ernie,Various - see Employee Dept List tab,Renewable Operations,Solar Operations
+8103,Operations Solar Team 4,Ernie,Various - see Employee Dept List tab,Renewable Operations,Solar Operations
+8104,Operations Solar Team 5,Ernie,Various - see Employee Dept List tab,Renewable Operations,Solar Operations
+8105,Operations Wind Team 1,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8106,Operations Wind Team 2,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8107,Operations Wind Team 3,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8108,Operations Wind Team 4,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8109,Operations Wind Team 5,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8110,Operations Wind Team 6,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8111,Operations Wind Team 7,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8112,Operations Wind Team 8,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8113,Operations Wind Team 9,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8114,Operations Wind Team 10,Ernie,Various - see Employee Dept List tab,Renewable Operations,Wind Operations
+8120,Renewables Operations ,Ernie,HW42,Renewable Operations,Overhead Operations SG&A
+8121,Environmental Health Safety ,Ernie,HW18,Renewable Operations,Overhead Operations SG&A
+8122,Operational Excellence,Ernie,HW22,Renewable Operations,Overhead Operations
+8123,Renewable Control Center,Ernie,HW23,Renewable Operations,Overhead Operations
+8124,Performance Services,Ernie,HW43,Renewable Operations,Overhead Operations
+8125,Operations Engineering,Ernie,HW43,Renewable Operations,Overhead Operations
+8130,Mobile Service Team - Field Services,Ernie,HW36,Renewable Operations,Central Services
+8131,Mobile Service Team  - Gearbox Repair,Ernie,HW37,Renewable Operations,Central Services
+8132,Mobile Service Team  - Large Corrective,Ernie,HW38,Renewable Operations,Central Services
+8133,Blade Maintenance,Ernie,HW39,Renewable Operations,Central Services
+8134,High Voltage Repair Team,Ernie,HW35,Renewable Operations,Central Services
+8050,Tech Services Operations Engineering Support,Matt Johnson,HW67,Tech Svc & Engineering,Tech Svc Ops Engineering Support
+8051,Tech Services Development Engineering,Matt Johnson,S096,Tech Svc & Engineering,Tech Svc Development Engineering
+8052,Tech Services Construction,Matt Johnson,HW33,Tech Svc & Engineering,Tech Svc Construction
+8053,Tech Services Environmental,Matt Johnson,HW55,Tech Svc & Engineering,Tech Svc Environmental
+8054,Tech Services Procurement,Matt Johnson,HW56,Tech Svc & Engineering,Tech Svc Procurement
+8055,Tech Services Material Management,Matt Johnson,HW40,Tech Svc & Engineering,Tech Svc Material Management
+8056,Tech Services Project Engineering,Matt Johnson,HW66,Tech Svc & Engineering,Tech Svc Project Engineering
+8057,Tech Services,Matt Johnson,HW32,Tech Svc & Engineering,Tech Svc
+8135,Renewables Operations - Central Services,Ernie,,Renewable Operations,Central Services
+8008,Power Marketing,,,Commercial Services,Commercial Services
