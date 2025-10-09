@@ -578,7 +578,6 @@ def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
     result += f"This charging code has **{len(matches)} options**. Please refer to the deparment list for more details:\n\n"
     
     for idx, (_, row) in enumerate(matches.iterrows(), 1):
-        account_number = format_account_number(row.get('Account'))
         
         result += f"---\n**OPTION {idx}:**\n"
         result += f"- **Description:** {row['Description']}\n"
