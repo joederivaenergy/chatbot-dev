@@ -31,15 +31,15 @@ def load_all_csvs():
     for team, filepath in CSV_FILES.items():
         if os.path.exists(filepath):
             try:
-                # Read CSV with Account as string to preserve formatting
-                df = pd.read_csv(filepath, dtype={'Account': str}, keep_default_na=False, na_values=[''])
+                # Read CSV normally without special dtype handling
+                df = pd.read_csv(filepath)
                 
                 # Strip whitespace from all string columns
                 for col in df.columns:
                     if df[col].dtype == 'object':
                         df[col] = df[col].str.strip()
                 
-                # Replace empty strings and 'nan' strings with actual NaN
+                # Replace empty strings and 'nan' strings with actual NaN for all columns
                 df = df.replace(['', 'nan', 'NaN', 'NAN', 'None'], pd.NA)
                 
                 data[team] = df
@@ -566,13 +566,25 @@ def format_field(value) -> str:
     if pd.isna(value) or value is None:
         return 'N/A'
     
+    # Convert to string
     value_str = str(value).strip()
     
     # Check for string representations of NaN
     if value_str.lower() in ['nan', 'none', '']:
         return 'N/A'
     
-    return value_str
+    # For numeric values that are floats like 5421.0, remove the .0
+    try:
+        # Try to convert to float
+        float_val = float(value)
+        # If it's a whole number, return as integer string
+        if float_val == int(float_val):
+            return str(int(float_val))
+        else:
+            return value_str
+    except (ValueError, OverflowError):
+        # Not a number, return as is
+        return value_str
 
 # ============================================
 # FORMATTING FUNCTIONS (FIXED)
