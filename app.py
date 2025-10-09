@@ -560,6 +560,22 @@ def get_charging_data(team: str, exact_description: str, location: str = None) -
 # FORMATTING FUNCTIONS
 # ============================================
 
+def format_account_number(account_value) -> str:
+    """Format account number properly - remove .0 from floats"""
+    if pd.isna(account_value):
+        return "N/A"
+    
+    # If it's a number (float or int)
+    if isinstance(account_value, (int, float)):
+        # Convert to int if it's a whole number, then to string
+        if float(account_value) == int(account_value):
+            return str(int(account_value))
+        else:
+            return str(account_value)
+    
+    # If it's already a string, return as is
+    return str(account_value).strip()
+
 def format_charging_info(row: pd.Series) -> str:
     """Format a single charging code with markdown bullets"""
     result = f"""- **Description:** {row['Description']}
