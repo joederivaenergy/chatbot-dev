@@ -563,7 +563,7 @@ def get_charging_data(team: str, exact_description: str, location: str = None) -
 def format_charging_info(row: pd.Series) -> str:
     """Format a single charging code with markdown bullets"""
     result = f"""- **Description:** {row['Description']}
-- **Account number:** {row['Account']}
+- **Account:** {row['Account']}
 - **Location:** {row['Location']}
 - **Company ID:** {row['Company ID']}
 - **Project:** {row['Project']}
@@ -582,7 +582,7 @@ def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
         
         result += f"---\n**OPTION {idx}:**\n"
         result += f"- **Description:** {row['Description']}\n"
-        result += f"- **Account number:** {row['Account']}\n"
+        result += f"- **Account:** {row['Account']}\n"
         result += f"- **Location:** {row['Location']}\n"
         result += f"- **Company ID:** {row['Company ID']}\n"
         result += f"- **Project:** {row['Project']}\n"
