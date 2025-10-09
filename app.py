@@ -581,17 +581,25 @@ def format_charging_info(row: pd.Series) -> str:
 - **Department:** {row['Department']}"""
     return result
 
-def format_multiple_locations(team: str, matches: pd.DataFrame) -> str:
-    """Format multiple location options"""
+def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
+    """Format multiple variants of the same description"""
     description = matches.iloc[0]['Description']
     
-    result = f"I found {len(matches)} locations for '{description}' in {team} team. Please specify which location:\n\n"
+    result = f"**{team} Team - {description}**\n\n"
+    result += f"This charging code has **{len(matches)} variants**. Please use the one that applies to your situation:\n\n"
     
     for idx, (_, row) in enumerate(matches.iterrows(), 1):
-        result += f"**Option {idx}:** {row['Location']}\n"
+        account_number = format_account_number(row.get('Account'))
+        
+        result += f"---\n**OPTION {idx}:**\n"
+        result += f"- **Description:** {row['Description']}\n"
+        result += f"- **Account number:** {account_number}\n"
+        result += f"- **Location:** {row['Location']}\n"
+        result += f"- **Company ID:** {row['Company ID']}\n"
+        result += f"- **Project:** {row['Project']}\n"
+        result += f"- **Department:** {row['Department']}\n\n"
     
-    result += "\nWhich location applies to you?"
-    return result
+    return result.strip()
 
 # ============================================
 # HANDLE USER SELECTING FROM LIST
@@ -679,58 +687,76 @@ def process_charging_question(user_input: str) -> str:
             st.session_state.extracted_context["exact_description"] = None
             return f"I couldn't find charging codes for '{exact_description}' in {team} team."
         
-        # If multiple locations, ask which one
-        if has_multiple and not location:
-            return format_multiple_locations(team, matches)
-        
-        # Return the charging info
-        row = matches.iloc[0]
-        
-        # After providing answer, completely clear context
-        st.session_state.extracted_context = {
-            "team": None,  # Clear team too
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        st.session_state.in_charging_flow = False
-        
-        return format_charging_info(row)
-    
-    # Step 4: Search for descriptions matching keywords
-    matching_descriptions = search_descriptions_by_keywords(team, keywords)
-    
-    if not matching_descriptions:
-        return f"I couldn't find any charging codes matching '{keywords}' in {team} team."
-    
-    # If only one match, save it and get the data
-    if len(matching_descriptions) == 1:
-        st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
-        matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
-        
-        if has_multiple and not location:
-            return format_multiple_locations(team, matches)
-        
-        row = matches.iloc[0]
-        
-        # After providing answer, completely clear context
-        st.session_state.extracted_context = {
-            "team": None,  # Clear team too
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        st.session_state.in_charging_flow = False
-        
-        return format_charging_info(row)
-    
-    # Multiple descriptions found
-    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
-    for idx, desc in enumerate(matching_descriptions, 1):
-        result += f"{idx}. {desc}\n"
-    result += "\nWhich one are you looking for?"
-    
-    return result
+        # If multiple variants exist, show all of them
+        if has_multiple:
+                    # After providing answer, completely clear context
+                    st.session_state.extracted_context = {
+                        "team": None,
+                        "keywords": None,
+                        "location": None,
+                        "exact_description": None
+                    }
+                    st.session_state.in_charging_flow = False
+                    
+                    return format_multiple_variants(team, matches)
+                
+                # Single result - return the charging info
+                row = matches.iloc[0]
+                
+                # After providing answer, completely clear context
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.in_charging_flow = False
+                
+                return format_charging_info(row)
+            
+            # Step 4: Search for descriptions matching keywords
+            matching_descriptions = search_descriptions_by_keywords(team, keywords)
+            
+            if not matching_descriptions:
+                return f"I couldn't find any charging codes matching '{keywords}' in {team} team."
+            
+            # If only one matching description, get its data
+            if len(matching_descriptions) == 1:
+                st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
+                matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
+                
+                # If multiple variants, show all
+                if has_multiple:
+                    st.session_state.extracted_context = {
+                        "team": None,
+                        "keywords": None,
+                        "location": None,
+                        "exact_description": None
+                    }
+                    st.session_state.in_charging_flow = False
+                    
+                    return format_multiple_variants(team, matches)
+                
+                # Single result
+                row = matches.iloc[0]
+                
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.in_charging_flow = False
+                
+                return format_charging_info(row)
+            
+            # Multiple different descriptions found
+            result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
+            for idx, desc in enumerate(matching_descriptions, 1):
+                result += f"{idx}. {desc}\n"
+            result += "\nWhich one are you looking for?"
+            
+            return result
 
 # ============================================
 # MAIN PROCESSING LOGIC
