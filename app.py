@@ -572,7 +572,7 @@ def format_account_number(account_value) -> str:
 
 def format_charging_info(row: pd.Series) -> str:
     """Format a single charging code with markdown bullets"""
-    account_number = format_account_number(row.get('Account')
+    account_number = format_account_number(row.get('Account'))
     result = f"""- **Description:** {row['Description']}
 - **Account number:** {account_number}
 - **Location:** {row['Location']}
