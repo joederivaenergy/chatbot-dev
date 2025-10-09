@@ -174,10 +174,13 @@ if "session_id" not in st.session_state:
 if "extracted_context" not in st.session_state:
     st.session_state.extracted_context = {
         "team": None,
-        "keywords": None,  # Changed from description to keywords
+        "keywords": None,
         "location": None,
-        "exact_description": None  # Store the exact description from CSV
+        "exact_description": None
     }
+
+if "in_charging_flow" not in st.session_state:
+    st.session_state.in_charging_flow = False
 
 # ============================================
 # SIDEBAR
@@ -200,6 +203,7 @@ def reset_history():
             "location": None,
             "exact_description": None
         }
+        st.session_state.in_charging_flow = False
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
@@ -261,7 +265,112 @@ def call_claude(system_prompt: str, user_message: str, include_history: bool = T
         return None
 
 # ============================================
-# EXTRACTION PROMPT (UPDATED)
+# CHARGING QUESTION DETECTION
+# ============================================
+
+CHARGING_DETECTION_PROMPT = """
+You are Diva, a charging guidelines assistant for Deriva Energy.
+
+Determine if the user's question is about CHARGING GUIDELINES or something else.
+
+Charging questions are about:
+- How to charge time/expenses
+- Charging codes, account numbers, projects, departments
+- Where to charge specific work (ERP, labor, projects, etc.)
+- Team-specific charging information
+
+NOT charging questions:
+- General greetings (hi, hello)
+- General questions about Deriva Energy
+- Questions about policies not related to charging
+- Casual conversation
+- Questions about other topics
+
+Return ONLY valid JSON:
+{
+  "is_charging_question": true | false,
+  "confidence": "high" | "medium" | "low"
+}
+
+Examples:
+- "how to charge erp" → {"is_charging_question": true, "confidence": "high"}
+- "where do I charge labor?" → {"is_charging_question": true, "confidence": "high"}
+- "IT team charging codes" → {"is_charging_question": true, "confidence": "high"}
+- "what's the weather today?" → {"is_charging_question": false, "confidence": "high"}
+- "tell me about Deriva Energy" → {"is_charging_question": false, "confidence": "high"}
+- "who is the CEO?" → {"is_charging_question": false, "confidence": "high"}
+"""
+
+def is_charging_question(user_query: str) -> bool:
+    """Detect if the question is about charging guidelines"""
+    
+    # Quick heuristic check first
+    charging_keywords = [
+        "charge", "charging", "code", "codes", "account", "project", 
+        "department", "expense", "time", "labor", "erp"
+    ]
+    
+    user_lower = user_query.lower()
+    has_charging_keyword = any(keyword in user_lower for keyword in charging_keywords)
+    
+    # If no charging keywords and it's a question, likely not charging
+    if not has_charging_keyword and len(user_query.split()) > 3:
+        return False
+    
+    # Use LLM for uncertain cases
+    response = call_claude(CHARGING_DETECTION_PROMPT, user_query, include_history=False)
+    
+    if not response:
+        # Default to charging question if LLM fails and has keywords
+        return has_charging_keyword
+    
+    try:
+        content = response.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+        
+        m = re.search(r'\{.*\}', content, re.DOTALL)
+        data = json.loads(m.group() if m else content)
+        
+        return data.get("is_charging_question", has_charging_keyword)
+    except:
+        return has_charging_keyword
+
+# ============================================
+# NATURAL LANGUAGE RESPONSE
+# ============================================
+
+GENERAL_ASSISTANT_PROMPT = """
+You are Diva, a friendly and helpful assistant for Deriva Energy employees.
+
+Your primary purpose is to help with charging guidelines, but you can also answer general questions conversationally.
+
+Guidelines:
+- Be friendly, concise, and professional
+- For questions about Deriva Energy that you don't know, say you're primarily designed for charging guidelines
+- Keep responses brief (2-4 sentences unless more detail is needed)
+- If the question seems related to charging, gently guide them: "If you're asking about charging guidelines, I can help with that!"
+
+You are an internal tool for Deriva Energy employees.
+"""
+
+def generate_natural_response(user_query: str) -> str:
+    """Generate natural language response for non-charging questions"""
+    
+    response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
+    
+    if not response:
+        return "I'm here to help! My specialty is charging guidelines. Could you rephrase your question or ask about charging codes?"
+    
+    return response
+
+# ============================================
+# EXTRACTION PROMPT
 # ============================================
 
 EXTRACTION_PROMPT = """
@@ -287,12 +396,22 @@ Return ONLY valid JSON:
   "is_new_query": true | false
 }
 
+**Instructions:**
+1.  If the user is just greeting you (e.g., 'hi', 'hello'), respond with a simple, friendly greeting and ask how you can help with.
+2.  For all charging questions, use the provided context to answer. Format the response as a markdown bulleted list with these exact fields:
+    - **Description:**
+    - **Account number:**
+    - **Location:**
+    - **Company ID:**
+    - **Project:**
+    - **Department:**
+3.  Use "N/A" if a field is not available in the context.
+
 Examples:
 - "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "is_new_query": true}
 - Previous asked team, Current: "IT" → {"team": "IT", "keywords": null, "location": null, "is_new_query": false}
 - Previous: "Core ERP codes", Current: "what about HR labor?" → {"team": null, "keywords": "labor", "location": null, "is_new_query": true}
 - Previous: showed 3 locations, Current: "Houston" → {"team": null, "keywords": null, "location": "Houston", "is_new_query": false}
-- Previous: showed list, Current: "1" → {"team": null, "keywords": null, "location": null, "is_new_query": false}
 """
 
 def extract_query_info(user_query: str) -> Dict:
@@ -320,7 +439,6 @@ def extract_query_info(user_query: str) -> Dict:
         
         # If it's a new query, reset context but keep team if not explicitly mentioned
         if is_new_query:
-            # Keep team from previous context if not specified in new query
             previous_team = st.session_state.extracted_context.get("team")
             new_team = data.get("team")
             
@@ -328,7 +446,7 @@ def extract_query_info(user_query: str) -> Dict:
                 "team": new_team if new_team else previous_team,
                 "keywords": data.get("keywords"),
                 "location": data.get("location"),
-                "exact_description": None  # Reset for new query
+                "exact_description": None
             }
             
             st.session_state.extracted_context = extracted
@@ -363,10 +481,7 @@ def extract_query_info(user_query: str) -> Dict:
 # ============================================
 
 def is_likely_new_query(user_input: str) -> bool:
-    """
-    Fallback detection if LLM extraction fails
-    Detect if user is asking a new charging question
-    """
+    """Fallback detection if LLM extraction fails"""
     user_lower = user_input.lower().strip()
     
     # Phrases that indicate new queries
@@ -399,127 +514,11 @@ def is_likely_new_query(user_input: str) -> bool:
     return False
 
 # ============================================
-# UPDATED PROCESS MESSAGE (WITH NEW QUERY DETECTION)
-# ============================================
-
-def process_message_with_selection(user_input: str) -> str:
-    """Process message with selection handling and new query detection"""
-    
-    # Handle greetings
-    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
-    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        # Clear context on greeting
-        st.session_state.extracted_context = {
-            "team": None,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
-    
-    # Check if this looks like a new query (fallback detection)
-    if is_likely_new_query(user_input):
-        # Keep team but reset everything else
-        previous_team = st.session_state.extracted_context.get("team")
-        st.session_state.extracted_context = {
-            "team": previous_team,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-    
-    # Extract information
-    extracted = extract_query_info(user_input)
-    
-    # Check if user is selecting from a list (only if we already have a context)
-    if extracted.get("keywords") and not extracted.get("exact_description"):
-        selected_description = check_if_selecting_from_list(user_input, extracted)
-        if selected_description:
-            st.session_state.extracted_context["exact_description"] = selected_description
-            extracted["exact_description"] = selected_description
-    
-    # Continue with normal processing
-    team = extracted.get("team")
-    keywords = extracted.get("keywords")
-    location = extracted.get("location")
-    exact_description = extracted.get("exact_description")
-    
-    # Step 1: Need team
-    if not team:
-        return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
-    
-    # Step 2: Need keywords (if no exact description yet)
-    if not keywords and not exact_description:
-        return "What would you like to charge for?"
-    
-    # Step 3: If we have exact description, get the data
-    if exact_description:
-        matches, has_multiple = get_charging_data(team, exact_description, location)
-        
-        if matches.empty:
-            st.session_state.extracted_context["exact_description"] = None
-            return f"I couldn't find charging codes for '{exact_description}' in {team} team."
-        
-        # If multiple locations, ask which one
-        if has_multiple and not location:
-            return format_multiple_locations(team, matches)
-        
-        # Return the charging info
-        row = matches.iloc[0]
-        
-        # After providing answer, clear context but keep team
-        st.session_state.extracted_context = {
-            "team": team,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        
-        return format_charging_info(row)
-    
-    # Step 4: Search for descriptions matching keywords
-    matching_descriptions = search_descriptions_by_keywords(team, keywords)
-    
-    if not matching_descriptions:
-        return f"I couldn't find any charging codes matching '{keywords}' in {team} team."
-    
-    # If only one match, save it and get the data
-    if len(matching_descriptions) == 1:
-        st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
-        matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
-        
-        if has_multiple and not location:
-            return format_multiple_locations(team, matches)
-        
-        row = matches.iloc[0]
-        
-        # After providing answer, clear context but keep team
-        st.session_state.extracted_context = {
-            "team": team,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        
-        return format_charging_info(row)
-    
-    # Multiple descriptions found
-    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
-    for idx, desc in enumerate(matching_descriptions, 1):
-        result += f"{idx}. {desc}\n"
-    result += "\nWhich one are you looking for?"
-    
-    return result
-
-# ============================================
 # CSV SEARCH FUNCTIONS (WHOLE WORD MATCHING)
 # ============================================
 
 def search_descriptions_by_keywords(team: str, keywords: str) -> List[str]:
-    """
-    Search for descriptions containing whole words from keywords
-    Returns list of unique matching descriptions
-    """
+    """Search for descriptions containing whole words from keywords"""
     if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
         return []
     
@@ -543,10 +542,7 @@ def search_descriptions_by_keywords(team: str, keywords: str) -> List[str]:
     return sorted(list(matching_descriptions))
 
 def get_charging_data(team: str, exact_description: str, location: str = None) -> Tuple[pd.DataFrame, bool]:
-    """
-    Get charging data for exact description
-    Returns (dataframe, has_multiple_locations)
-    """
+    """Get charging data for exact description"""
     if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
         return pd.DataFrame(), False
     
@@ -596,76 +592,6 @@ def format_multiple_locations(team: str, matches: pd.DataFrame) -> str:
     return result
 
 # ============================================
-# MAIN PROCESSING LOGIC
-# ============================================
-
-def process_message(user_input: str) -> str:
-    """Process user message and return response"""
-    
-    # Handle greetings
-    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
-    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
-    
-    # Extract information
-    extracted = extract_query_info(user_input)
-    
-    team = extracted.get("team")
-    keywords = extracted.get("keywords")
-    location = extracted.get("location")
-    exact_description = extracted.get("exact_description")
-    
-    # Step 1: Need team
-    if not team:
-        return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
-    
-    # Step 2: Need keywords (if no exact description yet)
-    if not keywords and not exact_description:
-        return "What would you like to charge for? Please provide a description or project name."
-    
-    # Step 3: If we have exact description, get the data
-    if exact_description:
-        matches, has_multiple = get_charging_data(team, exact_description, location)
-        
-        if matches.empty:
-            # Reset exact_description if not found
-            st.session_state.extracted_context["exact_description"] = None
-            return f"I couldn't find charging codes for '{exact_description}' in {team} team. Please try again."
-        
-        # If multiple locations, ask which one
-        if has_multiple and not location:
-            return format_multiple_locations(team, matches)
-        
-        # Return the charging info
-        row = matches.iloc[0]
-        return format_charging_info(row)
-    
-    # Step 4: Search for descriptions matching keywords
-    matching_descriptions = search_descriptions_by_keywords(team, keywords)
-    
-    if not matching_descriptions:
-        return f"I couldn't find any charging codes matching '{keywords}' in {team} team. Please try a different search term."
-    
-    # If only one match, save it and get the data
-    if len(matching_descriptions) == 1:
-        st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
-        matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
-        
-        if has_multiple and not location:
-            return format_multiple_locations(team, matches)
-        
-        row = matches.iloc[0]
-        return format_charging_info(row)
-    
-    # Multiple descriptions found - ask user to clarify
-    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
-    for idx, desc in enumerate(matching_descriptions, 1):
-        result += f"{idx}. {desc}\n"
-    result += "\nWhich one are you looking for? Please provide the full description or number."
-    
-    return result
-
-# ============================================
 # HANDLE USER SELECTING FROM LIST
 # ============================================
 
@@ -699,25 +625,35 @@ def check_if_selecting_from_list(user_input: str, extracted: Dict) -> str:
     return None
 
 # ============================================
-# UPDATED PROCESS MESSAGE WITH SELECTION HANDLING
+# CHARGING FLOW PROCESSING
 # ============================================
 
-def process_message_with_selection(user_input: str) -> str:
-    """Process message with selection handling"""
+def process_charging_question(user_input: str) -> str:
+    """Process charging guidelines question"""
     
-    # Handle greetings
-    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
-    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
+    # Mark that we're in charging flow
+    st.session_state.in_charging_flow = True
+    
+    # Check if this looks like a new query (fallback detection)
+    if is_likely_new_query(user_input):
+        # Keep team but reset everything else
+        previous_team = st.session_state.extracted_context.get("team")
+        st.session_state.extracted_context = {
+            "team": previous_team,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
     
     # Extract information
     extracted = extract_query_info(user_input)
     
     # Check if user is selecting from a list
-    selected_description = check_if_selecting_from_list(user_input, extracted)
-    if selected_description:
-        st.session_state.extracted_context["exact_description"] = selected_description
-        extracted["exact_description"] = selected_description
+    if extracted.get("keywords") and not extracted.get("exact_description"):
+        selected_description = check_if_selecting_from_list(user_input, extracted)
+        if selected_description:
+            st.session_state.extracted_context["exact_description"] = selected_description
+            extracted["exact_description"] = selected_description
     
     # Continue with normal processing
     team = extracted.get("team")
@@ -747,6 +683,16 @@ def process_message_with_selection(user_input: str) -> str:
         
         # Return the charging info
         row = matches.iloc[0]
+        
+        # After providing answer, clear context but keep team
+        st.session_state.extracted_context = {
+            "team": team,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        
         return format_charging_info(row)
     
     # Step 4: Search for descriptions matching keywords
@@ -764,6 +710,16 @@ def process_message_with_selection(user_input: str) -> str:
             return format_multiple_locations(team, matches)
         
         row = matches.iloc[0]
+        
+        # After providing answer, clear context but keep team
+        st.session_state.extracted_context = {
+            "team": team,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        
         return format_charging_info(row)
     
     # Multiple descriptions found
@@ -773,6 +729,45 @@ def process_message_with_selection(user_input: str) -> str:
     result += "\nWhich one are you looking for?"
     
     return result
+
+# ============================================
+# MAIN PROCESSING LOGIC
+# ============================================
+
+def process_message(user_input: str) -> str:
+    """Main message processing - routes to charging or general conversation"""
+    
+    # Handle greetings
+    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
+    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
+        # Clear context on greeting
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
+    
+    # If we're already in a charging flow (answering clarifications), continue
+    if st.session_state.in_charging_flow:
+        # Check if it's a new question or continuing the flow
+        if is_likely_new_query(user_input) and not is_charging_question(user_input):
+            # Exit charging flow and handle as general question
+            st.session_state.in_charging_flow = False
+            return generate_natural_response(user_input)
+        else:
+            # Continue charging flow
+            return process_charging_question(user_input)
+    
+    # Detect if this is a charging question
+    if is_charging_question(user_input):
+        return process_charging_question(user_input)
+    else:
+        # Handle as general conversation
+        st.session_state.in_charging_flow = False
+        return generate_natural_response(user_input)
 
 # ============================================
 # RENDER EXISTING CHAT HISTORY
@@ -789,7 +784,7 @@ for msg in messages:
 # CHAT INPUT & PROCESSING
 # ============================================
 
-user_input = st.chat_input("Ask about charging codes...")
+user_input = st.chat_input("Ask about charging codes or chat with me...")
 
 if user_input:
     # Display user message
@@ -801,8 +796,8 @@ if user_input:
     
     # Process and get response
     with st.chat_message("assistant"):
-        with st.spinner("Looking up..."):
-            response = process_message_with_selection(user_input)
+        with st.spinner("Thinking..."):
+            response = process_message(user_input)
             st.markdown(response)
     
     # Save assistant response
