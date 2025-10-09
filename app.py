@@ -396,17 +396,6 @@ Return ONLY valid JSON:
   "is_new_query": true | false
 }
 
-**Instructions:**
-1.  If the user is just greeting you (e.g., 'hi', 'hello'), respond with a simple, friendly greeting and ask how you can help with.
-2.  For all charging questions, use the provided context to answer. Format the response as a markdown bulleted list with these exact fields:
-    - **Description:**
-    - **Account number:**
-    - **Location:**
-    - **Company ID:**
-    - **Project:**
-    - **Department:**
-3.  Use "N/A" if a field is not available in the context.
-
 Examples:
 - "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "is_new_query": true}
 - Previous asked team, Current: "IT" → {"team": "IT", "keywords": null, "location": null, "is_new_query": false}
