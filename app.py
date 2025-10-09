@@ -565,9 +565,10 @@ def format_account_number(account_value) -> str:
     if pd.isna(account_value):
         return "N/A"
 
+    account_value = str(account_value)
     if account_value.endswith(".0"):
         account_value = account_value[:-2]
-    return str(account_value).strip()
+    return account_value
 
 def format_charging_info(row: pd.Series) -> str:
     """Format a single charging code with markdown bullets"""
