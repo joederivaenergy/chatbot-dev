@@ -560,21 +560,10 @@ def get_charging_data(team: str, exact_description: str, location: str = None) -
 # FORMATTING FUNCTIONS
 # ============================================
 
-def format_account_number(account_value) -> str:
-    """Format account number properly - remove .0 from floats"""
-    if pd.isna(account_value):
-        return "N/A"
-
-    account_value = str(account_value)
-    if account_value.endswith(".0"):
-        account_value = account_value[:-2]
-    return account_value
-
 def format_charging_info(row: pd.Series) -> str:
     """Format a single charging code with markdown bullets"""
-    account_number = format_account_number(row.get('Account'))
     result = f"""- **Description:** {row['Description']}
-- **Account number:** {account_number}
+- **Account number:** {row['Account']}
 - **Location:** {row['Location']}
 - **Company ID:** {row['Company ID']}
 - **Project:** {row['Project']}
@@ -593,7 +582,7 @@ def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
         
         result += f"---\n**OPTION {idx}:**\n"
         result += f"- **Description:** {row['Description']}\n"
-        result += f"- **Account number:** {account_number}\n"
+        result += f"- **Account number:** {row['Account']}\n"
         result += f"- **Location:** {row['Location']}\n"
         result += f"- **Company ID:** {row['Company ID']}\n"
         result += f"- **Project:** {row['Project']}\n"
