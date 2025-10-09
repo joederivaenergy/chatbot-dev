@@ -4,29 +4,7 @@ import uuid
 import boto3
 import streamlit as st
 import pandas as pd
-from typing import List, Dict
-import time
-import re
-
-# --- Config ---
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
-DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
-
-# --- CSV File Paths ---
-CSV_FILES = {
-    'IT': 'csvs/Guidelines_cleaned_it.csv',
-    'Finance': 'csvs/Guidelines_cleaned_finance.csv',
-    'HR': 'csvs/Guidelines_cleaned_hr.csv',
-}
-
-import os
-import json
-import uuid
-import boto3
-import streamlit as st
-import pandas as pd
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import time
 import re
 
@@ -169,7 +147,7 @@ class DynamoDBChatHistory:
             return "No previous conversation."
         
         history_text = "Previous conversation:\n"
-        for msg in messages[-6:]:  # Last 6 messages (3 turns)
+        for msg in messages[-10:]:  # Last 10 messages (5 turns)
             role = msg.get('message_type', 'user')
             content = msg.get('content', '')
             history_text += f"{role.upper()}: {content}\n"
@@ -187,13 +165,25 @@ st.set_page_config(
 )
 
 # ============================================
+# SESSION STATE INITIALIZATION
+# ============================================
+
+if "session_id" not in st.session_state:
+    st.session_state["session_id"] = str(uuid.uuid4())
+
+if "extracted_context" not in st.session_state:
+    st.session_state.extracted_context = {
+        "team": None,
+        "keywords": None,  # Changed from description to keywords
+        "location": None,
+        "exact_description": None  # Store the exact description from CSV
+    }
+
+# ============================================
 # SIDEBAR
 # ============================================
 
 st.sidebar.title("⚙️ Settings")
-
-if "session_id" not in st.session_state:
-    st.session_state["session_id"] = str(uuid.uuid4())
 
 # Initialize chat history
 chat_history = DynamoDBChatHistory(
@@ -204,6 +194,12 @@ chat_history = DynamoDBChatHistory(
 def reset_history():
     try:
         chat_history.clear()
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
@@ -269,50 +265,42 @@ def call_claude(system_prompt: str, user_message: str, include_history: bool = T
 # ============================================
 
 EXTRACTION_PROMPT = """
-You are Diva, a charging guidelines assistant. Your job is to extract key information from the user's query and conversation history.
+You are Diva, a charging guidelines assistant. Extract key information from the user's query.
 
-Extract the following:
-1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Operations, Engineering). Do NOT infer team from project names or descriptions.
-2. **description**: What they want to charge for (e.g., "Core ERP", "HR Labor", "Wind Maintenance")
-3. **location**: Specific location/site if mentioned (e.g., "DSOP", "DWOP", "DCS4", "DWE1", "STRG", "DSOL")
+Extract:
+1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Operations, Engineering)
+2. **keywords**: Key words the user wants to search for (e.g., "erp", "labor", "maintenance")
+3. **location**: Specific location if mentioned (e.g., "Houston", "DSOL")
 
-CRITICAL RULES:
-- Look at ALL previous USER messages to find missing information
-- Team must be EXPLICITLY stated by the user (e.g., "IT team", "I'm in Finance", "HR")
-- If user previously mentioned a description (like "ERP" or "Core ERP"), KEEP that description even if current message doesn't mention it
-- Do NOT guess team from project names like "Core ERP" or "Training"
-- If user says "IT team Core ERP", then team: "IT"
-- A short answer like "IT", "Finance", "Houston" is usually answering the assistant's clarification question
-- Accumulate information across the conversation - don't lose context
+RULES:
+- Team must be explicitly stated (e.g., "IT team", "I'm in Finance", or answering "IT" to clarification)
+- Keywords should be the main search terms (not full sentences)
+- Use conversation history to accumulate information
+- If user gives a short answer like "IT" or "Houston", they're answering a clarification question
 
 Return ONLY valid JSON:
 {
   "team": "IT" | "Finance" | "HR" | "Operations" | "Engineering" | null,
-  "description": "extracted description" | null,
-  "location": "extracted location" | null
+  "keywords": "search terms" | null,
+  "location": "location name" | null
 }
 
 Examples:
-- "how to charge core erp" → {"team": null, "description": "Core ERP", "location": null}
-- "IT team core erp" → {"team": "IT", "description": "Core ERP", "location": null}
-- "I'm in finance, need accounting codes" → {"team": "Finance", "description": "accounting", "location": null}
-- "HR labor in Houston" → {"team": null, "description": "HR Labor", "location": "Houston"}
-- First: "I'm in HR" → {"team": "HR", "description": null, "location": null}
-- Follow-up: "labor codes" → {"team": "HR", "description": "labor", "location": null}
-
-Only extract team if the user explicitly mentions it in current or previous messages.
+- "how to charge erp" → {"team": null, "keywords": "erp", "location": null}
+- "IT team core erp" → {"team": "IT", "keywords": "core erp", "location": null}
+- Previous: "how to charge erp", Current: "IT" → {"team": "IT", "keywords": "erp", "location": null}
+- "HR labor in Houston" → {"team": null, "keywords": "labor", "location": "Houston"}
 """
 
 def extract_query_info(user_query: str) -> Dict:
-    """Extract team, description, and location from user query"""
+    """Extract team, keywords, and location from user query"""
     
     response = call_claude(EXTRACTION_PROMPT, user_query, include_history=True)
     
     if not response:
-        return {"team": None, "description": None, "location": None}
+        return st.session_state.extracted_context.copy()
     
     try:
-        # Strip code fences if present
         content = response.strip()
         if content.startswith("```json"):
             content = content[7:]
@@ -322,20 +310,19 @@ def extract_query_info(user_query: str) -> Dict:
             content = content[:-3]
         content = content.strip()
         
-        # Parse JSON
         m = re.search(r'\{.*\}', content, re.DOTALL)
         data = json.loads(m.group() if m else content)
         
-        return {
+        extracted = {
             "team": data.get("team"),
-            "description": data.get("description"),
-            "location": data.get("location")
+            "keywords": data.get("keywords"),
+            "location": data.get("location"),
+            "exact_description": st.session_state.extracted_context.get("exact_description")
         }
-
-        # Merge with existing context (accumulate information)
+        
+        # Merge with existing context
         merged = {}
-        for key in ["team", "description", "location"]:
-            # Use new value if present, otherwise keep old value
+        for key in ["team", "keywords", "location", "exact_description"]:
             if extracted.get(key):
                 merged[key] = extracted[key]
             elif st.session_state.extracted_context.get(key):
@@ -343,142 +330,98 @@ def extract_query_info(user_query: str) -> Dict:
             else:
                 merged[key] = None
         
-        # Update session state
         st.session_state.extracted_context = merged
-        
         return merged
         
     except Exception as e:
         return st.session_state.extracted_context.copy()
 
 # ============================================
-# UPDATE RESET FUNCTION
+# CSV SEARCH FUNCTIONS (WHOLE WORD MATCHING)
 # ============================================
 
-def reset_history():
-    try:
-        chat_history.clear()
-        # Clear extracted context
-        st.session_state.extracted_context = {
-            "team": None,
-            "description": None,
-            "location": None
-        }
-        st.success("Chat cleared!")
-    except Exception as e:
-        st.warning(f"Could not clear history: {e}")
-
-# ============================================
-# CSV QUERY FUNCTIONS
-# ============================================
-
-def query_csv_data(team: str, description_query: str, location: str = None) -> pd.DataFrame:
-    """Query CSV data for specific team and description"""
-    
+def search_descriptions_by_keywords(team: str, keywords: str) -> List[str]:
+    """
+    Search for descriptions containing whole words from keywords
+    Returns list of unique matching descriptions
+    """
     if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
-        return pd.DataFrame()
+        return []
     
-    df = ALL_TEAM_DATA[team].copy()
+    df = ALL_TEAM_DATA[team]
     
-    # Fuzzy match on description
-    description_query_lower = description_query.lower()
+    # Split keywords into individual words
+    search_words = [w.strip().lower() for w in keywords.split() if w.strip()]
     
-    # Try exact match first
-    matches = df[df['Description'].str.lower() == description_query_lower]
+    matching_descriptions = set()
     
-    # If no exact match, try partial match
+    for idx, row in df.iterrows():
+        description = str(row['Description']).lower()
+        description_words = re.findall(r'\b\w+\b', description)
+        
+        # Check if any search word matches a whole word in description
+        for search_word in search_words:
+            if search_word in description_words:
+                matching_descriptions.add(row['Description'])
+                break
+    
+    return sorted(list(matching_descriptions))
+
+def get_charging_data(team: str, exact_description: str, location: str = None) -> Tuple[pd.DataFrame, bool]:
+    """
+    Get charging data for exact description
+    Returns (dataframe, has_multiple_locations)
+    """
+    if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
+        return pd.DataFrame(), False
+    
+    df = ALL_TEAM_DATA[team]
+    
+    # Exact match on description
+    matches = df[df['Description'] == exact_description]
+    
     if matches.empty:
-        matches = df[df['Description'].str.lower().str.contains(description_query_lower, na=False)]
+        return pd.DataFrame(), False
     
-    # Filter by location if specified
-    if location and not matches.empty and 'Location' in matches.columns:
+    # Check if multiple locations
+    has_multiple = len(matches) > 1
+    
+    # Filter by location if specified and multiple exist
+    if location and has_multiple:
         location_matches = matches[matches['Location'].str.lower() == location.lower()]
         if not location_matches.empty:
             matches = location_matches
     
-    return matches
-
-def format_csv_results(team: str, matches: pd.DataFrame) -> str:
-    """Format CSV query results into consistent format"""
-    
-    if matches.empty:
-        return ""
-    
-    # Check if multiple variants exist
-    num_variants = len(matches)
-    
-    if num_variants == 1:
-        # Single result - standard format
-        row = matches.iloc[0]
-        result = f"""**{team} Team - {row['Description']}**
-
-**Description:** {row['Description']}
-**Account number:** {row['Account'] if pd.notna(row['Account']) else 'Not specified'}
-**Location:** {row['Location']}
-**Company ID:** {row['Company ID']}
-**Project:** {row['Project']}
-**Department:** {row['Department']}"""
-    else:
-        # Multiple variants - show all with same format
-        description = matches.iloc[0]['Description']
-        result = f"""**{team} Team - {description}**
-
-⚠️ **This charging code has {num_variants} variants. Please select the correct option based on your location/project:**
-
-"""
-        for idx, (_, row) in enumerate(matches.iterrows(), 1):
-            differentiator = row['Location']
-            
-            result += f"""---
-**OPTION {idx}: {differentiator}**
-
-**Description:** {row['Description']}
-**Account number:** {row['Account'] if pd.notna(row['Account']) else 'Not specified'}
-**Location:** {row['Location']}
-**Company ID:** {row['Company ID']}
-**Project:** {row['Project']}
-**Department:** {row['Department']}
-
-"""
-    
-    return result.strip()
+    return matches, has_multiple
 
 # ============================================
-# ROUTER & CLARIFICATION
+# FORMATTING FUNCTIONS
 # ============================================
 
-def needs_clarification(extracted: Dict) -> tuple:
-    """Check if we need to ask clarifying questions"""
-    missing = []
-    
-    if not extracted.get("team"):
-        missing.append("team")
-    if not extracted.get("description"):
-        missing.append("description")
-    
-    needs_clarify = len(missing) > 0
-    return needs_clarify, missing
+def format_charging_info(row: pd.Series) -> str:
+    """Format a single charging code in simple format"""
+    result = f"""Description: {row['Description']}
+Account number: {row['Account'] if pd.notna(row['Account']) else 'N/A'}
+Location: {row['Location']}
+Company ID: {row['Company ID']}
+Project: {row['Project']}
+Department: {row['Department']}"""
+    return result
 
-def generate_clarification(missing: List[str], extracted: Dict) -> str:
-    """Generate clarification question"""
+def format_multiple_locations(team: str, matches: pd.DataFrame) -> str:
+    """Format multiple location options"""
+    description = matches.iloc[0]['Description']
     
-    # If both team and description are missing
-    if "team" in missing and "description" in missing:
-        return "I can help with that! Could you tell me which team you're with (IT, Finance, HR, Operations, or Engineering) and what you're charging for?"
+    result = f"I found {len(matches)} locations for '{description}' in {team} team. Please specify which location:\n\n"
     
-    # If only team is missing
-    elif "team" in missing:
-        return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
+    for idx, (_, row) in enumerate(matches.iterrows(), 1):
+        result += f"Option {idx}: {row['Location']}\n"
     
-    # If only description is missing
-    elif "description" in missing:
-        return "What project or activity are you charging for?"
-    
-    else:
-        return "Could you provide more details?"
+    result += "\nWhich location applies to you?"
+    return result
 
 # ============================================
-# MAIN CHAT LOGIC
+# MAIN PROCESSING LOGIC
 # ============================================
 
 def process_message(user_input: str) -> str:
@@ -487,32 +430,172 @@ def process_message(user_input: str) -> str:
     # Handle greetings
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today? You can ask me about charging codes for any team or project."
+        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
     
     # Extract information
     extracted = extract_query_info(user_input)
     
-    # Check if we need clarification
-    needs_clarify, missing = needs_clarification(extracted)
-    
-    if needs_clarify:
-        return generate_clarification(missing, extracted)
-    
-    # Query CSV data
     team = extracted.get("team")
-    description = extracted.get("description")
+    keywords = extracted.get("keywords")
     location = extracted.get("location")
+    exact_description = extracted.get("exact_description")
     
-    matches = query_csv_data(team, description, location)
+    # Step 1: Need team
+    if not team:
+        return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
     
-    if matches.empty:
-        return f"I couldn't find charging guidelines for '{description}' in the {team} team. Could you verify the project/activity name or try rephrasing?"
+    # Step 2: Need keywords (if no exact description yet)
+    if not keywords and not exact_description:
+        return "What would you like to charge for? Please provide a description or project name."
     
-    # Format and return results
-    result = format_csv_results(team, matches)
+    # Step 3: If we have exact description, get the data
+    if exact_description:
+        matches, has_multiple = get_charging_data(team, exact_description, location)
+        
+        if matches.empty:
+            # Reset exact_description if not found
+            st.session_state.extracted_context["exact_description"] = None
+            return f"I couldn't find charging codes for '{exact_description}' in {team} team. Please try again."
+        
+        # If multiple locations, ask which one
+        if has_multiple and not location:
+            return format_multiple_locations(team, matches)
+        
+        # Return the charging info
+        row = matches.iloc[0]
+        return format_charging_info(row)
     
-    if len(matches) > 1:
-        result += "\n\n*Which location applies to you?*"
+    # Step 4: Search for descriptions matching keywords
+    matching_descriptions = search_descriptions_by_keywords(team, keywords)
+    
+    if not matching_descriptions:
+        return f"I couldn't find any charging codes matching '{keywords}' in {team} team. Please try a different search term."
+    
+    # If only one match, save it and get the data
+    if len(matching_descriptions) == 1:
+        st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
+        matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
+        
+        if has_multiple and not location:
+            return format_multiple_locations(team, matches)
+        
+        row = matches.iloc[0]
+        return format_charging_info(row)
+    
+    # Multiple descriptions found - ask user to clarify
+    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
+    for idx, desc in enumerate(matching_descriptions, 1):
+        result += f"{idx}. {desc}\n"
+    result += "\nWhich one are you looking for? Please provide the full description or number."
+    
+    return result
+
+# ============================================
+# HANDLE USER SELECTING FROM LIST
+# ============================================
+
+def check_if_selecting_from_list(user_input: str, extracted: Dict) -> str:
+    """Check if user is selecting a description from a list"""
+    team = extracted.get("team")
+    keywords = extracted.get("keywords")
+    
+    if not team or not keywords:
+        return None
+    
+    # Get matching descriptions
+    matching_descriptions = search_descriptions_by_keywords(team, keywords)
+    
+    if len(matching_descriptions) <= 1:
+        return None
+    
+    # Check if user input is a number
+    user_input_clean = user_input.strip()
+    if user_input_clean.isdigit():
+        idx = int(user_input_clean) - 1
+        if 0 <= idx < len(matching_descriptions):
+            return matching_descriptions[idx]
+    
+    # Check if user input matches one of the descriptions
+    user_lower = user_input_clean.lower()
+    for desc in matching_descriptions:
+        if desc.lower() == user_lower or desc.lower() in user_lower:
+            return desc
+    
+    return None
+
+# ============================================
+# UPDATED PROCESS MESSAGE WITH SELECTION HANDLING
+# ============================================
+
+def process_message_with_selection(user_input: str) -> str:
+    """Process message with selection handling"""
+    
+    # Handle greetings
+    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
+    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
+        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
+    
+    # Extract information
+    extracted = extract_query_info(user_input)
+    
+    # Check if user is selecting from a list
+    selected_description = check_if_selecting_from_list(user_input, extracted)
+    if selected_description:
+        st.session_state.extracted_context["exact_description"] = selected_description
+        extracted["exact_description"] = selected_description
+    
+    # Continue with normal processing
+    team = extracted.get("team")
+    keywords = extracted.get("keywords")
+    location = extracted.get("location")
+    exact_description = extracted.get("exact_description")
+    
+    # Step 1: Need team
+    if not team:
+        return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
+    
+    # Step 2: Need keywords (if no exact description yet)
+    if not keywords and not exact_description:
+        return "What would you like to charge for?"
+    
+    # Step 3: If we have exact description, get the data
+    if exact_description:
+        matches, has_multiple = get_charging_data(team, exact_description, location)
+        
+        if matches.empty:
+            st.session_state.extracted_context["exact_description"] = None
+            return f"I couldn't find charging codes for '{exact_description}' in {team} team."
+        
+        # If multiple locations, ask which one
+        if has_multiple and not location:
+            return format_multiple_locations(team, matches)
+        
+        # Return the charging info
+        row = matches.iloc[0]
+        return format_charging_info(row)
+    
+    # Step 4: Search for descriptions matching keywords
+    matching_descriptions = search_descriptions_by_keywords(team, keywords)
+    
+    if not matching_descriptions:
+        return f"I couldn't find any charging codes matching '{keywords}' in {team} team."
+    
+    # If only one match, save it and get the data
+    if len(matching_descriptions) == 1:
+        st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
+        matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
+        
+        if has_multiple and not location:
+            return format_multiple_locations(team, matches)
+        
+        row = matches.iloc[0]
+        return format_charging_info(row)
+    
+    # Multiple descriptions found
+    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
+    for idx, desc in enumerate(matching_descriptions, 1):
+        result += f"{idx}. {desc}\n"
+    result += "\nWhich one are you looking for?"
     
     return result
 
@@ -531,7 +614,7 @@ for msg in messages:
 # CHAT INPUT & PROCESSING
 # ============================================
 
-user_input = st.chat_input("Ask about charging codes, departments, projects, etc.")
+user_input = st.chat_input("Ask about charging codes...")
 
 if user_input:
     # Display user message
@@ -543,8 +626,8 @@ if user_input:
     
     # Process and get response
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            response = process_message(user_input)
+        with st.spinner("Looking up..."):
+            response = process_message_with_selection(user_input)
             st.markdown(response)
     
     # Save assistant response
