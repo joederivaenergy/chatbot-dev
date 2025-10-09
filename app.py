@@ -403,6 +403,10 @@ Examples:
 - Previous: showed 3 locations, Current: "Houston" → {"team": null, "keywords": null, "location": "Houston", "is_new_query": false}
 """
 
+# ============================================
+# EXTRACTION - RESET TEAM FOR NEW QUERIES (UPDATED)
+# ============================================
+
 def extract_query_info(user_query: str) -> Dict:
     """Extract team, keywords, and location from user query"""
     
@@ -426,13 +430,11 @@ def extract_query_info(user_query: str) -> Dict:
         
         is_new_query = data.get("is_new_query", False)
         
-        # If it's a new query, reset context but keep team if not explicitly mentioned
+        # If it's a new query, COMPLETELY RESET context (including team)
+        # User must specify team again for each new charging question
         if is_new_query:
-            previous_team = st.session_state.extracted_context.get("team")
-            new_team = data.get("team")
-            
             extracted = {
-                "team": new_team if new_team else previous_team,
+                "team": data.get("team"),  # Only use if explicitly mentioned in new query
                 "keywords": data.get("keywords"),
                 "location": data.get("location"),
                 "exact_description": None
@@ -559,13 +561,13 @@ def get_charging_data(team: str, exact_description: str, location: str = None) -
 # ============================================
 
 def format_charging_info(row: pd.Series) -> str:
-    """Format a single charging code in simple format"""
-    result = f"""Description: {row['Description']}
-Account number: {row['Account'] if pd.notna(row['Account']) else 'N/A'}
-Location: {row['Location']}
-Company ID: {row['Company ID']}
-Project: {row['Project']}
-Department: {row['Department']}"""
+    """Format a single charging code with markdown bullets"""
+    result = f"""- **Description:** {row['Description']}
+- **Account number:** {row['Account'] if pd.notna(row['Account']) else 'N/A'}
+- **Location:** {row['Location']}
+- **Company ID:** {row['Company ID']}
+- **Project:** {row['Project']}
+- **Department:** {row['Department']}"""
     return result
 
 def format_multiple_locations(team: str, matches: pd.DataFrame) -> str:
@@ -575,7 +577,7 @@ def format_multiple_locations(team: str, matches: pd.DataFrame) -> str:
     result = f"I found {len(matches)} locations for '{description}' in {team} team. Please specify which location:\n\n"
     
     for idx, (_, row) in enumerate(matches.iterrows(), 1):
-        result += f"Option {idx}: {row['Location']}\n"
+        result += f"**Option {idx}:** {row['Location']}\n"
     
     result += "\nWhich location applies to you?"
     return result
@@ -614,7 +616,7 @@ def check_if_selecting_from_list(user_input: str, extracted: Dict) -> str:
     return None
 
 # ============================================
-# CHARGING FLOW PROCESSING
+# CHARGING FLOW - RESET TEAM FOR NEW QUESTIONS (UPDATED)
 # ============================================
 
 def process_charging_question(user_input: str) -> str:
@@ -625,10 +627,10 @@ def process_charging_question(user_input: str) -> str:
     
     # Check if this looks like a new query (fallback detection)
     if is_likely_new_query(user_input):
-        # Keep team but reset everything else
-        previous_team = st.session_state.extracted_context.get("team")
+        # For NEW charging questions, completely reset context
+        # User must specify team again
         st.session_state.extracted_context = {
-            "team": previous_team,
+            "team": None,  # Reset team for new questions
             "keywords": None,
             "location": None,
             "exact_description": None
@@ -650,7 +652,7 @@ def process_charging_question(user_input: str) -> str:
     location = extracted.get("location")
     exact_description = extracted.get("exact_description")
     
-    # Step 1: Need team
+    # Step 1: Need team (ALWAYS ask for new charging questions)
     if not team:
         return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
     
@@ -673,9 +675,9 @@ def process_charging_question(user_input: str) -> str:
         # Return the charging info
         row = matches.iloc[0]
         
-        # After providing answer, clear context but keep team
+        # After providing answer, completely clear context
         st.session_state.extracted_context = {
-            "team": team,
+            "team": None,  # Clear team too
             "keywords": None,
             "location": None,
             "exact_description": None
@@ -700,9 +702,9 @@ def process_charging_question(user_input: str) -> str:
         
         row = matches.iloc[0]
         
-        # After providing answer, clear context but keep team
+        # After providing answer, completely clear context
         st.session_state.extracted_context = {
-            "team": team,
+            "team": None,  # Clear team too
             "keywords": None,
             "location": None,
             "exact_description": None
