@@ -274,14 +274,16 @@ You are Diva, a charging guidelines assistant. Your job is to extract key inform
 Extract the following:
 1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Operations, Engineering). Do NOT infer team from project names or descriptions.
 2. **description**: What they want to charge for (e.g., "Core ERP", "HR Labor", "Wind Maintenance")
-3. **location**: Specific location/site if mentioned (e.g., "Houston", "DSOL", "Wind Site A")
+3. **location**: Specific location/site if mentioned (e.g., "DSOP", "DWOP", "DCS4", "DWE1", "STRG", "DSOL")
 
 CRITICAL RULES:
-- Team must be EXPLICITLY stated by the user (e.g., "IT team", "I'm in Finance", "HR department")
-- Do NOT guess team from project names like "Core ERP" or "HR Labor"
-- If user says "Core ERP" without mentioning team, return team: null
+- Look at ALL previous USER messages to find missing information
+- Team must be EXPLICITLY stated by the user (e.g., "IT team", "I'm in Finance", "HR")
+- If user previously mentioned a description (like "ERP" or "Core ERP"), KEEP that description even if current message doesn't mention it
+- Do NOT guess team from project names like "Core ERP" or "Training"
 - If user says "IT team Core ERP", then team: "IT"
-- Use conversation history to remember team if already stated
+- A short answer like "IT", "Finance", "Houston" is usually answering the assistant's clarification question
+- Accumulate information across the conversation - don't lose context
 
 Return ONLY valid JSON:
 {
@@ -329,8 +331,42 @@ def extract_query_info(user_query: str) -> Dict:
             "description": data.get("description"),
             "location": data.get("location")
         }
+
+        # Merge with existing context (accumulate information)
+        merged = {}
+        for key in ["team", "description", "location"]:
+            # Use new value if present, otherwise keep old value
+            if extracted.get(key):
+                merged[key] = extracted[key]
+            elif st.session_state.extracted_context.get(key):
+                merged[key] = st.session_state.extracted_context[key]
+            else:
+                merged[key] = None
+        
+        # Update session state
+        st.session_state.extracted_context = merged
+        
+        return merged
+        
     except Exception as e:
-        return {"team": None, "description": None, "location": None}
+        return st.session_state.extracted_context.copy()
+
+# ============================================
+# UPDATE RESET FUNCTION
+# ============================================
+
+def reset_history():
+    try:
+        chat_history.clear()
+        # Clear extracted context
+        st.session_state.extracted_context = {
+            "team": None,
+            "description": None,
+            "location": None
+        }
+        st.success("Chat cleared!")
+    except Exception as e:
+        st.warning(f"Could not clear history: {e}")
 
 # ============================================
 # CSV QUERY FUNCTIONS
