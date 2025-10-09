@@ -214,12 +214,12 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("�� Tools", expanded=True):
-    if st.button("��️ Clear Chat"):
+with st.sidebar.expander("🧹 Tools", expanded=True):
+    if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("�� Support"):
+with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 st.sidebar.divider()
