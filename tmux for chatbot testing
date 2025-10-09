@@ -1,0 +1,50 @@
+1. Start the Chatbot with tmux
+Create a tmux session
+tmux new -s chatbot
+
+Run the Streamlit app
+streamlit run app.py --server.port 8080 --server.address 0.0.0.0
+
+You can now view your Streamlit app in your browser.
+
+
+press:
+Ctrl + B, then D
+This detaches the session and leaves your app running in the background.
+
+✅ The chatbot is now running 24/7 — you can safely close your SSH terminal.
+
+2. Reattach to the Session (to Check or Update)
+
+When you want to update or check logs:
+
+tmux attach -t chatbot
+
+You’ll see the running logs of your chatbot.
+
+3. Stop the Running App
+
+Inside the tmux session:
+
+Ctrl + C
+
+This stops the current Streamlit app but keeps you inside tmux.
+
+4. Update the Code
+
+While still inside tmux: 
+git pull
+
+
+If dependencies changed:
+pip install -r requirements.txt
+
+5. Restart the App
+
+Start the app again:
+streamlit run app.py --server.port 8080 --server.address 0.0.0.0
+
+
+Once it starts successfully, detach again:
+Ctrl + B, then D
+✅ the chatbot now runs the newest version.
