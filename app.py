@@ -261,7 +261,7 @@ def call_claude(system_prompt: str, user_message: str, include_history: bool = T
         return None
 
 # ============================================
-# EXTRACTION PROMPT
+# EXTRACTION PROMPT (UPDATED)
 # ============================================
 
 EXTRACTION_PROMPT = """
@@ -271,25 +271,28 @@ Extract:
 1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Operations, Engineering)
 2. **keywords**: Key words the user wants to search for (e.g., "erp", "labor", "maintenance")
 3. **location**: Specific location if mentioned (e.g., "Houston", "DSOL")
+4. **is_new_query**: Is this a NEW charging question or a follow-up/clarification? (true/false)
 
-RULES:
-- Team must be explicitly stated (e.g., "IT team", "I'm in Finance", or answering "IT" to clarification)
-- Keywords should be the main search terms (not full sentences)
-- Use conversation history to accumulate information
-- If user gives a short answer like "IT" or "Houston", they're answering a clarification question
+RULES FOR is_new_query:
+- TRUE if: User asks "how to charge X", "where to charge Y", "codes for Z", or any new charging question
+- FALSE if: User gives short answers like "IT", "Houston", "1", "option 2" (these are clarifications)
+- TRUE if: User asks about a DIFFERENT project/activity than previous conversation
+- FALSE if: User is answering assistant's clarification questions
 
 Return ONLY valid JSON:
 {
   "team": "IT" | "Finance" | "HR" | "Operations" | "Engineering" | null,
   "keywords": "search terms" | null,
-  "location": "location name" | null
+  "location": "location name" | null,
+  "is_new_query": true | false
 }
 
 Examples:
-- "how to charge erp" → {"team": null, "keywords": "erp", "location": null}
-- "IT team core erp" → {"team": "IT", "keywords": "core erp", "location": null}
-- Previous: "how to charge erp", Current: "IT" → {"team": "IT", "keywords": "erp", "location": null}
-- "HR labor in Houston" → {"team": null, "keywords": "labor", "location": "Houston"}
+- "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "is_new_query": true}
+- Previous asked team, Current: "IT" → {"team": "IT", "keywords": null, "location": null, "is_new_query": false}
+- Previous: "Core ERP codes", Current: "what about HR labor?" → {"team": null, "keywords": "labor", "location": null, "is_new_query": true}
+- Previous: showed 3 locations, Current: "Houston" → {"team": null, "keywords": null, "location": "Houston", "is_new_query": false}
+- Previous: showed list, Current: "1" → {"team": null, "keywords": null, "location": null, "is_new_query": false}
 """
 
 def extract_query_info(user_query: str) -> Dict:
@@ -313,6 +316,25 @@ def extract_query_info(user_query: str) -> Dict:
         m = re.search(r'\{.*\}', content, re.DOTALL)
         data = json.loads(m.group() if m else content)
         
+        is_new_query = data.get("is_new_query", False)
+        
+        # If it's a new query, reset context but keep team if not explicitly mentioned
+        if is_new_query:
+            # Keep team from previous context if not specified in new query
+            previous_team = st.session_state.extracted_context.get("team")
+            new_team = data.get("team")
+            
+            extracted = {
+                "team": new_team if new_team else previous_team,
+                "keywords": data.get("keywords"),
+                "location": data.get("location"),
+                "exact_description": None  # Reset for new query
+            }
+            
+            st.session_state.extracted_context = extracted
+            return extracted
+        
+        # If it's a follow-up, merge with existing context
         extracted = {
             "team": data.get("team"),
             "keywords": data.get("keywords"),
@@ -335,6 +357,159 @@ def extract_query_info(user_query: str) -> Dict:
         
     except Exception as e:
         return st.session_state.extracted_context.copy()
+
+# ============================================
+# HELPER: DETECT NEW QUERY (FALLBACK)
+# ============================================
+
+def is_likely_new_query(user_input: str) -> bool:
+    """
+    Fallback detection if LLM extraction fails
+    Detect if user is asking a new charging question
+    """
+    user_lower = user_input.lower().strip()
+    
+    # Phrases that indicate new queries
+    new_query_phrases = [
+        "how to charge",
+        "where to charge",
+        "charge for",
+        "charging for",
+        "codes for",
+        "what about",
+        "how about",
+        "need codes",
+        "looking for"
+    ]
+    
+    for phrase in new_query_phrases:
+        if phrase in user_lower:
+            return True
+    
+    # If it's a short answer (likely clarification)
+    if len(user_input.split()) <= 3:
+        return False
+    
+    # If it contains question words, likely new
+    question_words = ["how", "what", "where", "which", "can", "do"]
+    first_word = user_lower.split()[0] if user_lower.split() else ""
+    if first_word in question_words:
+        return True
+    
+    return False
+
+# ============================================
+# UPDATED PROCESS MESSAGE (WITH NEW QUERY DETECTION)
+# ============================================
+
+def process_message_with_selection(user_input: str) -> str:
+    """Process message with selection handling and new query detection"""
+    
+    # Handle greetings
+    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
+    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
+        # Clear context on greeting
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
+    
+    # Check if this looks like a new query (fallback detection)
+    if is_likely_new_query(user_input):
+        # Keep team but reset everything else
+        previous_team = st.session_state.extracted_context.get("team")
+        st.session_state.extracted_context = {
+            "team": previous_team,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+    
+    # Extract information
+    extracted = extract_query_info(user_input)
+    
+    # Check if user is selecting from a list (only if we already have a context)
+    if extracted.get("keywords") and not extracted.get("exact_description"):
+        selected_description = check_if_selecting_from_list(user_input, extracted)
+        if selected_description:
+            st.session_state.extracted_context["exact_description"] = selected_description
+            extracted["exact_description"] = selected_description
+    
+    # Continue with normal processing
+    team = extracted.get("team")
+    keywords = extracted.get("keywords")
+    location = extracted.get("location")
+    exact_description = extracted.get("exact_description")
+    
+    # Step 1: Need team
+    if not team:
+        return "Which team are you with? (IT, Finance, HR, Operations, or Engineering)"
+    
+    # Step 2: Need keywords (if no exact description yet)
+    if not keywords and not exact_description:
+        return "What would you like to charge for?"
+    
+    # Step 3: If we have exact description, get the data
+    if exact_description:
+        matches, has_multiple = get_charging_data(team, exact_description, location)
+        
+        if matches.empty:
+            st.session_state.extracted_context["exact_description"] = None
+            return f"I couldn't find charging codes for '{exact_description}' in {team} team."
+        
+        # If multiple locations, ask which one
+        if has_multiple and not location:
+            return format_multiple_locations(team, matches)
+        
+        # Return the charging info
+        row = matches.iloc[0]
+        
+        # After providing answer, clear context but keep team
+        st.session_state.extracted_context = {
+            "team": team,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        
+        return format_charging_info(row)
+    
+    # Step 4: Search for descriptions matching keywords
+    matching_descriptions = search_descriptions_by_keywords(team, keywords)
+    
+    if not matching_descriptions:
+        return f"I couldn't find any charging codes matching '{keywords}' in {team} team."
+    
+    # If only one match, save it and get the data
+    if len(matching_descriptions) == 1:
+        st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
+        matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
+        
+        if has_multiple and not location:
+            return format_multiple_locations(team, matches)
+        
+        row = matches.iloc[0]
+        
+        # After providing answer, clear context but keep team
+        st.session_state.extracted_context = {
+            "team": team,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        
+        return format_charging_info(row)
+    
+    # Multiple descriptions found
+    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
+    for idx, desc in enumerate(matching_descriptions, 1):
+        result += f"{idx}. {desc}\n"
+    result += "\nWhich one are you looking for?"
+    
+    return result
 
 # ============================================
 # CSV SEARCH FUNCTIONS (WHOLE WORD MATCHING)
