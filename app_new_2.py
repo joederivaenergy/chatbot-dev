@@ -19,7 +19,7 @@ CHARGING_GUIDELINES_LINK = "https://derivaenergy.sharepoint.com/:x:/r/sites/Deri
 # --- CSV File Paths ---
 CSV_FILES = {
     'IT': 'csvs/Guidelines_cleaned_it.csv',
-    'Finance': 'csvs/Guidelines_cleaned_finance.csv',
+    'Finance': 'csvs/Guidelines_cleaned_Finance.csv',
     'HR': 'csvs/Guidelines_cleaned_HR.csv',
     'Legal': 'csvs/Guidelines_cleaned_Legal.csv',
     'Corporate': 'csvs/Guidelines_cleaned_Corporate.csv',
