@@ -251,7 +251,7 @@ with st.sidebar.expander("📧 Support"):
 # ============================================
 
 st.markdown("<h1 style='text-align: center;'>⚡Meet Diva!</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines and more</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines and More</p>", unsafe_allow_html=True)
 
 # ============================================
 # LLM HELPER FUNCTIONS
@@ -374,6 +374,12 @@ def is_charging_question(user_query: str) -> bool:
 
 GENERAL_ASSISTANT_PROMPT = """
 You are Diva, a friendly and helpful assistant for Deriva Energy employees.
+
+IMPORTANT CONTEXT:
+- "Charging" in this context means TIME CHARGING and EXPENSE CHARGING for accounting/billing purposes
+- This is about charging time to projects, departments, and cost centers
+- This is NOT about electric vehicle charging or battery charging
+- You help with: timesheet codes, expense report codes, project codes, department codes, account numbers
 
 Your primary purpose is to help with charging guidelines, but you can also answer general questions conversationally.
 
