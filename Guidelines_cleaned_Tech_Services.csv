@@ -1,0 +1,66 @@
+﻿Description,Company ID,Location,Department,Project,Account,Account Name
+Salaries,"(77079) Deriva Energy Sub I
+(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC
+(75736) - General & Admin
+**Project Specific - see Project Activity Sequence","DSOP
+DWOP
+DCS4
+DWE1
+STRG
+DSOL
+**Project Specific - see Project Activity Sequence",,"DSOP25G001
+DWOP25G001
+DCS425G001
+DWE125G001
+STRG25G001
+DSOL25G001
+**Project Specific - see Project Activity Sequence tab",512101,Salaries and Wages - Regular Hours - Salaried
+Spot Bouns,"(75736) Deriva Energy Services, LLC",DSOL,8057,DSOL25G001,512401,Bonus - Salaried
+"PMD
+ (personal mobile device)","(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,513105,Telecom - Cellular Service
+Conferences,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517400,Conferences and Seminars
+Travel - Flight / Airfare,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517103,Transportation - Flight / Airfare
+Travel - Lodging,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517110,Accommodations Hotel / Lodging Expenses
+Travel - Meals - Individual,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517200,Meals
+Parking,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517102,Transportation - Tolls and Parking
+Memberships,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517600,Memberships
+Contract Workers,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,515220,Consultant - Staff Augmentation
+Consultants,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,515200,Consultant Other
+Training,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517501,Employee Training
+Subscriptions,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517600,Memberships
+Subscriptions,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517601,Newspapers and Magazines Subscription
+Conferences,"(75736) Deriva Energy Services, LLC",DSOL,See Employee Dept List,DSOL25G001,517400,Conferences and Seminars
+Warehousing Costs - Development,"(77079) DE Renewables Solar, LLC
+(75752) Deriva Energy Wind, LLC
+(75969) Deriva Energy Storage, LLC","DWE1
+DCS4
+STRG",See Employee Dept List,"DCS425G001
+DWE125G001
+STRG25G001",513401,Long Term Lease Building/Office Space
+Inventory Warehouses,"(77079) DE Renewables Solar, LLC
+(75752) Deriva Energy Wind, LLC","DWOP
+DSOP",See Employee Dept List,"DSOP25G001
+DWOP25G001",513401,Long Term Lease Building/Office Space
+Tax for Renewable Ops Corporate Inventory purchases,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,516400,Non-Recoverable Tax Expense
+Freight for Renewable Ops Corporate Inventory purchases,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514130,Maintenance Material Freight Out Courier/Trucking
+Freight charges from the Vendor for Renewable Ops Corporate Inventory purchases being sent to the warehouse,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514130,Maintenance Material Freight Out Courier/Trucking
+UPS weekly service charge ,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514130,Maintenance Material Freight Out Courier/Trucking
+Non-Inventory Consumables,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514151,Supplies Consumable Maintenance
+CORP inventory repairs/inspections,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,515109,Outside Services Equipment Maintenance
+PPE & Uniform Purchases,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514154,Supplies Safety Gear
+PPE & Uniform Purchases,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514156,Supplies Uniforms
+Technician/Site Tool Purchases,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514153,Supplies Tools
+Fleet Shared Tool Purchases (non-capital),"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,514153,Supplies Tools
+Tool repairs for tools shared across the Fleet,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,515100,Outside Services Other
+Tool repairs for site specific tools,Site Company ID,ROMM,See Employee Dept List,ROMM25G001,515100,Outside Services Other
+Tool calibration for tools shared across the Fleet,"(75736) Deriva Energy Services, LLC",ROMM,See Employee Dept List,ROMM25G001,515100,Outside Services Other
+Tool calibration for site specific tools,Site Company ID,ROMM,See Employee Dept List,ROMM25G001,515100,Outside Services Other
+Handling of components by Flanders or other vendors,,,See Employee Dept List,,515100,Outside Services Other
+Monthly blade storage and blade transportation (RMS Cranes),"(75752) Deriva Energy Wind, LLC",DWOP,See Employee Dept List,DWOP25G001,515100,Outside Services Other
+Office Supplies for the Warehouses,"(77079) DE Renewables Solar, LLC
+(75752) Deriva Energy Wind, LLC","DWOP
+DSOP",See Employee Dept List,"DSOP25G001
+DWOP25G001",514200,Office Supplies - General
