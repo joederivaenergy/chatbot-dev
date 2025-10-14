@@ -198,7 +198,7 @@ if os.path.exists("Deriva-Logo.png"):
 else:
     st.sidebar.warning("⚠️ logo.png not found")
 
-st.sidebar.title("⚙️ Settings")
+st.sidebar.title(" ")
 
 # Initialize chat history
 chat_history = DynamoDBChatHistory(
@@ -220,16 +220,14 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("🧹 Tools", expanded=True):
+with st.sidebar.expander("⚙️ Tools", expanded=True):
     if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
 
-st.sidebar.divider()
-
-with st.sidebar.expander("ℹ️ About charging questions", expanded=False):
+with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
     st.markdown("""    
-    Diva provides the following information based on description:
+    About charging questions, Diva provides the following information based on description:
     - Account Number
     - Location
     - Company ID
