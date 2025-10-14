@@ -1,34 +1,3 @@
-import pandas as pd
-import os
-
-# Path to your Excel file
-excel_file = "Guidelines_cleaned.xlsx"
-
-# Output folder (optional)
-output_dir = "csv_exports"
-os.makedirs(output_dir, exist_ok=True)
-
-# Read all sheet names
-xls = pd.ExcelFile(excel_file)
-
-# Loop through each sheet and save as CSV
-for sheet_name in xls.sheet_names:
-    df = pd.read_excel(xls, sheet_name=sheet_name)
-    
-    # Clean up the sheet name (remove spaces/special chars if needed)
-    safe_name = sheet_name.strip().replace(" ", "_")
-    
-    # Build output file name
-    csv_filename = f"Guidelines_cleaned_{safe_name}.csv"
-    output_path = os.path.join(output_dir, csv_filename)
-    
-    # Save to CSV
-    df.to_csv(output_path, index=False, encoding='utf-8-sig')
-    print(f"✅ Saved: {csv_filename}")
-
-print("✅ All sheets have been converted to CSVs!")
-
-
 import os
 import json
 import uuid
