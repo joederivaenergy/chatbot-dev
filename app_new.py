@@ -220,7 +220,9 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("⚙️ Tools", expanded=True):
+with st.sidebar.expander(
+    label="<span style='font-size:22px; font-weight:bold;'>⚙️ Tools</span>",
+    expanded=True):
     if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
