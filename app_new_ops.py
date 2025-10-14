@@ -17,7 +17,7 @@ DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 CSV_FILES = {
     'IT': 'csvs/Guidelines_cleaned_it.csv',
     'Finance': 'csvs/Guidelines_cleaned_finance.csv',
-    'HR': 'csvs/Guidelines_cleaned_hr.csv',
+    'HR': 'csvs/Guidelines_cleaned_HR.csv',
     'Legal': 'csvs/Guidelines_cleaned_Legal.csv',
     'Corporate': 'csvs/Guidelines_cleaned_Corporate.csv',
     'Land Services': 'csvs/Guidelines_cleaned_Land_Services.csv',
@@ -203,7 +203,13 @@ if "in_charging_flow" not in st.session_state:
 # SIDEBAR
 # ============================================
 
-st.sidebar.title("⚙️ Settings")
+# Add logo at the very top of sidebar
+if os.path.exists("Deriva-Logo.png"):
+    st.sidebar.image("Deriva-Logo.png", width=200)
+else:
+    st.sidebar.warning("⚠️ logo.png not found")
+
+st.sidebar.title(" ")
 
 # Initialize chat history
 chat_history = DynamoDBChatHistory(
@@ -218,31 +224,44 @@ def reset_history():
             "team": None,
             "keywords": None,
             "location": None,
-            "exact_description": None,
-            "operation_type": None
+            "exact_description": None
         }
         st.session_state.in_charging_flow = False
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("�� Tools", expanded=True):
-    if st.button("��️ Clear Chat"):
+with st.sidebar.expander("⚙️ Tools", expanded=True):
+    if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("�� Support"):
-    st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
+with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
+    st.markdown("""    
+    About charging questions, Diva provides the following information based on description:
+    - Account Number
+    - Location
+    - Company ID
+    - Project (Concur, Timesheets)
+    - Department    
+    ---
+    
+    For additional info, please refer to [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true).
+    """)
 
 st.sidebar.divider()
-st.sidebar.caption("Diva The Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
+st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
+
+with st.sidebar.expander("📧 Support"):
+    st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
+
 
 # ============================================
 # HEADER
 # ============================================
 
 st.markdown("<h1 style='text-align: center;'>⚡Meet Diva!</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines and More</p>", unsafe_allow_html=True)
 
 # ============================================
 # LLM HELPER FUNCTIONS
@@ -365,6 +384,12 @@ def is_charging_question(user_query: str) -> bool:
 
 GENERAL_ASSISTANT_PROMPT = """
 You are Diva, a friendly and helpful assistant for Deriva Energy employees.
+
+IMPORTANT CONTEXT:
+- "Charging" in this context means TIME CHARGING and EXPENSE CHARGING for accounting/billing purposes
+- This is about charging time to projects, departments, and cost centers
+- This is NOT about electric vehicle charging or battery charging
+- You help with: timesheet codes, expense report codes, project codes, department codes, account numbers
 
 Your primary purpose is to help with charging guidelines, but you can also answer general questions conversationally.
 
