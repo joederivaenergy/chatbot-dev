@@ -1,0 +1,212 @@
+﻿Description,Company ID,Location,Department,Project,Account,Account Name,Additional Guidance
+Preventative Maintenance,,,,,,,
+Labor - Site (Deriva FTE's) (Preventative Maintenance),,,,XXXX25G006,512101,Salaries and Wages - Regular Hours - Salaried,Site Technicians 
+Labor - Site (Deriva FTE's) (Preventative Maintenance),,,,XXXX25G002,512101,Salaries and Wages - Regular Hours - Salaried,Site ARRC's
+Labor - Site (Deriva FTE's) (Preventative Maintenance),,,,XXXX25G002 ,512101,Salaries and Wages - Regular Hours - Salaried,"Site Area Managers, Planner/Schedulers, Supervisors"
+Staff Aug/ Contingent workers - Site (Preventative Maintenance),,,,XXXX25G006,515220,Consultant - Staff Augmentation,"Technician/SRC contingent worker labor for individuals under the direct supervision of a Deriva Manager/Supervisor (included on Duke org chart); i.e. Spencer Ogden, ERSG, Staffing Specialist"
+3rd Party Maintenance Support (Preventative Maintenance),,,,XXXX25G006,515219,Consultant - 3rd Party Maintenance Support ,"Technician labor for technicians NOT under the direct supervision of a Deriva Manager/Supervisor; i.e. Uptower Inc., support from the OEM, etc. "
+Scheduled Maintenance or General Site Support from Central Services Teams (Preventative Maintenance),,,,XXXX25G006,514151,Supplies Consumable Maintenance,"Parts, materials, and consumables for all scheduled maintenance (including semi-annual, annual, 2-year, 5-year, etc.); includes cleaners, rags, grease, filters, top-off oil, antifreeze, oil samples for gearbox, hydraulic oil, grease samples for main bearings"
+Scheduled Maintenance or General Site Support from Central Services Teams (Preventative Maintenance),,,,XXXX25G006,512101,Salaries and Wages - Regular Hours - Salaried,Labor - MST Support (Deriva FTE)
+Scheduled Maintenance or General Site Support from Central Services Teams (Preventative Maintenance),,,,XXXX25G006,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Scheduled Maintenance or General Site Support from Central Services Teams (Preventative Maintenance),,,,XXXX25G006,517112,Per Diem Allowance Travel Meals,Per Diem
+Scheduled Maintenance or General Site Support from Central Services Teams (Preventative Maintenance),,,,XXXX25G006,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Scheduled Maintenance or General Site Support from Central Services Teams (Preventative Maintenance),,,,XXXX25G006,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Other consumable Items & inventoried parts as used (not covered during scheduled maint) (Preventative Maintenance),,,,XXXX25G006,514151,Supplies Consumable Maintenance,"Hardware, o-rings, Rewitec, etc.; considered consumable in the tower; expensed when purchased; general stocking (warehouse small parts, nuts, bolts)
+* If the consumable box is NOT checked in Maximo, use the coding guidance in the Inventory Items row below"
+Refurbished Parts (Preventative Maintenance),,,,XXXX25G006,514159,Supplies Consumable Maintenance - Refurbished Parts,Refurbished Parts
+Airgas (Bulk Gases) (Preventative Maintenance),,,,XXXX25G006,514100,Maintenance Material Other,"Airgas, SF6 for breakers, nitrogen for accumulators  "
+General Expenses & Other (Preventative Maintenance),,,,XXXX25G006,514100,Maintenance Material Other,"Recycling (cardboard, plastic); safety meetings, meals, recognitions, & awards; gifts for site tours & job fairs, REC transfer fees (WREGIS), storage fees, Connex storage, lubrication upgrade costs (filter carts, labels, jugs), meters"
+Safety PPE (Preventative Maintenance),,,,XXXX25G006,514154,Supplies Safety Gear,"Hard hats, safety glasses, boots, harnesses, first aid kits, rescue dummy, lanyards, TSL kits, uniform/clothing replacements & new hires, fire extinguisher cert/service, fire suppression system inspections/service, fire alarms"
+Tooling (Preventative Maintenance),,,,XXXX25G006,514153,Supplies Tools,"Tooling (ERAD's, tension pumps, DRA tooling, etc.); calibrations  - *** tooling related to a specific job should be coded to the applicable project code"
+Training (including Safety Training) (Preventative Maintenance),,,,XXXX25G006,517501,Employee Training,"Danish Wind Academy, HV substation training, On-Boarding/DRA training + materials, other training fees"
+Site Vehicles (Preventative Maintenance),,,,XXXX25G006,514501,Vehicle Fuel / Gas,Vehicle Fuel / Gas
+Site Vehicles (Preventative Maintenance),,,,XXXX25G006,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Site Vehicles (Preventative Maintenance),,,,XXXX25G006,514502,Vehicle Maintenace and Repairs,Vehicle Maintenace and Repairs
+Freight/Shipping (Preventative Maintenance),,,,XXXX25G006,514130,Maintenance Material Freight Out Courier/Trucking,UPS & other freight handling charges; tariff charges
+Personal Mobile Device (Preventative Maintenance),,,,XXXX25G006,513105,Telecom - Cellular Service,Personal Mobile Devices for Site Staff
+Travel & Expenses (Preventative Maintenance),,,,XXXX25G006,517100,Transportation - Other,Travel for Site Staff- use applicable travel account to correspond with cost
+Travel & Expenses (Preventative Maintenance),,,,XXXX25G006,517112,Per Diem Allowance Travel Meals,Per Diem
+Bonus (Preventative Maintenance),,,,XXXX25G006,512401,Bonus - Salaried,Sign on/recruiting bonus for OEM techs
+Relocation (Preventative Maintenance),,,,XXXX25G006,512334,Hiring Costs / Moving Expenses / Relocation Costs - Salaried,Relocation/Moving Expenses (when applicable for site technicians)
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,514104,Maintenance Material Gear/Hydraulic Oil,"Parts, materials, supplies"
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,515109,Outside Services Equipment Maintenance,3rd Party Services
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,517112,Per Diem Allowance Travel Meals,Per Diem
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Mobile Oil Exchanges (Preventative Maintenance),,,,XXXX25G006,514501,Vehicle Fuel / Gas,Vehicle Fuel
+LTSA - O&M Fixed and Variable Fee,,,,XXXX25G004,"113200 - Prepaid for invoices paying in advance
+515140 - Accounting books expense to monthly",Operation and maintenance - fixed fee,"Fixed Fee OEM Warranty Maint Svc Agreement (turnkey); includes limited damages and CPI increase (Frontier II, Ledyard, North Allegheny only)"
+LTSA - O&M Contract - Bonus,,,,XXXX25G004,"113200 - Prepaid for invoices paying in advance
+514411 - Accounting records expense to monthly",O&M - Availability Bonus,O&M contract; production-based incentive and profit sharing for performance over a set number in O&M contract (Frontier)
+Blade Inspections,,,,XXXX25G003,515109,Outside Services Equipment Maintenance,"Blade Inspections  - Contractor Support
+*Managed and arranged by the site - use site dept
+*Managed and arranged by the Blade Team - use dept 8133"
+Blade Inspections,,,,XXXX25G003,514404,R&M Blades,"Consumables, Materials and Supplies"
+Blade Inspections,,,,XXXX25G003,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Blade Inspections,,,,XXXX25G003,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Blade Inspections,,,,XXXX25G003,517112,Per Diem Allowance Travel Meals,Per Diem
+Blade Inspections,,,,XXXX25G003,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Blade Inspections,,,,XXXX25G003,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Blade Inspections,,,,XXXX25G003,514501,Vehicle Fuel / Gas,Vehicle Fuel
+End of Contract Inspections,,,,XXXX25E001,515109,Outside Services Equipment Maintenance,3rd Party Services
+End of Contract Inspections,,,,XXXX25E001,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+End of Contract Inspections,,,,XXXX25E001,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+End of Contract Inspections,,,,XXXX25E001,517112,Per Diem Allowance Travel Meals,Per Diem
+End of Contract Inspections,,,,XXXX25E001,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+End of Contract Inspections,,,,XXXX25E001,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+End of Contract Inspections,,,,XXXX25E001,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Labor - Site (Deriva FTE's),,,,XXXX25G005,512101,Salaries and Wages - Regular Hours - Salaried,Site Technicians 
+Staff Aug/ Contingent workers - Site,,,,XXXX25G005,515220,Consultant - Staff Augmentation,"Technician/SRC contingent worker labor for individuals under the direct supervision of a Deriva Manager/Supervisor (included on Duke org chart); i.e. Spencer Ogden, ERSG, Staffing Specialist"
+OEM Tech Support,,,,XXXX25G005,515200,Consultant Other,Tech support from the OEM (Original Equipment Manufacturer)
+3rd Party Maintenance Support,,,,XXXX25G006,515219,Consultant - 3rd Party Maintenance Support ,Technician labor for technicians NOT under the direct supervision of a Deriva Manager/Supervisor; i.e. Uptower Inc.
+Specialized Jobs,,,,XXXX25G005,515100,Outside Services Other,"Specialized jobs or non-routine work (i.e. tower cleaning, yaw ring replacement, outsourcing labor for lubrication excellence upgrade to build/upgrade the room, oil cleanup performed by external resources, base bolt tensioning)"
+Gearbox failure & repair,,,,XXXX25M001,514408,R&M Gearbox,"Materials and components for complete exchanges (includes gearbox kits); including sales tax; storage fees 
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Gearbox failure & repair,,,,XXXX25M001,515109,Outside Services Equipment Maintenance,"Repair of component, D&I reports, external contract labor and turnkey services"
+Gearbox failure & repair,,,,XXXX25M001,515114,Outside Services Corps of Engineers,"3rd party engineering services (post-development arc flash testing, proposal reviews), large component RCA costs, inspections & reports (root cause analysis, bed crack)"
+Gearbox failure & repair,,,,XXXX25M001,514413,Repairs & Maintenance - Refurbished Parts,Refurbished Parts
+Gearbox failure & repair,,,,XXXX25M001,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Gearbox failure & repair,,,,XXXX25M001,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Gearbox failure & repair,,,,XXXX25M001,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Gearbox failure & repair,,,,XXXX25M001,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Gearbox failure & repair,,,,XXXX25M001,517112,Per Diem Allowance Travel Meals,Per Diem
+Gearbox failure & repair,,,,XXXX25M001,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Gearbox failure & repair,,,,XXXX25M001,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Gearbox failure & repair,,,,XXXX25M001,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Generator failure & repair,,,,XXXX25M002,514406,R&M Generator,"Materials and components for complete exchanges; including sales tax; storage fees
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Generator failure & repair,,,,XXXX25M002,515109,Outside Services Equipment Maintenance,"Repair of component, D&I reports, external contract labor and turnkey services"
+Generator failure & repair,,,,XXXX25M002,515114,Outside Services Corps of Engineers,"3rd party engineering services (post-development arc flash testing, proposal reviews), large component RCA costs, inspections & reports (root cause analysis, bed crack)"
+Generator failure & repair,,,,XXXX25M002,514413,Repairs & Maintenance - Refurbished Parts,Refurbished Parts
+Generator failure & repair,,,,XXXX25M002,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Generator failure & repair,,,,XXXX25M002,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Generator failure & repair,,,,XXXX25M002,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Generator failure & repair,,,,XXXX25M002,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Generator failure & repair,,,,XXXX25M002,517112,Per Diem Allowance Travel Meals,Per Diem
+Generator failure & repair,,,,XXXX25M002,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Generator failure & repair,,,,XXXX25M002,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Generator failure & repair,,,,XXXX25M002,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Main bearing/shaft failure & repair,,,,XXXX25M003,514408,R&M Gearbox,"Materials and components for complete exchanges; including sales tax; storage fees
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Main bearing/shaft failure & repair,,,,XXXX25M003,515109,Outside Services Equipment Maintenance,"Repair of component, D&I reports, external contract labor and turnkey services"
+Main bearing/shaft failure & repair,,,,XXXX25M003,515114,Outside Services Corps of Engineers,"3rd party engineering services (post-development arc flash testing, proposal reviews), large component RCA costs, inspections & reports (root cause analysis, bed crack)"
+Main bearing/shaft failure & repair,,,,XXXX25M003,514413,Repairs & Maintenance - Refurbished Parts,Refurbished Parts
+Main bearing/shaft failure & repair,,,,XXXX25M003,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Main bearing/shaft failure & repair,,,,XXXX25M003,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Main bearing/shaft failure & repair,,,,XXXX25M003,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Main bearing/shaft failure & repair,,,,XXXX25M003,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Main bearing/shaft failure & repair,,,,XXXX25M003,517112,Per Diem Allowance Travel Meals,Per Diem
+Main bearing/shaft failure & repair,,,,XXXX25M003,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Main bearing/shaft failure & repair,,,,XXXX25M003,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Main bearing/shaft failure & repair,,,,XXXX25M003,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Transformer,,,,XXXX25M005,514407,Repairs & Maintenance - Transformer,"Materials and components for complete exchanges; including sales tax; storage fees
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Transformer,,,,XXXX25M005,515109,Outside Services Equipment Maintenance,"Repair of component, D&I reports, external contract labor and turnkey services"
+Transformer,,,,XXXX25M005,515114,Outside Services Corps of Engineers,"3rd party engineering services (post-development arc flash testing, proposal reviews), large component RCA costs, inspections & reports (root cause analysis, bed crack)"
+Transformer,,,,XXXX25M005,514413,Repairs & Maintenance - Refurbished Parts,Refurbished Parts
+Transformer,,,,XXXX25M005,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Transformer,,,,XXXX25M005,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Transformer,,,,XXXX25M005,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Transformer,,,,XXXX25M005,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Transformer,,,,XXXX25M005,517112,Per Diem Allowance Travel Meals,Per Diem
+Transformer,,,,XXXX25M005,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Transformer,,,,XXXX25M005,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Transformer,,,,XXXX25M005,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Blade Bearing Replacement,,,,XXXX25M006,514404,R&M Blades,"Materials and components for complete exchanges; including sales tax; storage fees
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Blade Bearing Replacement,,,,XXXX25M006,515109,Outside Services Equipment Maintenance,"Repair of component, D&I reports, external contract labor and turnkey services"
+Blade Bearing Replacement,,,,XXXX25M006,515114,Outside Services Corps of Engineers,"3rd party engineering services (post-development arc flash testing, proposal reviews), large component RCA costs, inspections & reports (root cause analysis, bed crack)"
+Blade Bearing Replacement,,,,XXXX25M006,514413,Repairs & Maintenance - Refurbished Parts,Refurbished Parts
+Blade Bearing Replacement,,,,XXXX25M006,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Blade Bearing Replacement,,,,XXXX25M006,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Blade Bearing Replacement,,,,XXXX25M006,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Blade Bearing Replacement,,,,XXXX25M006,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Blade Bearing Replacement,,,,XXXX25M006,517112,Per Diem Allowance Travel Meals,Per Diem
+Blade Bearing Replacement,,,,XXXX25M006,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Blade Bearing Replacement,,,,XXXX25M006,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Blade Bearing Replacement,,,,XXXX25M006,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Pitch Bearing Replacement,,,,XXXX25M007,514405,Repairs & Maintenance - Pitch Bearings,"Materials and components for complete exchanges; including sales tax; storage fees
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Pitch Bearing Replacement,,,,XXXX25M007,515109,Outside Services Equipment Maintenance,"Repair of component, D&I reports, external contract labor and turnkey services"
+Pitch Bearing Replacement,,,,XXXX25M007,515114,Outside Services Corps of Engineers,"3rd party engineering services (post-development arc flash testing, proposal reviews), large component RCA costs, inspections & reports (root cause analysis, bed crack)"
+Pitch Bearing Replacement,,,,XXXX25M007,514413,Repairs & Maintenance - Refurbished Parts,Refurbished Parts
+Pitch Bearing Replacement,,,,XXXX25M007,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Pitch Bearing Replacement,,,,XXXX25M007,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Pitch Bearing Replacement,,,,XXXX25M007,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Pitch Bearing Replacement,,,,XXXX25M007,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Pitch Bearing Replacement,,,,XXXX25M007,517112,Per Diem Allowance Travel Meals,Per Diem
+Pitch Bearing Replacement,,,,XXXX25M007,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Pitch Bearing Replacement,,,,XXXX25M007,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Pitch Bearing Replacement,,,,XXXX25M007,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Blade failures & repairs,,,,XXXX25M004,515109,Outside Services Equipment Maintenance,"3rd Party Services
+*Managed and arranged by the site - use site department
+*Managed and arranged by the Blade Team - use department 8133"
+Blade failures & repairs,,,,XXXX25M004,514404,R&M Blades,"Materials and components for complete repairs/replacements, including sales tax; storage fees
+*coding only used when item is issued out of inventory **see Inventory Items row for inventory coding/guidance"
+Blade failures & repairs,,,,XXXX25M004,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+Blade failures & repairs,,,,XXXX25M004,514403,Maintenance equipment Rental CRANE,Crane and crane pads
+Blade failures & repairs,,,,XXXX25M004,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+Blade failures & repairs,,,,XXXX25M004,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+Blade failures & repairs,,,,XXXX25M004,517112,Per Diem Allowance Travel Meals,Per Diem
+Blade failures & repairs,,,,XXXX25M004,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+Blade failures & repairs,,,,XXXX25M004,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Blade failures & repairs,,,,XXXX25M004,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Administrative Costs,,,,XXXX25G008,515100,Outside Services Other,Issuance Fee  (APX vendor)
+Community Involvement,,,,XXXX25G009,518102,Donations Charitable Registered,Community Involvement
+NERC PRC & MOD Testing,,,,XXXX25G010,515114,Outside Services Corps of Engineers,NERC PRC & MOD Testing
+Environmental Fees & Permits,,,,XXXX25G011,515202,Consultant Environmental,Wildlife and Natural Resources Conservation
+Environmental - Identiflight Agreement,,,,XXXX25G011,515104,Outside Services Environmental,Identiflight Agreement
+Janitorial Services & Supplies,,,,XXXX25G012,515113,Outside Services Janitorial,Cleaning services & supplies
+Contractor O&M Service,,,,XXXX25G012,515100,Outside Services Other,"Repairs to HVAC, electric, plumbing, roof, siding; fiber optic work/repairs"
+O&M Building Rent,,,,XXXX25G012,513401,Long Term Lease Building/Office Space,O&M building rent
+Office Supplies,,,,XXXX25G012,514200,Office Supplies - General,"Includes paper, copier supplies/lease, bottled water, bulk water, ice, coffee, cups, plates, air conditioner filters"
+"Fuel: Propane, Diesel & Gasoline",,,,XXXX25G012,513302,Utilities - Heat Gas / Oil / Fuel,"O&M bldg heat, substation fuel for generators, diesel, gasoline, fuel for forklifts and other equipment"
+Utility Expense,,,,XXXX25G012,513102,Telecom - Telephone,Telephone/Internet 
+Site Security,,,,XXXX25G017,515100,Outside Services Other,Security services
+Waste Management,,,,XXXX25G016,515107,Outside Services Hazardous Waste Disposal,"Dumpster/trash removal, hazardous waste, used oil, Safety-Kleen"
+Utility Expense,,,,XXXX25G014,513300,Utilities Office Electrical,"Utility expenses for O&M building, substation, turbines (primarily electric expense)"
+Utility Expense,,,,XXXX25G015,515101,Outside Services Electrical,Site interconnect fees (also known as 'transmission' or 'facilities' on invoices)
+BOP Road & Infrastructure Maintenance,,,,XXXX25B005,515100,Outside Services Other,"Roads, reclamation, gates, fences, grading, snow removal"
+Other BOP,,,,XXXX25B005,515100,Outside Services Other,"Backup generator maintenance, crane repairs & inspection, alarm system equipment, exterminator (ants, bees)/pest control, weed control & spraying, tractor, snow plow, & lawn mower maintenance, septic cleaning, crop damage payments, NERC-CIP tower & facility locks, material costs related to lubrication excellence upgrade to build/upgrade the existing room"
+BOP Equipment Rental,,,,"XXXX25B001 (Corrective)
+XXXX25B002 (Preventative)",514400,Maintenance equipment Rental,"Rental equip for switchgear replacement & annual outage, forklift & scissor lift rental, air monitors, JLG's, thumpers, excavators, specialty tool purchase, Industrial Scientific vendor invoices, crane to move Connex"
+Preventative Maintenance and Scheduled Outages,,,,,,,"Materials, parts and supplies needed to support Preventative Maintenance and Scheduled Outages; includes relays, general spare parts and rags"
+Preventative Maintenance and Scheduled Outages,,,,,,,"Equipment Rentals to support Preventative Maintenance and Scheduled Outages (ex. manlifts, telehandlers, porta-potties); HV owns the costs for the following equipment rentals: generators for HV activities, test equipment, specialized equipment"
+Pad mount and Main Power Transformer Repairs (PLANNED work),,,,,,,"Materials, parts and supplies needed to support PM & MPT Repairs; includes pad mount transformers, switch gears, PMT's, MPT's, transformer oil, up tower transformer replacements"
+Pad mount and Main Power Transformer Repairs (PLANNED work),,,,,,,"Equipment Rentals to support PM & MPT Repairs (ex. manlifts, telehandlers, porta-potties); HV owns the costs for the following equipment rentals: generators for HV activities, test equipment, specialized equipment"
+NERC Testing and EEG Support,,,,,,,"Equipment Rentals to support the High Voltage designated activities at the left (ex. manlifts, telehandlers, porta-potties); HV owns the costs for the following equipment rentals: generators for HV activities, test equipment, specialized equipment"
+Corrective Maintenance & Unscheduled Outages,,,,,,,
+T&D Corrective Maintenance,,,,,,,
+T&D ,,,,"XXXX25B001 (Corrective)
+XXXX25B002 (Preventative)",515100,Outside Services Other,Locate fees for techs to locate underground cables before digging is done by another party
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,514100,Maintenance Material Other,"Parts, materials, supplies (site department)"
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,515109,Outside Services Equipment Maintenance,"3rd Party Services, Repairs (site department)"
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,514403,Maintenance equipment Rental CRANE,Crane
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,517112,Per Diem Allowance Travel Meals,Per Diem
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,514501,Vehicle Fuel / Gas,Vehicle Fuel
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,514400,Maintenance equipment Rental,"Equipment Rentals to support Preventative Maintenance and Scheduled Outages (ex. manlifts, telehandlers, porta-potties); Equipment rental for generators for HV activities, test equipment, specialized equipment (site department)"
+BoP: Preventative Maintenance and Scheduled Outages,,,,XXXX25B002,515109,Outside Services Equipment Maintenance,"Contractor outage support arranged by HV team (equipment mobilization, Substation & T&D support)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514100,Maintenance Material Other,"Parts, materials, supplies (site department)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,515109,Outside Services Equipment Maintenance,"3rd Party Services, Repairs (site department)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514130,Maintenance Material Freight Out Courier/Trucking,Freight
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514403,Maintenance equipment Rental CRANE,Crane
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,517112,Per Diem Allowance Travel Meals,Per Diem
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514501,Vehicle Fuel / Gas,Vehicle Fuel
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514400,Maintenance equipment Rental,"Equipment Rentals to support Corrective Maintenance and Unscheduled Outages (ex. manlifts, telehandlers, porta-potties); Equipment rental for generators for HV activities, test equipment, specialized equipment (site department)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,515109,Outside Services Equipment Maintenance,"Contractor outage support arranged by HV team (equipment mobilization, Substation & T&D support)"
+"Met tower maintenance, fiber network repairs and switch replacements",,,,XXXX25B003,515100,Outside Services Other,"Includes met tower maintenance costs, fiber network repairs and switch replacements (including contractor and/or Duke internal Blade Repair Team)"
+Inventory Items,,,,,"113150
+*Dept and Location not needed in Basware",Other Inventory,"* Use the coding for items going into Maximo Inventory (i.e. the consumable box is NOT checked in Maximo)
+  ** Accounting will code to the applicable project code once the inventory items are issued out of inventory 
+"

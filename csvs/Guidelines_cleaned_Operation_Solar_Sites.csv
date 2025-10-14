@@ -1,0 +1,94 @@
+﻿Description,Company ID,Location,Department,Project,Account,Account Name,Additional Guidance
+Labor - Site (Deriva FTE's),,,,XXXX25G006,512101,Salaries and Wages - Regular Hours - Salaried,Site Technicians 
+Labor - Site (Deriva FTE's),,,,XXXX25G002,512101,Salaries and Wages - Regular Hours - Salaried,Site ARRC's
+Labor - Site (Deriva FTE's),,,,XXXX25G002,512101,Salaries and Wages - Regular Hours - Salaried,"Site Area Managers, Planner/Schedulers, Supervisors"
+Staff Aug/ Contingent workers - Site,,,,XXXX25G006,515220,Consultant - Staff Augementation,"Technician/SRC contingent worker labor for individuals under the direct supervision of a Deriva Manager/Supervisor (included on Duke org chart); i.e. Spencer Ogden, ERSG, Staffing Specialist"
+Scheduled Maintenance,,,,XXXX25G006,514151,Supplies Consumable Maintenance,"Purchases/consumption of inventory associated with scheduled maintenance (parts, inverter filter replacements, parts associated with OEM replacement intervals, etc.), scheduled generator maintenance/parts (installed)"
+Consumables,,,,XXXX25G006,514151,Supplies Consumable Maintenance,"Items coded to consumables in Maximo (zip ties, wire ties, wires, fuses, etc.), unless specifically for High Voltage outage or similar"
+Refurbished Parts,,,,XXXX25G006,514159,Supplies Consumable Maintenance - Refurbished Parts,Refurbished Parts
+Drone Inspection,,,,XXXX25G006,514402,Operation equipment Repairs & Maintenance,"All drone related expenses (including travel, shipping, and returning), except Tech labor"
+Other Contracts,,,,XXXX25G006,515100,Outside Services Other,"Forecasting contracts (WREGIS, GATS, RIG support, AWS Truepower, etc.); SPOT devices"
+Freight,,,,XXXX25G006,514130,Maintenance Material Freight Out Courier/Trucking,For freight and shipping expenses; tariff charges **Consumable items should use the freight box on CAPS
+Personal Mobile Device (PMD),,,,XXXX25G006,513105,Telecom - Cellular Service,Allocate the cost among the sites supported 
+"EHS supplies, safety equipment, PPE, uniforms",,,,XXXX25G006,514154,Supplies Safety Gear,"Dust masks, hard hats, safety glasses, boots, first aid kits, 40 cal suits, fire extinguisher/suppression system certification/service/inspections, fire alarms, etc."
+Tooling,,,,XXXX25G006,514153,Supplies Tools,"New tooling that is not capitalized; shop equipment and tools (ex. ladders, shop vacs, meters, etc.)"
+Training (including Safety Training),,,,XXXX25G006,517501,Employee Training,"Danish Wind Academy, HV substation training, On-Boarding/DRA training + materials, other training fees"
+Travel,,,,XXXX25G006,517100,Transportation - Other,"Travel for Tech's to their respective sites for site visit, inspections, employee/customer visits, etc."
+Travel,,,,XXXX25G006,517112,Per Diem Allowance Travel Meals,Per Diem
+Site Vehicles,,,,XXXX25G006,514501,Vehicle Fuel / Gas,Vehicle Fuel / Gas
+Site Vehicles,,,,XXXX25G006,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+Site Vehicles,,,,XXXX25G006,514502,Vehicle Maintenace and Repairs,Vehicle Maintenace and Repairs
+Relocation,,,,XXXX25G006,512334,Hiring Costs / Moving Expenses / Relocation Costs - Salaried,Relocation/moving expenses (when applicable for site technicians and SRC's)
+General Site Support from Central Services Teams,,,,XXXX25G006,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+General Site Support from Central Services Teams,,,,XXXX25G006,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+General Site Support from Central Services Teams,,,,XXXX25G006,517112,Per Diem Allowance Travel Meals,Per Diem
+General Site Support from Central Services Teams,,,,XXXX25G006,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+General Site Support from Central Services Teams,,,,XXXX25G006,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+General Site Support from Central Services Teams,,,,XXXX25G006,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Fixed O&M Contract and Variable O&M Fees,,,,XXXX25G004,515140,Operation and maintenance - fixed fee,Fixed and variable fee portions of O&M contract payments
+"Unscheduled Maintenance: Wiring, Cable, Ground Faults, Met Stations, Repairs and Maintenance, other Unscheduled Maintenance",,,,XXXX25M007,514151,Supplies Consumable Maintenance,"Parts & hardware purchased or consumed from inventory to repair/replace damaged wire and cable, met towers (wind speed, rain gauge, radiance, etc.), and misc. components; ATV maintenance and fuel, communications, non-outage rentals of any kind, portable generator/owned"
+"Unscheduled Maintenance: O&M building, Fencing, Racking, Power Station Equipment (excluding inverters)",,,,XXXX25M007,514402,Operation equipment Repairs & Maintenance,"Items on pad, including cameras"
+Solar O&M Minor Corrective Repairs,,,,XXXX25G005,514151,Supplies Consumable Maintenance,"Tracker repairs, combiner boxes, DC field issues"
+Solar O&M Minor Corrective Repairs,,,,XXXX25G005,515109,Outside Services Equipment Maintenance,
+Panel Cleaning Fees,,,,XXXX25P004,515109,Outside Services Equipment Maintenance,"Contract for an outside company to provide this service; if the service provider invoices for water, charge the water here; if the site provides water through an on-site metered service, see codes under O&M Building Utilities"
+Panel Replacement,,,,XXXX25P003,514414,Solar Panels ,"Parts & hardware purchased or consumed from inventory to replace damaged panels (large amounts) **If not a Consumable see inventory line for coding. If Consumable, check box in Maximo "
+Panel Replacement (Minor),,,,XXXX25P002,,,
+Panel Replacement (Preventative),,,,XXXX25P001,,,
+Inverter Repairs (Major),,,,XXXX25I003,514415,Inverters ,"Parts & hardware purchased or consumed from inventory to replace/repair inverters **If not a Consumable see inventory line for coding. If Consumable, check box in Maximo "
+Inverter Repairs (Minor),,,,XXXX25I002,515109,Outside Services Equipment Maintenance,"Inverter Inspections, AC/DC contactor replacements, fuse replacements"
+Inverter Repairs (Minor),,,,XXXX25I002,514415,Inverters ,
+Inverter Repairs (Minor),,,,XXXX25I002,514151,Supplies Consumable Maintenance,
+Inverter Repairs (Preventative),,,,XXXX25I001,515109,Outside Services Equipment Maintenance,"Inverter cleaning, Inverter PM's"
+Vegetation Management,,,,XXXX25B004,515119,Outside Services Vegetation Control,"Contractor services to cut, mow, and weed-eat vegetation, weeds, and grass (includes sheep); contingent workers hired exclusively for vegetation management services"
+Chemical Application,,,,XXXX25B004,515119,Outside Services Vegetation Control,Chemical application
+Equipment Maintenance,,,,XXXX25B004,514402,Operation equipment Repairs & Maintenance,"Maintenance, repairs, non-capitalized purchases, fuel, and oil for vegetation management equipment (excluding ATV's not used for vegetation management)"
+Other Vegetation Management,,,,XXXX25B004,515119,Outside Services Vegetation Control,"Other miscellaneous work (i.e. seeding, ditch maintenance, clean-up after sheep)"
+Grounds Maintenance & Repairs,,,,XXXX25B005,515100,Outside Services Other,"Gravel, erosion repair, etc."
+Met Tower & Calibration,,,,XXXX25B003,515100,Outside Services Other,"New met station equipment and instrument calibrations, including pulling from inventory or paying for calibrations as part of a scheduled maintenance interval (annual, semi-annual, etc.), tooling calibration"
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,514100,Maintenance Material Other,"Materials, parts, and supplies needed to support Scheduled Outages and Preventative Maintenance (includes relays, general spare parts, rags,etc.) (site department)"
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,515109,Outside Services Equipment Maintenance,"3rd Party Services, Repairs (site department)"
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,517112,Per Diem Allowance Travel Meals,Per Diem
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,514501,Vehicle Fuel / Gas,Vehicle Fuel
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,514400,Maintenance equipment Rental,"Equipment Rentals to support Scheduled Outages and Preventative Maintenance (includes manlifts, telehandlers, porta-potties etc.) (site department)"
+BoP: Preventative Maintenance and Scheduled Outages ,,,,XXXX25B002,515109,Outside Services Equipment Maintenance,"Contractor outage support arranged by HV team (equipment mobilization, Substation & T&D support)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514100,Maintenance Material Other,"Materials, parts, and supplies needed to support Scheduled Outages and Preventative Maintenance (includes relays, general spare parts, rags,etc.) (site department)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,515109,Outside Services Equipment Maintenance,"3rd Party Services, Repairs (site department)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,517112,Per Diem Allowance Travel Meals,Per Diem
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514501,Vehicle Fuel / Gas,Vehicle Fuel
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,515109,Outside Services Equipment Maintenance,"Contractor outage support arranged by HV team (equipment mobilization, Substation & T&D support)"
+BoP: Corrective Maintenance and Unscheduled Outages,,,,XXXX25B001,514400,Maintenance equipment Rental,"Equipment Rentals to support Unscheduled Outages and Corrective Maintenance (includes manlifts, telehandlers, porta-potties etc.) (site department)"
+Administrative Costs,,,,XXXX25G008,515100,Outside Services Other,Issuance Fee  (APX vendor)
+Community Involvement,,,,XXXX25G009,518102,Donations Charitable Registered,"Donations to local charities, community organizations, etc."
+NERC PRC & MOD Testing,,,,XXXX25G010,515114,Outside Services Corps of Engineers,Electrical Engineering team members engage vendor and monitor service is completed; SRC should process invoices and Area Manager should approve
+Environmental,,,,XXXX25G011,515104,Outside Services Environmental,"Environmental compliance, permitting, hazmat, etc. (not actual work done to site)"
+O&M Building: Exterminator,,,,XXXX25G012,515100,Outside Services Other,Exterminators at O&M buildings
+O&M Building: Janitorial Services,,,,XXXX25G012,515113,Outside Services Janitorial,"Service contracts in support of the O&M building (janitors, office cleaners, safety system inspections, etc.)"
+O&M Building: Electric Expense,,,,XXXX25G012,513300,Utilities Office Electrical,Electric expense at O&M buildings
+O&M Building: Water,,,,XXXX25G012,513300,Utilities Office Electrical,Water expense at O&M buildings
+O&M Building: Gas,,,,XXXX25G012,513300,Utilities Office Electrical,O&M gas/heat expense at O&M buildings
+O&M Building:Internet Service,,,,XXXX25G012,513102,Telecom - Telephone,Internet service at sites and O&M buildings
+General Expenses,,,,XXXX25G012,514200,Office Supplies - General,"All other employee expenses not categorized elsewhere (meals, recognition awards, etc.)"
+Office supplies,,,,XXXX25G012,514200,Office Supplies - General,"Paper, ink cartridges, coffee cups, pens, etc."
+O&M Building Lease,,,,XXXX25G012,513402,Long Term Lease Property / Land,O&M building lease
+Resource Adequacy Fees,,,,XXXX25G012,513719,Other Fees,Budgeted on site templates (only Pumpjack and Wildwood I)
+Interconnect Fees,,,,XXXX25G015,515101,Outside Services Electrical,Site interconnect fees (also known as 'transmission' or 'facilities' on invoices)
+Site Electric Expense,,,,XXXX25G014,513300,Utilities Office Electrical,Site electric bills and taxes for interconnect (parasitic load)
+Security ,,,,XXXX25G017,515100,Outside Services Other,"Security services at sites and O&M buildings (i.e. ADT, CPI)"
+BOP Waste Management,,,,XXXX25G016,515107,Outside Services Hazardous Waste Disposal,Waste/garbage removal service at sites; portable toilets
+O&M Building: Waste,,,,XXXX25G016,515107,Outside Services Hazardous Waste Disposal,Waste/garbage removal service at O&M buildings
+End of Contract Inspections,,,,XXXX25E001,515109,Outside Services Equipment Maintenance,3rd Party Services
+End of Contract Inspections,,,,XXXX25E001,512101,Salaries and Wages - Regular Hours - Salaried,Labor (Deriva FTE)
+End of Contract Inspections,,,,XXXX25E001,517100,Transportation - Other,Travel - use applicable travel account to correspond with cost
+End of Contract Inspections,,,,XXXX25E001,517112,Per Diem Allowance Travel Meals,Per Diem
+End of Contract Inspections,,,,XXXX25E001,515220,Consultant - Staff Augmentation,Staff Aug/ Contingent workers (Labor)
+End of Contract Inspections,,,,XXXX25E001,517105,Transportation - Auto Rental and Rental Car Fuel,Vehicle Rental
+End of Contract Inspections,,,,XXXX25E001,514501,Vehicle Fuel / Gas,Vehicle Fuel
+Inventory,,,,,113150,Other Inventory,Invoices for Maximo inventory (not consumables) Dept & Location not needed in Basware

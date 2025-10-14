@@ -1,0 +1,44 @@
+﻿Description,Company ID,Location,Department,Project,Account,Account Name
+Labor: Technicians,75736,HVLT,8134,HVLT25G001,512101,Salaries and Wages - Regular Hours - Salaried
+Labor: ARRC,75736,HVLT,8134,HVLT25G001,512101,Salaries and Wages - Regular Hours - Salaried
+Labor Manager & Planner/Scheduler,75736,HVLT,8134,HVLT25G001,512101,Salaries and Wages - Regular Hours - Salaried
+Technician Contingent workers,75736,HVLT,8134,HVLT25G001,515220,Consultant - Staff Augmentation
+Specialized Jobs,75736,HVLT,8134,HVLT25G001,515100,Outside Services Other
+Office Supplies,75736,HVLT,8134,HVLT25G001,514200,Office Supplies - General
+Other Real Property Leases,75736,HVLT,8134,HVLT25G001,513402,Long Term Lease Property / Land
+Training (including Safety Training),75736,HVLT,8134,HVLT25G001,517501,Employee Training
+Safety PPE,75736,HVLT,8134,HVLT25G001,514154,Supplies Safety Gear
+General Expenses & Other,75736,HVLT,8134,HVLT25G001,514100,Maintenance Material Other
+Tooling,75736,HVLT,8134,HVLT25G001,514153,Supplies Tools
+Vehicles,75736,HVLT,8134,HVLT25G001,517105,Transportation - Auto Rental and Rental Car Fuel
+Vehicles,75736,HVLT,8134,HVLT25G001,514501,Vehicle Fuel / Gas
+Vehicles,75736,HVLT,8134,HVLT25G001,514502,Vehicle Maintenace and Repairs
+Travel & Expenses,75736,HVLT,8134,HVLT25G001,517100,Transportation - Other
+Maintaining Transformers,75736,HVLT,8134,HVLT25G001,514402,Operation equipment Repairs & Maintenance
+Shipping,75736,HVLT,8134,HVLT25G001,514130,Maintenance Material Freight Out Courier/Trucking
+Personal Mobile Device,75736,HVLT,8134,HVLT25G001,513105,Telecom - Cellular Service
+Rental Equipment,75736,HVLT,8134,HVLT25G001,514400,Maintenance equipment Rental
+Self Storage,75736,HVLT,8134,HVLT25G001,513401,Long Term Lease Building/Office Space
+Building & Grounds Maintenance,75736,HVLT,8134,HVLT25G001,515100,Outside Services Other
+Utility Expense,75736,HVLT,8134,HVLT25G001,513300,Utilities Office Electrical
+"Third Party work for external customers
+
+",75736,HVLT,8134,applicable project code assigned,512101,Salaries and Wages - Regular Hours - Salaried
+"Third Party work for external customers
+
+",75736,HVLT,8134,,515220,Consultant - Staff Augmentation
+"Third Party work for external customers
+
+",75736,HVLT,8134,,514151,Supplies Consumable Maintenance
+"Third Party work for external customers
+
+",75736,HVLT,8134,,517100,Transportation - Other
+"Third Party work for external customers
+
+",75736,HVLT,8134,,517112,Per Diem Allowance Travel Meals
+"Third Party work for external customers
+
+",75736,HVLT,8134,,514400,Maintenance equipment Rental
+"Third Party work for external customers
+
+",75736,HVLT,8134,,515109,Outside Services Equipment Maintenance

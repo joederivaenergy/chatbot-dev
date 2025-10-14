@@ -1,0 +1,66 @@
+﻿Description,Company ID,Location,Department,Project,Account,Account Name
+Labor (Deriva FTE),"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,512101,Salaries and Wages - Regular Hours - Salaried
+Contract Workers (Labor),"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,515220,Consultant - Staff Augmentation
+Vehicle Fuel / Gas,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,514501,Vehicle Fuel / Gas
+Vehicle Maintenace and Repairs,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,514502,Vehicle Maintenace and Repairs
+Travel - Daily Allowance (meals),"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517112,Per Diem Allowance Travel Meals
+Travel - Daily Allowance (lodging),"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517112,Per Diem Allowance Travel Meals
+Travel - Lodging,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517110,Accommodations Hotel / Lodging Expenses
+Travel - Auto Rental & Rental Car Fuel,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517105,Transportation - Auto Rental and Rental Car Fuel
+Travel - Flight / Airfare,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517103,Transportation - Flight / Airfare
+"Travel - Ground Bus, Taxi","(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517104,Transportation - Ground Bus Taxi
+Travel - Mileage Reimbursement,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517101,Transportation - Mileage Reimbursement
+Travel - Other Transportation,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517100,Transportation - Other
+Travel - Tolls,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,517102,Transportation - Tolls and Parking
+Crane,"(75736) Deriva Energy Services, LLC",CLCT,8132,From work order,514403,Maintenance equipment Rental CRANE
+"Unproductive time (R&R, Vacation, Sick, ect.)","(75736) Deriva Energy Services, LLC",CLCT,8132,No code needed,,
+Manager,,,,,,
+Respective expense item,"(75736) Deriva Energy Services, LLC",CLCT,8132,CLCT25G001,,
+Respective expense item,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOP25G001,,
+Planner/Scheduler,,,,,,
+Respective expense item,"(75736) Deriva Energy Services, LLC",CGBT,8132,CGBT25G001,,
+Respective expense item,"(75736) Deriva Energy Services, LLC",CLCT,8132,CLCT25G001,,
+Respective expense item,(75940) Ledyard,LEDY,8132,LEDY25G002,,
+Respective expense item,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOP25G001,,
+Uniforms,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514154,Supplies Safety Gear
+Uniforms,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514154,Supplies Safety Gear
+Boot reimbursements,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514154,Supplies Safety Gear
+Boot reimbursements,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514154,Supplies Safety Gear
+PPE for new hires and replacement PPE,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514154,Supplies Safety Gear
+PPE for new hires and replacement PPE,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514154,Supplies Safety Gear
+PMD reimbursements,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,513105,Telecom - Cellular Service
+PMD reimbursements,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,513105,Telecom - Cellular Service
+DRA training - technicians NOT assigned to contracted site,"(75736) Deriva Energy Services, LLC",CLCT,8132,1002,,
+DRA training - technicians NOT assigned to contracted site,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,,
+DRA training - technicians assigned to contracted site,"(75736) Deriva Energy Services, LLC",CLCT,8132,Applicable project code,,
+DRA Leadership training - technicians NOT assigned to contracted site,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,,
+DRA Leadership training - technicians NOT assigned to contracted site,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,,
+DRA Leadership training - technicians assigned to contracted site,"(75736) Deriva Energy Services, LLC",CLCT,8132,Applicable project code,,
+"Training costs (GWO training, Annual Refresher, CBT’s, Safety Summit, NCOO)","(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,,
+"Training costs (GWO training, Annual Refresher, CBT’s, Safety Summit, NCOO)","(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,,
+Weekly safety meetings,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,512101,Salaries and Wages - Regular Hours - Salaried
+Weekly safety meetings,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,512101,Salaries and Wages - Regular Hours - Salaried
+Vehicle related services expenses (maintenance & repair charges) ,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514502,Vehicle Repairs & Maintenance
+Vehicle related services expenses (maintenance & repair charges) ,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514502,Vehicle Repairs & Maintenance
+DOT related expenses,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,515502,Employee Testing/Background Checks
+DOT related expenses,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,515502,Employee Testing/Background Checks
+"Tooling for new hires, tooling replacements, new tooling that doesn’t qualify for capitalization","(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514153,Supplies Tools
+"Tooling for new hires, tooling replacements, new tooling that doesn’t qualify for capitalization","(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514153,Supplies Tools
+Tool calibrations,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,515100,Outside Services Other
+Tool calibrations,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,515100,Outside Services Other
+"Freight to ship uniforms, PPE, Tooling","(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514130,Maintenance Material Freight Out Courier/Trucking
+"Freight to ship uniforms, PPE, Tooling","(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514130,Maintenance Material Freight Out Courier/Trucking
+IT Hardware and Software purchases,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,"514302
+514301","IT Hardware
+IT Software"
+IT Hardware and Software purchases,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,"514302
+514301","IT Hardware
+IT Software"
+Vehicle costs for non-utilized vehicles and non-revenue generating hours: ,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514501,Vehicle Fuel / Gas
+Vehicle costs for non-utilized vehicles and non-revenue generating hours: ,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514501,Vehicle Fuel / Gas
+A Technician or Technologist in a non-billable/training role,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,Labor or Travel coding from above,
+A Technician or Technologist in a non-billable/training role,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,Labor or Travel coding from above,
+Travel for a funeral,"(75736) Deriva Energy Services, LLC",CLCT,8132,9999,Labor and Travel coding from above,
+Off boarding a technician,"(75736) Deriva Energy Services, LLC",CLCT,8132,9999,Labor and Travel coding from above,
+Large Corrective Tooling and Freight associated with the tooling,"(75736) Deriva Energy Services, LLC",CLCT,8132,MSTDWOP,514153,Supplies Tools
+Large Corrective Tooling and Freight associated with the tooling,"(75752) Deriva Energy Wind, LLC",DWOP,8132,DWOPMST,514153,Supplies Tools

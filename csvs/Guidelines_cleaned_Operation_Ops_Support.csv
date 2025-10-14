@@ -1,0 +1,188 @@
+﻿Description,Company ID,Location,Department,Project,Account,Account Name
+Labor,"Per ""Ops Support Allocations 2025"" workbook",,8120,"XXXX25G001 
+(XXXX = Location Code)",512101,Salaries and Wages - Regular Hours - Salaried
+"PMD
+ (personal mobile device)","Per ""Ops Support Allocations 2025"" workbook",,8120,"XXXX25G001 
+(XXXX = Location Code)",513105,Telecom - Cellular Service
+Travel,"Per ""Ops Support Allocations 2025"" workbook",,8120,"XXXX25G001 
+(XXXX = Location Code)",517100,Transportation - Other
+Parking,"Per ""Ops Support Allocations 2025"" workbook",,8120,"XXXX25G001 
+(XXXX = Location Code)",517102,Transportation - Tolls and Parking
+Conferences,"Per ""Ops Support Allocations 2025"" workbook",,8120,"XXXX25G001 
+(XXXX = Location Code)",517400,Conferences and Seminars
+External Marketing Efforts,"(75736) Deriva Energy Services, LLC",DCSV,8120,"XXXX25G001 
+(XXXX = Location Code)",515200,Consultant Other
+DRONE FLIGHT TRAINING ,"(75736) Deriva Energy Services, LLC","DSOL: 50%
+DCSV: 50%",8120,"XXXX25G001 
+(XXXX = Location Code)",515200,Consultant Other
+ENERGY SYSTEMS INTEGRATION GROUP ,"(75736) Deriva Energy Services, LLC",DSOL,8120,"XXXX25G001 
+(XXXX = Location Code)",517600,Memberships
+Veriforce (Xcel Energy),"(75736) Deriva Energy Services, LLC",DCSV,8120,"XXXX25G001 
+(XXXX = Location Code)",517600,Memberships
+Labor,"Per ""Ops Support Allocations 2025"" workbook",,8121,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",512101,Salaries and Wages - Regular Hours - Salaried
+"PMD
+ (personal mobile device)","Per ""Ops Support Allocations 2025"" workbook",,8121,XXXX25G007 (Site support),513105,Telecom - Cellular Service
+Training,"Per ""Ops Support Allocations 2025"" workbook",,8121,XXXX25G001 (Non-Site support),517501,Employee Training
+Travel,"Per ""Ops Support Allocations 2025"" workbook",,8121,(XXXX = Location Code),517100,Transportation - Other
+Parking,"Per ""Ops Support Allocations 2025"" workbook",,8121,XXXX25G007 (Site support),517102,Transportation - Tolls and Parking
+Conferences,"Per ""Ops Support Allocations 2025"" workbook",,8121,XXXX25G001 (Non-Site support),517400,Conferences and Seminars
+Membership,"Per ""Ops Support Allocations 2025"" workbook",,8121,(XXXX = Location Code),517600,Memberships
+Office Supplies,"Per ""Ops Support Allocations 2025"" workbook",,8121,XXXX25G007 (Site support),514200,Office Supplies - General
+Freight,"Per ""Ops Support Allocations 2025"" workbook",,8121,XXXX25G001 (Non-Site support),514206,Office Supplies Postage - Courier
+Safety Gear,"Per ""Ops Support Allocations 2025"" workbook",,8121,(XXXX = Location Code),514154,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)"
+Brookfield HSSE Audit,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC","DWOP: 50%
+DSOP: 50%",8121,XXXX25G007 (Site support),515100,Outside Services Other
+Labor,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",512101,Salaries and Wages - Regular Hours - Salaried
+"PMD
+ (personal mobile device)","Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",513105,Telecom - Cellular Service
+Training,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517501,Employee Training
+Travel,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517100,Transportation - Other
+Parking,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517102,Transportation - Tolls and Parking
+Conferences,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517400,Conferences and Seminars
+Safety Gear,"Per ""Ops Support Allocations 2025"" workbook",,8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514154,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)"
+Training Facility,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",513401,Long Term Lease Building/Office Space
+Office Supplies - Leadership training materials,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514200,Office Supplies - General
+Office Supplies - DRA general,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514200,Office Supplies - General
+Material Purchases - DRA general,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514200,Office Supplies - General
+Freight - DRA general,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514206,Office Supplies Postage - Courier
+Vehicle - DRA general,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514501,Vehicle Fuel / Gas
+GWO Audit,"(75752) Deriva Energy Wind, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 50%
+DCSV: 50%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515100,Outside Services Other
+Consulting for Training,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+Consulting for Performance Improvement,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+Consulting for Procedure writing,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+Team Building,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC
+(75736) Deriva Energy Services, LLC","DWOP: 40%
+DSOP: 30%
+DCSV: 30%",8122,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+Labor,"Per ""Ops Support Allocations 2025"" workbook",,8123,"XXXX25G001
+(XXXX = Location Code)",512101,Salaries and Wages - Regular Hours - Salaried
+"PMD
+ (personal mobile device)","Per ""Ops Support Allocations 2025"" workbook",,8123,"XXXX25G001
+(XXXX = Location Code)",513105,Telecom - Cellular Service
+Training,"Per ""Ops Support Allocations 2025"" workbook",,8123,"XXXX25G001
+(XXXX = Location Code)",517501,Employee Training
+Travel,"Per ""Ops Support Allocations 2025"" workbook",,8123,"XXXX25G001
+(XXXX = Location Code)",517100,Transportation - Other
+Parking,"Per ""Ops Support Allocations 2025"" workbook",,8123,"XXXX25G001
+(XXXX = Location Code)",517102,Transportation - Tolls and Parking
+Conferences,"Per ""Ops Support Allocations 2025"" workbook",,8123,"XXXX25G001
+(XXXX = Location Code)",517400,Conferences and Seminars
+Team Building,"(75736) Deriva Energy Services, LLC",DWCC,8123,"XXXX25G001
+(XXXX = Location Code)",517111,Entertainment (Staff & External Guests)
+Labor,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",512101,Salaries and Wages - Regular Hours - Salaried
+"PMD
+ (personal mobile device)","Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",513105,Telecom - Cellular Service
+Training,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517501,Employee Training
+Travel,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517100,Transportation - Other
+Parking,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517102,Transportation - Tolls and Parking
+Membership,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",517600,Memberships
+Freight,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514206,Office Supplies Postage - Courier
+Safety Gear,"Per ""Ops Support Allocations 2025"" workbook",,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",514154,"Supplies (Safety Gear e.g: Shoes, Glasses etc.,)"
+"EPRI, Wind Program","(75752) Deriva Energy Wind, LLC",DWOP,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+"EPRI, Solar Program","(77079) Deriva Energy Sub I, LLC",DSOP,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+Consulting for Analytics ,"(75752) Deriva Energy Wind, LLC",DWOP,8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
+Team Building,"(75752) Deriva Energy Wind, LLC
+(77079) Deriva Energy Sub I, LLC","DWOP: 50%
+DSOP: 50%",8124,"XXXX25G007 (Site support)
+XXXX25G001 (Non-Site support)
+(XXXX = Location Code)",515200,Consultant Other
