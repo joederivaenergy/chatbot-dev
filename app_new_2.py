@@ -27,8 +27,18 @@ CSV_FILES = {
     'Commercial': 'csvs/Guidelines_cleaned_Commercial.csv',
     'Development': 'csvs/Guidelines_cleaned_Development.csv',
     'Tech Services': 'csvs/Guidelines_cleaned_Tech_Services.csv',
-    'Operations': 'csvs/Guidelines_cleaned_Operations.csv',
+    # Operations sub-teams
+    'Operations_High_Voltage': 'csvs/Guidelines_cleaned_Operation_High_Voltage.csv',
+    'Operations_MST_FS': 'csvs/Guidelines_cleaned_Operation_MST_FS.csv',
+    'Operations_MST_GBX': 'csvs/Guidelines_cleaned_Operation_MST_GBX.csv',
+    'Operations_MST_LC': 'csvs/Guidelines_cleaned_Operation_MST_LC.csv',
+    'Operations_Non_Controllable_QM': 'csvs/Guidelines_cleaned_Operation_Non_Controllable_QM.csv',
+    'Operations_Ops_Support': 'csvs/Guidelines_cleaned_Operation_Ops_Support.csv',
+    'Operations_Solar_Sites': 'csvs/Guidelines_cleaned_Operation_Solar_Sites.csv',
+    'Operations_Wind_Sites': 'csvs/Guidelines_cleaned_Operation_Wind_Sites.csv',
+    'Operations_Blade_Maintenance_Repair': 'csvs/Guidelines_cleaned_Operation_Blade_Maintenance_Repair.csv',
 }
+
 
 # --- Reference CSV Files ---
 REFERENCE_CSV_FILES = {
