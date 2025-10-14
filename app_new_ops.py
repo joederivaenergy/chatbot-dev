@@ -29,7 +29,7 @@ CSV_FILES = {
     'Operations_MST_FS': 'csvs/Guidelines_cleaned_Operation_MST_FS.csv',
     'Operations_MST_GBX': 'csvs/Guidelines_cleaned_Operation_MST_GBX.csv',
     'Operations_MST_LC': 'csvs/Guidelines_cleaned_Operation_MST_LC.csv',
-    'Operations_Non_Controllable_QM': 'csvs/Guidelines_cleaned_Operation_Non_Controllable_Q&M.csv',
+    'Operations_Non_Controllable_QM': 'csvs/Guidelines_cleaned_Operation_Non_Controllable_QM.csv',
     'Operations_Ops_Support': 'csvs/Guidelines_cleaned_Operation_Ops_Support.csv',
     'Operations_Solar_Sites': 'csvs/Guidelines_cleaned_Operation_Solar_Sites.csv',
     'Operations_Wind_Sites': 'csvs/Guidelines_cleaned_Operation_Wind_Sites.csv',
@@ -403,7 +403,7 @@ Extract:
    - "mst_fs" (MST FS, Field Service)
    - "mst_gbx" (MST GBX, Gearbox)
    - "mst_lc" (MST LC, Load Center)
-   - "non_controllable_qm" (Non-Controllable Q&M, Quality and Maintenance)
+   - "non_controllable_qm" (Non-Controllable QM, Quality and Maintenance)
    - "ops_support" (Operations Support, Ops Support)
    - "solar_sites" (Solar Sites, Solar)
    - "wind_sites" (Wind Sites, Wind)
