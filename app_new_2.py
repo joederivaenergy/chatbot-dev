@@ -237,8 +237,6 @@ if "operations_search_results" not in st.session_state:
 # Add logo at the very top of sidebar
 if os.path.exists("Deriva-Logo.png"):
     st.sidebar.image("Deriva-Logo.png", width=200)
-else:
-    st.sidebar.warning("⚠️ Loading Error")
 
 st.sidebar.title(" ")
 
@@ -258,7 +256,6 @@ def reset_history():
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
-        st.session_state.operations_search_results = {}
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
@@ -268,20 +265,17 @@ with st.sidebar.expander("⚙️ Tools", expanded=True):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("ℹ️ What Diva Can Help With", expanded=False):
-    st.markdown(f"""    
-    **Charging Guidelines:**
-    - Account Numbers, Locations, Company IDs
-    - Project codes (Concur, Timesheets)
-    - Department charging codes
-    
-    **Reference Information:**
-    - Department code lookups
-    - Activity code meanings
-    
+with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
+    st.markdown("""    
+    About charging questions, Diva provides the following information based on description:
+    - Account Number
+    - Location
+    - Company ID
+    - Project (Concur, Timesheets)
+    - Department    
     ---
     
-    For additional info, refer to [O&M Charging Guidelines]({CHARGING_GUIDELINES_LINK}).
+    For additional info, please refer to [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true).
     """)
 
 st.sidebar.divider()
