@@ -1310,7 +1310,7 @@ def process_message(user_input: str) -> str:
         }
         st.session_state.in_charging_flow = False
         st.session_state.operations_search_results = {}
-        return "Hi! I'm Diva, your charging guidelines assistant. I can help with charging codes, department information, and activity codes. How can I help you today?"
+        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
     
     # If we're already in a charging flow, continue
     if st.session_state.in_charging_flow:
