@@ -251,7 +251,7 @@ with st.sidebar.expander("ℹ️ About charging questions", expanded=False):
 # ============================================
 
 st.markdown("<h1 style='text-align: center;'>⚡Meet Diva!</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines and more</p>", unsafe_allow_html=True)
 
 # ============================================
 # LLM HELPER FUNCTIONS
