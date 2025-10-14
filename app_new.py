@@ -192,6 +192,12 @@ if "in_charging_flow" not in st.session_state:
 # SIDEBAR
 # ============================================
 
+# Add logo at the very top of sidebar
+if os.path.exists("Deriva-Logo.png"):
+    st.sidebar.image("Deriva-Logo.png", use_container_width=True)
+else:
+    st.sidebar.warning("⚠️ logo.png not found")
+
 st.sidebar.title("⚙️ Settings")
 
 # Initialize chat history
