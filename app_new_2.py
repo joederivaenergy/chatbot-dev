@@ -238,7 +238,7 @@ if "operations_search_results" not in st.session_state:
 if os.path.exists("Deriva-Logo.png"):
     st.sidebar.image("Deriva-Logo.png", width=200)
 else:
-    st.sidebar.warning("⚠️ Deriva-Logo.png not found")
+    st.sidebar.warning("⚠️ Loading Error")
 
 st.sidebar.title(" ")
 
@@ -264,7 +264,7 @@ def reset_history():
         st.warning(f"Could not clear history: {e}")
 
 with st.sidebar.expander("⚙️ Tools", expanded=True):
-    if st.button("��️ Clear Chat"):
+    if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
 
@@ -287,7 +287,7 @@ with st.sidebar.expander("ℹ️ What Diva Can Help With", expanded=False):
 st.sidebar.divider()
 st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
-with st.sidebar.expander("�� Support"):
+with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 # ============================================
