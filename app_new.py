@@ -224,7 +224,7 @@ st.markdown("""
     <style>
     /* Make expander label text in sidebar larger */
     section[data-testid="stSidebar"] details summary {
-        font-size: 20px !important;
+        font-size: 30px !important;
         font-weight: bold !important;
     }
     </style>
