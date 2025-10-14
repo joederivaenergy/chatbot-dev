@@ -225,12 +225,6 @@ with st.sidebar.expander("🧹 Tools", expanded=True):
         reset_history()
         st.rerun()
 
-with st.sidebar.expander("📧 Support"):
-    st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
-
-st.sidebar.divider()
-st.sidebar.caption("Diva The Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
-
 st.sidebar.divider()
 
 with st.sidebar.expander("ℹ️ About charging questions", expanded=False):
@@ -245,6 +239,12 @@ with st.sidebar.expander("ℹ️ About charging questions", expanded=False):
     
     For additional info, please refer to [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true).
     """)
+
+st.sidebar.divider()
+st.sidebar.caption("Diva The Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
+
+with st.sidebar.expander("📧 Support"):
+    st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 # ============================================
 # HEADER
