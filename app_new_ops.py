@@ -206,8 +206,6 @@ if "in_charging_flow" not in st.session_state:
 # Add logo at the very top of sidebar
 if os.path.exists("Deriva-Logo.png"):
     st.sidebar.image("Deriva-Logo.png", width=200)
-else:
-    st.sidebar.warning("⚠️ logo.png not found")
 
 st.sidebar.title(" ")
 
@@ -928,44 +926,18 @@ if user_input:
     chat_history.add_message("assistant", response)
 
 # ============================================
-# FOOTER & SIDEBAR EXTRAS
+# FOOTER
 # ============================================
 
-# Add logo at the very top of sidebar
-if os.path.exists("logo.png"):
-    st.sidebar.image("logo.png", use_container_width=True)
-else:
-    st.sidebar.warning("⚠️ logo.png not found")
-
-st.sidebar.divider()
-
-with st.sidebar.expander("ℹ️ About Diva", expanded=False):
-    st.markdown("""
-    **What Diva Can Do:**
-    
-    For charging questions, Diva provides charging information including:
-    - Department codes
-    - Account numbers
-    - Location codes
-    - Project codes
-    - Company IDs
-    
-    Use this information for:
-    - Concur expense reports
-    - Timesheet entries
-    - Time and expense charging
-    
-    ---
-    
-    For additional info, please refer to [charging guideline](http://www.chargingderiva.com/guidline.xls).
-    """)
-
-st.markdown("""
-    <style>
-    /* Make expander label text in sidebar larger */
-    section[data-testid="stSidebar"] details summary {
-        font-size: 20px !important;
-        font-weight: bold !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+st.divider()
+footer = """
+<style>
+a:link, a:visited { color: blue; background-color: transparent; text-decoration: underline; }
+a:hover, a:active { color: red; background-color: transparent; text-decoration: underline; }
+.footer { position: fixed; left:0; bottom:0; width:100%; background-color:white; color:black; text-align:center; }
+</style>
+<div class="footer">
+<p>Diva The Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.</p>
+</div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
