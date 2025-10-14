@@ -1,70 +1,46 @@
-﻿Description,Additional Guidance,Account #,Account Name,"Project Code (Concur, Timesheets)
-XXXX = Site Location Code","Project Code 
-XXXX= Site OU
-(Maximo, Basware, NetSuite)","Activity Code 
-(Maximo, Basware, NetSuite)",Category,Sub Category,Account Group
-Royalties,Lease schedule ,516111.0,Variable Lease Payments,,"XXXXOM
-OR
-ZZZZ","OM100 - OM - General
-OR
-ZZZZ",,,Royalties
-Operational Rent,,513400.0,Long Term Lease Other,,"XXXXOM
-OR
-ZZZZ","OM100 - OM - General
-OR
-ZZZZ",,,Rent
-Development Rent,,513402.0,Long Term Lease Property / Land,,"XXXXOM
-OR
-ZZZZ","OM100 - OM - General
-OR
-ZZZZ",,,Rent
-Corporate Office Building Rent,,513401.0,Long Term Lease Building/Office Space,,"XXXXOM
-OR
-ZZZZ","OM100 - OM - General
-OR
-ZZZZ",,,Rent
-Property Tax Reimbursement,,516201.0,Municipal Taxes - Fixed Rates,,"XXXXOM
-OR
-ZZZZ","OM100 - OM - General
-OR
-ZZZZ",,,Property Tax and EDZ
-Other Misc Reimbursements,livestock compensation,,,,,,,,
-Legal review costs,Landowner Contracts & Real Estate Management team,,,,,,,,
-Misc payments not reimbursements,"Good neighbor payments, bonus payments, crop damage",,,,,,,,
-Property Insurance,,513502.0,Insurance - Property,,,,,,Insurance
-Liability Insurance,,513501.0,Insurance - Liability,,,,,,Insurance
-Insurance - Other,Mesquite Creek - Stewart Title,513501.0,Insurance - Liability,,,,,,Insurance
-ARO Accretion,,815617.0, ARO Accretion,,,,,,Non-cash interest
-Donation Agreements,Cimarron & Ironwood (Freestate Financing),513719.0,Other Fees,,,,,,Other Fees & charges
-PILOT Programs (Payment in Lieu of Taxes),Specified in contracts,513719.0,Other Fees,,,,,,Other Fees & charges
-Upwind Indemnity Fee,Maryneal,513204.0,Other Fees & charges,,,,,,Other Fees & charges
-Bank Fees,Financed entities only,513600.0,Bank charges & fees,,,,,,Other Fees & charges
-Letter of Credit Fees,,741111.0,Fees Expense on Letter of Credit,,,,,,Other Interest & Financing Fees (Not Debt Related)7410
-Green E certification fee,Frontier II,513719.0,Other Fees,,,,,,Other Fees & charges
-Broker Fees,,513719.0,Other Fees,,,,,,Other Fees & charges
-Participation Agreements,Frontier II,513719.0,Other Fees,,,,,,Other Fees & charges
-Audit Fees,Financed entities only,515300.0,Audit - Financial Statements,,,,,,Audit Fees
-Mgmt Svcs Agreement Fees,Associated with financed sites (services provided to manage financings); Symphony reporting requirements,507299.0,Intercompany - Management Fees - Administrative Services Fees,,,,,,Management Fees Purchases
-Energy Management Fees,"Frontier II, Maryneal, Mesteno, Lapetus, Holstein, and Rambler",507199.0,Intercompany - Management Fees - Trading & Marketing Fees,,,,,,Management Fees Purchases
-O&M Fee,"O&M management fee associated with financed sites (Reliability group, REMC, Reg Mgrs)",507299.0,Intercompany - Management Fees - Administrative Services Fees,,,,,,Management Fees Purchases
-Property Tax Reimbursement & Interconnect Fees,Reimbursement to landowners for taxes they paid on mixed-use land (the Tax Dept pays property taxes for solar farm-only land); APS interconnect fees (Bagdad),513719.0,Other Fees,,,,,,Other Fees & charges
-Admin Services Fees,Mesquite Only,513204.0,Other Fees & charges,,,,,,Other Fees & charges
-"QSE, PSE and Settlement Fees",,513204.0,Other Fees & charges,,,,,,Other Fees & charges
-Other - Hedging Costs,,513204.0,Other Fees & charges,,,,,,Other Fees & charges
-Legal Fees,,515210.0,Consultant Legal Services,,,,,,Consultant fees
-Property Tax,Property Tax,516200.0,Municipal Taxes - Hydrology Variable,,,,,,Property Tax and EDZ
-Sales Tax,Sales Tax,516401.0,Non-Recoverable Tax Expense on Project,,,,,,Other Tax Expense
-Franchise Tax,Franchise Tax,516402.0,Franchise Tax Fee,,,,,,Other Tax Expense
-Fixed Asset Depreciation,,821000.0,Depreciation Expense - General,,,,,,Depreciation of Power Generating Assets
-ARO Depreciation,,821100.0,Depreciation of Asset Retirement Obligation,,,,,,Depreciation of Power Generating Assets
-Amortization Expense,,822100.0,Amortization of Intangible Assets - General,,,,,,Amortization of Intangibles
-Misc. Amortization,Amortization Expense,822100.0,Amortization of Intangible Assets - General,,,,,,Amortization of Intangibles
-Other income (expense),,811600.0,Interest income on restricted cash,,,,,,Interest Income - External
-Asset write-off,Disposal of Assets,815100.0,Loss / (Gain) on Disposal of Asset / Business,,,,,,Gain / Loss on Disposal
-Interest Expense,,712001.0,Interest expense - SB USD,,,,,,Interest expense - SB USD
-SPP Claw back Litigation Interest Expense,Cimarron II,815100.0,Loss / (Gain) on Disposal of Asset / Business,,,,,,Gain / Loss on Disposal
-Amortization of Deferred Financing Costs,,712201.0,Amortization of Discount - SB USD,,,,,,Amortization of Discount - SB USD
-Gearbox failure & repair,Insurance Claim Proceeds,513502.0,Insurance - Property,,,,,,Insurance
-Generator failure & repair,,513502.0,Insurance - Property,,,,,,Insurance
-Main bearing/shaft failure & repair,,513502.0,Insurance - Property,,,,,,Insurance
-Blade failure & repair,,513502.0,Insurance - Property,,,,,,Insurance
+﻿Description,Company ID,Location,Department,Account,Account Name,Project ,Account Group
+Royalties,,,,516111,Variable Lease Payments,,Royalties
+Operational Rent,,,,513400,Long Term Lease Other,,Rent
+Development Rent,,,,513402,Long Term Lease Property / Land,,Rent
+Corporate Office Building Rent,,,,513401,Long Term Lease Building/Office Space,,Rent
+Property Tax Reimbursement,,,,516201,Municipal Taxes - Fixed Rates,,Property Tax and EDZ
+Other Misc Reimbursements,,,,,,,
+Legal review costs,,,,,,,
+Misc payments not reimbursements,,,,,,,
+Property Insurance,,,,513502,Insurance - Property,,Insurance
+Liability Insurance,,,,513501,Insurance - Liability,,Insurance
+Insurance - Other,,,,513501,Insurance - Liability,,Insurance
+ARO Accretion,,,,815617, ARO Accretion,,Non-cash interest
+Donation Agreements,,,,513719,Other Fees,,Other Fees & charges
+PILOT Programs (Payment in Lieu of Taxes),,,,513719,Other Fees,,Other Fees & charges
+Upwind Indemnity Fee,,,,513204,Other Fees & charges,,Other Fees & charges
+Bank Fees,,,,513600,Bank charges & fees,,Other Fees & charges
+Letter of Credit Fees,,,,741111,Fees Expense on Letter of Credit,,Other Interest & Financing Fees (Not Debt Related)7410
+Green E certification fee,,,,513719,Other Fees,,Other Fees & charges
+Broker Fees,,,,513719,Other Fees,,Other Fees & charges
+Participation Agreements,,,,513719,Other Fees,,Other Fees & charges
+Audit Fees,,,,515300,Audit - Financial Statements,,Audit Fees
+Mgmt Svcs Agreement Fees,,,,507299,Intercompany - Management Fees - Administrative Services Fees,,Management Fees Purchases
+Energy Management Fees,,,,507199,Intercompany - Management Fees - Trading & Marketing Fees,,Management Fees Purchases
+O&M Fee,,,,507299,Intercompany - Management Fees - Administrative Services Fees,,Management Fees Purchases
+Property Tax Reimbursement & Interconnect Fees,,,,513719,Other Fees,,Other Fees & charges
+Admin Services Fees,,,,513204,Other Fees & charges,,Other Fees & charges
+"QSE, PSE and Settlement Fees",,,,513204,Other Fees & charges,,Other Fees & charges
+Other - Hedging Costs,,,,513204,Other Fees & charges,,Other Fees & charges
+Legal Fees,,,,515210,Consultant Legal Services,,Consultant fees
+Property Tax,,,,516200,Municipal Taxes - Hydrology Variable,,Property Tax and EDZ
+Sales Tax,,,,516401,Non-Recoverable Tax Expense on Project,,Other Tax Expense
+Franchise Tax,,,,516402,Franchise Tax Fee,,Other Tax Expense
+Fixed Asset Depreciation,,,,821000,Depreciation Expense - General,,Depreciation of Power Generating Assets
+ARO Depreciation,,,,821100,Depreciation of Asset Retirement Obligation,,Depreciation of Power Generating Assets
+Amortization Expense,,,,822100,Amortization of Intangible Assets - General,,Amortization of Intangibles
+Misc. Amortization,,,,822100,Amortization of Intangible Assets - General,,Amortization of Intangibles
+Other income (expense),,,,811600,Interest income on restricted cash,,Interest Income - External
+Asset write-off,,,,815100,Loss / (Gain) on Disposal of Asset / Business,,Gain / Loss on Disposal
+Interest Expense,,,,712001,Interest expense - SB USD,,Interest expense - SB USD
+SPP Claw back Litigation Interest Expense,,,,815100,Loss / (Gain) on Disposal of Asset / Business,,Gain / Loss on Disposal
+Amortization of Deferred Financing Costs,,,,712201,Amortization of Discount - SB USD,,Amortization of Discount - SB USD
+Gearbox failure & repair,,,,513502,Insurance - Property,,Insurance
+Generator failure & repair,,,,513502,Insurance - Property,,Insurance
+Main bearing/shaft failure & repair,,,,513502,Insurance - Property,,Insurance
+Blade failure & repair,,,,513502,Insurance - Property,,Insurance
