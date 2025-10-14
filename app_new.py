@@ -194,8 +194,7 @@ if "in_charging_flow" not in st.session_state:
 
 # Add logo at the very top of sidebar
 if os.path.exists("Deriva-Logo.png"):
-    st.sidebar.image("Deriva-Logo.png", width=100)
-    st.sidebar.markdown("---")
+    st.sidebar.image("Deriva-Logo.png", width=150)
 else:
     st.sidebar.warning("⚠️ logo.png not found")
 
