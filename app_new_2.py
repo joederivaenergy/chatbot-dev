@@ -1379,4 +1379,4 @@ a:hover, a:active { color: red; background-color: transparent; text-decoration: 
 </div>
 """
 st.markdown(footer, unsafe_allow_html=True)
-```
+
