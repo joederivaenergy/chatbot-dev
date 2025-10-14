@@ -531,6 +531,36 @@ def generate_natural_response(user_query: str) -> str:
 # EXTRACTION PROMPT
 # ============================================
 
+# EXTRACTION_PROMPT = """
+# You are Diva, a charging guidelines assistant. Extract key information from the user's query.
+
+# Extract:
+# 1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Legal, Corporate, Land Services, Commercial, Development, Tech Services, Operations)
+# 2. **keywords**: Key words the user wants to search for (e.g., "erp", "labor", "maintenance")
+# 3. **location**: Specific location if mentioned (e.g., "DSOP", "DSOL")
+# 4. **is_new_query**: Is this a NEW charging question or a follow-up/clarification? (true/false)
+
+# RULES FOR is_new_query:
+# - TRUE if: User asks "how to charge X", "where to charge Y", "codes for Z", or any new charging question
+# - FALSE if: User gives short answers like "IT", "Houston", "1", "option 2" (these are clarifications)
+# - TRUE if: User asks about a DIFFERENT project/activity than previous conversation
+# - FALSE if: User is answering assistant's clarification questions
+
+# Return ONLY valid JSON:
+# {
+#   "team": "IT" | "Finance" | "HR" | "Legal" | "Corporate" | "Land Services" | "Commercial" | "Development" | "Tech Services" | "Operations" | null,
+#   "keywords": "search terms" | null,
+#   "location": "location name" | null,
+#   "is_new_query": true | false
+# }
+
+# Examples:
+# - "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "is_new_query": true}
+# - Previous asked team, Current: "IT" → {"team": "IT", "keywords": null, "location": null, "is_new_query": false}
+# - Previous: "Core ERP codes", Current: "what about HR labor?" → {"team": null, "keywords": "labor", "location": null, "is_new_query": true}
+# - Previous: showed 3 locations, Current: "DSOL" → {"team": null, "keywords": null, "location": "DSOL", "is_new_query": false}
+# """
+
 EXTRACTION_PROMPT = """
 You are Diva, a charging guidelines assistant. Extract key information from the user's query.
 
@@ -538,11 +568,21 @@ Extract:
 1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Legal, Corporate, Land Services, Commercial, Development, Tech Services, Operations)
 2. **keywords**: Key words the user wants to search for (e.g., "erp", "labor", "maintenance")
 3. **location**: Specific location if mentioned (e.g., "DSOP", "DSOL")
-4. **is_new_query**: Is this a NEW charging question or a follow-up/clarification? (true/false)
+4. **operation_type**: ONLY if Operations team AND user specifies type:
+   - "high_voltage" (High Voltage, HV)
+   - "mst_fs" (MST FS, Field Service)
+   - "mst_gbx" (MST GBX, Gearbox)
+   - "mst_lc" (MST LC, Load Center)
+   - "non_controllable_qm" (Non-Controllable QM, Quality and Maintenance)
+   - "ops_support" (Operations Support, Ops Support)
+   - "solar_sites" (Solar Sites, Solar)
+   - "wind_sites" (Wind Sites, Wind)
+   - "blade_maintenance" (Blade Maintenance & Repair, Blade)
+5. **is_new_query**: Is this a NEW charging question or a follow-up/clarification? (true/false)
 
 RULES FOR is_new_query:
 - TRUE if: User asks "how to charge X", "where to charge Y", "codes for Z", or any new charging question
-- FALSE if: User gives short answers like "IT", "Houston", "1", "option 2" (these are clarifications)
+- FALSE if: User gives short answers like "IT", "Houston", "1", "option 2", "wind", "solar" (these are clarifications)
 - TRUE if: User asks about a DIFFERENT project/activity than previous conversation
 - FALSE if: User is answering assistant's clarification questions
 
@@ -551,15 +591,18 @@ Return ONLY valid JSON:
   "team": "IT" | "Finance" | "HR" | "Legal" | "Corporate" | "Land Services" | "Commercial" | "Development" | "Tech Services" | "Operations" | null,
   "keywords": "search terms" | null,
   "location": "location name" | null,
+  "operation_type": "high_voltage" | "mst_fs" | "mst_gbx" | "mst_lc" | "non_controllable_qm" | "ops_support" | "solar_sites" | "wind_sites" | "blade_maintenance" | null,
   "is_new_query": true | false
 }
 
 Examples:
-- "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "is_new_query": true}
-- Previous asked team, Current: "IT" → {"team": "IT", "keywords": null, "location": null, "is_new_query": false}
-- Previous: "Core ERP codes", Current: "what about HR labor?" → {"team": null, "keywords": "labor", "location": null, "is_new_query": true}
-- Previous: showed 3 locations, Current: "DSOL" → {"team": null, "keywords": null, "location": "DSOL", "is_new_query": false}
+- "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "operation_type": null, "is_new_query": true}
+- Previous asked team, Current: "Operations" → {"team": "Operations", "keywords": null, "location": null, "operation_type": null, "is_new_query": false}
+- Previous asked operation type, Current: "wind sites" → {"team": null, "keywords": null, "location": null, "operation_type": "wind_sites", "is_new_query": false}
+- "Operations solar maintenance" → {"team": "Operations", "keywords": "maintenance", "location": null, "operation_type": "solar_sites", "is_new_query": true}
+- Previous: "Operations team", Current: "blade" → {"team": null, "keywords": null, "location": null, "operation_type": "blade_maintenance", "is_new_query": false}
 """
+
 
 # ============================================
 # EXTRACTION - RESET TEAM FOR NEW QUERIES
