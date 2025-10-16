@@ -15,7 +15,7 @@ DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
 
 # --- CSV File Paths ---
 CSV_FILES = {
-    'IT': 'csvs/Guidelines_cleaned_it.csv',
+    'IT': 'csvs/Guidelines_cleaned_IT.csv',
     'Finance': 'csvs/Guidelines_cleaned_Finance.csv',
     'HR': 'csvs/Guidelines_cleaned_HR.csv',
     'Legal': 'csvs/Guidelines_cleaned_Legal.csv',
