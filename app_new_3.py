@@ -221,7 +221,7 @@ def reset_history():
         st.warning(f"Could not clear history: {e}")
 
 with st.sidebar.expander("⚙️ Tools", expanded=True):
-    if st.button("��️ Clear Chat"):
+    if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
 
@@ -241,7 +241,7 @@ with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
 st.sidebar.divider()
 st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
-with st.sidebar.expander("�� Support"):
+with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 # ============================================
