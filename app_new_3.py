@@ -234,6 +234,12 @@ if "operations_search_results" not in st.session_state:
 if "operations_subteam" not in st.session_state:
     st.session_state.operations_subteam = None
 
+if "pending_operations_subteams" not in st.session_state:
+    st.session_state.pending_operations_subteams = {}
+
+if "pending_operations_description" not in st.session_state:
+    st.session_state.pending_operations_description = ""
+
 # ============================================
 # SIDEBAR
 # ============================================
@@ -253,19 +259,13 @@ chat_history = DynamoDBChatHistory(
 def reset_history():
     try:
         chat_history.clear()
-        st.session_state.extracted_context = {
-            "team": None,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        st.session_state.in_charging_flow = False
+        reset_charging_state()
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
 with st.sidebar.expander("⚙️ Tools", expanded=True):
-    if st.button("🗑️ Clear Chat"):
+    if st.button("��️ Clear Chat"):
         reset_history()
         st.rerun()
 
@@ -285,7 +285,7 @@ with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
 st.sidebar.divider()
 st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
-with st.sidebar.expander("📧 Support"):
+with st.sidebar.expander("�� Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 # ============================================
@@ -734,7 +734,7 @@ def clean_value(value, field_name=""):
     value_str = str(value).strip()
     
     # Check if string looks like "123.0" and convert to integer
-    if field_name.lower() == "account" or field_name.lower() == "company id":
+    if field_name.lower() in ["account", "company id", "department"]:
         try:
             float_val = float(value_str)
             if float_val == int(float_val):
@@ -759,6 +759,59 @@ def check_for_xxxx_in_project(project_value):
         return True, "\n\n**Note:** XXXX = Site location code"
     
     return False, ""
+
+# ============================================
+# HELPER FUNCTIONS - DRY PRINCIPLE
+# ============================================
+
+def reset_charging_state():
+    """Reset all charging-related session state"""
+    reset_charging_state()
+
+def extract_clean_row_data(row) -> dict:
+    """Extract and clean all standard fields from a row"""
+    return {
+        'description': clean_value(row.get('Description'), 'description'),
+        'account': clean_value(row.get('Account'), 'account'),
+        'location': clean_value(row.get('Location'), 'location'),
+        'company_id': clean_value(row.get('Company ID'), 'company id'),
+        'project': clean_value(row.get('Project'), 'project'),
+        'department': clean_value(row.get('Department'), 'department')
+    }
+
+def format_variant_block(idx: int, row_data: dict, label: str = "VARIANT") -> str:
+    """Format a single variant/option block for display"""
+    return f"""---
+**{label} {idx}:**
+- **Description:** {row_data['description']}
+- **Account:** {row_data['account']}
+- **Location:** {row_data['location']}
+- **Company ID:** {row_data['company_id']}
+- **Project:** {row_data['project']}
+- **Department:** {row_data['department']}
+
+"""
+
+def format_variants_with_xxxx_check(variants: List, label: str = "VARIANT") -> Tuple[str, bool]:
+    """Format multiple variants and detect XXXX codes"""
+    result = ""
+    has_any_xxxx = False
+    
+    for idx, row in enumerate(variants, 1):
+        row_data = extract_clean_row_data(row)
+        result += format_variant_block(idx, row_data, label)
+        
+        has_xxxx, _ = check_for_xxxx_in_project(row_data['project'])
+        if has_xxxx:
+            has_any_xxxx = True
+    
+    return result, has_any_xxxx
+
+def add_xxxx_note_if_needed(result: str, has_xxxx: bool) -> str:
+    """Add XXXX note to result if needed"""
+    if has_xxxx:
+        return result + "\n**Note:** XXXX = Site location code\n"
+    return result
 
 # ============================================
 # CSV SEARCH FUNCTIONS (WHOLE WORD MATCHING)
@@ -972,15 +1025,7 @@ def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict,
             
             # If only one variant, return it directly
             if len(rows) == 1:
-                st.session_state.extracted_context = {
-                    "team": None,
-                    "keywords": None,
-                    "location": None,
-                    "exact_description": None
-                }
-                st.session_state.operations_subteam = None
-                st.session_state.pending_operations_subteams = {}
-                st.session_state.in_charging_flow = False
+                reset_charging_state()
                 return format_charging_info(rows[0])
             else:
                 # Multiple variants - show all
@@ -1028,22 +1073,14 @@ def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict,
                 result = f"**Operations - {subteam_name} - {description}**\n\n"
                 result += f"This charging code has **{len(rows)} options**:\n\n"
                 
-                for idx, row in enumerate(variants, 1):
-                    # Use .get() with defaults to handle missing columns
-                    desc = clean_value(row.get('Description'), 'description')
-                    account = clean_value(row.get('Account'), 'account')
-                    location = clean_value(row.get('Location'), 'location')
-                    company_id = clean_value(row.get('Company ID'), 'company id')
-                    project = clean_value(row.get('Project'), 'project')
-                    department = clean_value(row.get('Department'), 'department')
-                    
+                for idx, row in enumerate(rows, 1):
                     result += f"---\n**Option {idx}:**\n"
-                    result += f"- **Description:** {desc}\n"
-                    result += f"- **Account:** {account}\n"
-                    result += f"- **Location:** {location}\n"
-                    result += f"- **Company ID:** {company_id}\n"
-                    result += f"- **Project:** {project}\n"
-                    result += f"- **Department:** {department}\n\n"
+                    result += f"- **Description:** {row['Description']}\n"
+                    result += f"- **Account:** {row['Account']}\n"
+                    result += f"- **Location:** {row['Location']}\n"
+                    result += f"- **Company ID:** {row['Company ID']}\n"
+                    result += f"- **Project:** {row['Project']}\n"
+                    result += f"- **Department:** {row['Department']}\n\n"
                 
                 st.session_state.extracted_context = {
                     "team": None,
@@ -1150,7 +1187,10 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                 return format_charging_info(row)
             else:
                 result = f"**Operations - {selected_desc}**\n\n"
-                result += f"This charging code has **{len(variants)} options**:\n\n"
+                result += f"**This charging code has **{len(variants)} options**:\n\n"
+                
+                # Track if any variant has XXXX
+                has_any_xxxx = False
                 
                 for idx, row in enumerate(variants, 1):
                     # Use .get() with defaults to handle missing columns
@@ -1161,13 +1201,22 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                     project = clean_value(row.get('Project'), 'project')
                     department = clean_value(row.get('Department'), 'department')
                     
+                    # Check for XXXX
+                    has_xxxx, _ = check_for_xxxx_in_project(project)
+                    if has_xxxx:
+                        has_any_xxxx = True
+                    
                     result += f"---\n**Option {idx}:**\n"
                     result += f"- **Description:** {desc}\n"
                     result += f"- **Account:** {account}\n"
                     result += f"- **Location:** {location}\n"
                     result += f"- **Company ID:** {company_id}\n"
                     result += f"- **Project:** {project}\n"
-                    result += f"- **Department:** {department}\n\n""
+                    result += f"- **Department:** {department}\n\n"
+                
+                # Add XXXX note if any variant has it
+                if has_any_xxxx:
+                    result += "\n**Note:** XXXX = Site location code\n"
                 
                 return result.strip()
     
@@ -1186,22 +1235,34 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                 result = f"**Operations - {desc}**\n\n"
                 result += f"This charging code has **{len(variants)} options**:\n\n"
                 
+                # Track if any variant has XXXX
+                has_any_xxxx = False
+                
                 for idx, row in enumerate(variants, 1):
                     # Use .get() with defaults to handle missing columns
-                    desc = clean_value(row.get('Description'), 'description')
+                    desc_val = clean_value(row.get('Description'), 'description')
                     account = clean_value(row.get('Account'), 'account')
                     location = clean_value(row.get('Location'), 'location')
                     company_id = clean_value(row.get('Company ID'), 'company id')
                     project = clean_value(row.get('Project'), 'project')
                     department = clean_value(row.get('Department'), 'department')
                     
+                    # Check for XXXX
+                    has_xxxx, _ = check_for_xxxx_in_project(project)
+                    if has_xxxx:
+                        has_any_xxxx = True
+                    
                     result += f"---\n**Option {idx}:**\n"
-                    result += f"- **Description:** {desc}\n"
+                    result += f"- **Description:** {desc_val}\n"
                     result += f"- **Account:** {account}\n"
                     result += f"- **Location:** {location}\n"
                     result += f"- **Company ID:** {company_id}\n"
                     result += f"- **Project:** {project}\n"
                     result += f"- **Department:** {department}\n\n"
+                
+                # Add XXXX note if any variant has it
+                if has_any_xxxx:
+                    result += "\n**Note:** XXXX = Site location code\n"
                 
                 return result.strip()
     
@@ -1455,6 +1516,9 @@ def process_charging_question(user_input: str) -> str:
     
     # Step 2: Need keywords (if no exact description yet)
     if not keywords and not exact_description:
+        # Special handling for Operations - ask which sub-team
+        if team == "Operations" and not st.session_state.operations_subteam:
+            return "Is this about **High Voltage**, **MST FS**, **MST GBX**, **MST LC**, **Non Controllable QM**, **Ops Support**, **Solar Sites**, **Wind Sites**, or **Blade Maintenance Repair**?\n\nPlease specify which Operations team, or describe what you'd like to charge for."
         return "What would you like to charge for?"
     
     # ============================================
@@ -1511,9 +1575,22 @@ def process_charging_question(user_input: str) -> str:
             subteam_results = get_operations_subteams_for_description(exact_description)
             
             if not subteam_results:
-                st.session_state.extracted_context["exact_description"] = None
-                st.session_state.operations_search_results = {}
-                return f"I couldn't find charging codes for '{exact_description}' in Operations team.\n\nPlease refer to the [O&M Charging Guidelines]({CHARGING_GUIDELINES_LINK}) for more information."
+                # Try searching by keywords across all subteams as fallback
+                grouped_results = search_operations_by_description(exact_description, None)
+                
+                if not grouped_results:
+                    st.session_state.extracted_context["exact_description"] = None
+                    st.session_state.operations_search_results = {}
+                    return f"I couldn't find charging codes for '{exact_description}' in Operations team.\n\nPlease refer to the [O&M Charging Guidelines]({CHARGING_GUIDELINES_LINK}) for more information."
+                
+                # Found results via keyword search, use those
+                if len(grouped_results) == 1:
+                    description = list(grouped_results.keys())[0]
+                    subteam_results = get_operations_subteams_for_description(description)
+                else:
+                    # Multiple descriptions found
+                    st.session_state.operations_search_results = grouped_results
+                    return format_operations_results(grouped_results)
             
             # If description exists in only one subteam, return results directly
             if len(subteam_results) == 1:
@@ -1536,22 +1613,14 @@ def process_charging_question(user_input: str) -> str:
                     result = f"**Operations - {subteam_name} - {exact_description}**\n\n"
                     result += f"This charging code has **{len(rows)} options**:\n\n"
                     
-                    for idx, row in enumerate(variants, 1):
-                        # Use .get() with defaults to handle missing columns
-                        desc = clean_value(row.get('Description'), 'description')
-                        account = clean_value(row.get('Account'), 'account')
-                        location = clean_value(row.get('Location'), 'location')
-                        company_id = clean_value(row.get('Company ID'), 'company id')
-                        project = clean_value(row.get('Project'), 'project')
-                        department = clean_value(row.get('Department'), 'department')
-                        
+                    for idx, row in enumerate(rows, 1):
                         result += f"---\n**Option {idx}:**\n"
-                        result += f"- **Description:** {desc}\n"
-                        result += f"- **Account:** {account}\n"
-                        result += f"- **Location:** {location}\n"
-                        result += f"- **Company ID:** {company_id}\n"
-                        result += f"- **Project:** {project}\n"
-                        result += f"- **Department:** {department}\n\n"
+                        result += f"- **Description:** {row['Description']}\n"
+                        result += f"- **Account:** {row['Account']}\n"
+                        result += f"- **Location:** {row['Location']}\n"
+                        result += f"- **Company ID:** {row['Company ID']}\n"
+                        result += f"- **Project:** {row['Project']}\n"
+                        result += f"- **Department:** {row['Department']}\n\n"
                     
                     st.session_state.extracted_context = {
                         "team": None,
@@ -1576,8 +1645,13 @@ def process_charging_question(user_input: str) -> str:
             grouped_results = search_operations_by_description(keywords, subteam_to_search)
             
             if not grouped_results:
-                st.session_state.operations_search_results = {}
-                return f"I couldn't find any Operations charging codes matching '{keywords}'.\n\nPlease refer to the [O&M Charging Guidelines]({CHARGING_GUIDELINES_LINK}) for more information."
+                # If we searched a specific subteam and found nothing, try all subteams
+                if subteam_to_search:
+                    grouped_results = search_operations_by_description(keywords, None)
+                    
+                if not grouped_results:
+                    st.session_state.operations_search_results = {}
+                    return f"I couldn't find any Operations charging codes matching '{keywords}'.\n\nPlease refer to the [O&M Charging Guidelines]({CHARGING_GUIDELINES_LINK}) for more information."
             
             # If only one unique description found
             if len(grouped_results) == 1:
@@ -1606,22 +1680,14 @@ def process_charging_question(user_input: str) -> str:
                         result = f"**Operations - {subteam_name} - {description}**\n\n"
                         result += f"This charging code has **{len(rows)} options**:\n\n"
                         
-                        for idx, row in enumerate(variants, 1):
-                            # Use .get() with defaults to handle missing columns
-                            desc = clean_value(row.get('Description'), 'description')
-                            account = clean_value(row.get('Account'), 'account')
-                            location = clean_value(row.get('Location'), 'location')
-                            company_id = clean_value(row.get('Company ID'), 'company id')
-                            project = clean_value(row.get('Project'), 'project')
-                            department = clean_value(row.get('Department'), 'department')
-                            
+                        for idx, row in enumerate(rows, 1):
                             result += f"---\n**Option {idx}:**\n"
-                            result += f"- **Description:** {desc}\n"
-                            result += f"- **Account:** {account}\n"
-                            result += f"- **Location:** {location}\n"
-                            result += f"- **Company ID:** {company_id}\n"
-                            result += f"- **Project:** {project}\n"
-                            result += f"- **Department:** {department}\n\n"
+                            result += f"- **Description:** {row['Description']}\n"
+                            result += f"- **Account:** {row['Account']}\n"
+                            result += f"- **Location:** {row['Location']}\n"
+                            result += f"- **Company ID:** {row['Company ID']}\n"
+                            result += f"- **Project:** {row['Project']}\n"
+                            result += f"- **Department:** {row['Department']}\n\n"
                         
                         st.session_state.extracted_context = {
                             "team": None,
@@ -1734,14 +1800,7 @@ def process_message(user_input: str) -> str:
     # Handle greetings
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        st.session_state.extracted_context = {
-            "team": None,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        st.session_state.in_charging_flow = False
-        st.session_state.operations_search_results = {}
+        reset_charging_state()
         return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
     
     # If we're already in a charging flow, continue
