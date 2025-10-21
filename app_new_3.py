@@ -778,7 +778,7 @@ def process_charging_question(user_input: str) -> str:
     matching_descriptions = search_descriptions_by_keywords(team, keywords)
     
     if not matching_descriptions:
-        return f"I couldn't find any charging codes matching '{keywords}' in {team} team."
+        return f"I couldn't find any charging information regarding '{keywords}' in {team} team. Could you check the description and try again?"
     
     # If only one matching description, get its data
     if len(matching_descriptions) == 1:
