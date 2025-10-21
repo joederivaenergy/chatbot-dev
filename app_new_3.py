@@ -1028,14 +1028,22 @@ def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict,
                 result = f"**Operations - {subteam_name} - {description}**\n\n"
                 result += f"This charging code has **{len(rows)} options**:\n\n"
                 
-                for idx, row in enumerate(rows, 1):
+                for idx, row in enumerate(variants, 1):
+                    # Use .get() with defaults to handle missing columns
+                    desc = clean_value(row.get('Description'), 'description')
+                    account = clean_value(row.get('Account'), 'account')
+                    location = clean_value(row.get('Location'), 'location')
+                    company_id = clean_value(row.get('Company ID'), 'company id')
+                    project = clean_value(row.get('Project'), 'project')
+                    department = clean_value(row.get('Department'), 'department')
+                    
                     result += f"---\n**Option {idx}:**\n"
-                    result += f"- **Description:** {row['Description']}\n"
-                    result += f"- **Account:** {row['Account']}\n"
-                    result += f"- **Location:** {row['Location']}\n"
-                    result += f"- **Company ID:** {row['Company ID']}\n"
-                    result += f"- **Project:** {row['Project']}\n"
-                    result += f"- **Department:** {row['Department']}\n\n"
+                    result += f"- **Description:** {desc}\n"
+                    result += f"- **Account:** {account}\n"
+                    result += f"- **Location:** {location}\n"
+                    result += f"- **Company ID:** {company_id}\n"
+                    result += f"- **Project:** {project}\n"
+                    result += f"- **Department:** {department}\n\n"
                 
                 st.session_state.extracted_context = {
                     "team": None,
@@ -1145,13 +1153,21 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                 result += f"This charging code has **{len(variants)} options**:\n\n"
                 
                 for idx, row in enumerate(variants, 1):
+                    # Use .get() with defaults to handle missing columns
+                    desc = clean_value(row.get('Description'), 'description')
+                    account = clean_value(row.get('Account'), 'account')
+                    location = clean_value(row.get('Location'), 'location')
+                    company_id = clean_value(row.get('Company ID'), 'company id')
+                    project = clean_value(row.get('Project'), 'project')
+                    department = clean_value(row.get('Department'), 'department')
+                    
                     result += f"---\n**Option {idx}:**\n"
-                    result += f"- **Description:** {row['Description']}\n"
-                    result += f"- **Account:** {row['Account']}\n"
-                    result += f"- **Location:** {row['Location']}\n"
-                    result += f"- **Company ID:** {row['Company ID']}\n"
-                    result += f"- **Project:** {row['Project']}\n"
-                    result += f"- **Department:** {row['Department']}\n\n"
+                    result += f"- **Description:** {desc}\n"
+                    result += f"- **Account:** {account}\n"
+                    result += f"- **Location:** {location}\n"
+                    result += f"- **Company ID:** {company_id}\n"
+                    result += f"- **Project:** {project}\n"
+                    result += f"- **Department:** {department}\n\n""
                 
                 return result.strip()
     
@@ -1171,13 +1187,21 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                 result += f"This charging code has **{len(variants)} options**:\n\n"
                 
                 for idx, row in enumerate(variants, 1):
+                    # Use .get() with defaults to handle missing columns
+                    desc = clean_value(row.get('Description'), 'description')
+                    account = clean_value(row.get('Account'), 'account')
+                    location = clean_value(row.get('Location'), 'location')
+                    company_id = clean_value(row.get('Company ID'), 'company id')
+                    project = clean_value(row.get('Project'), 'project')
+                    department = clean_value(row.get('Department'), 'department')
+                    
                     result += f"---\n**Option {idx}:**\n"
-                    result += f"- **Description:** {row['Description']}\n"
-                    result += f"- **Account:** {row['Account']}\n"
-                    result += f"- **Location:** {row['Location']}\n"
-                    result += f"- **Company ID:** {row['Company ID']}\n"
-                    result += f"- **Project:** {row['Project']}\n"
-                    result += f"- **Department:** {row['Department']}\n\n"
+                    result += f"- **Description:** {desc}\n"
+                    result += f"- **Account:** {account}\n"
+                    result += f"- **Location:** {location}\n"
+                    result += f"- **Company ID:** {company_id}\n"
+                    result += f"- **Project:** {project}\n"
+                    result += f"- **Department:** {department}\n\n"
                 
                 return result.strip()
     
@@ -1512,14 +1536,22 @@ def process_charging_question(user_input: str) -> str:
                     result = f"**Operations - {subteam_name} - {exact_description}**\n\n"
                     result += f"This charging code has **{len(rows)} options**:\n\n"
                     
-                    for idx, row in enumerate(rows, 1):
+                    for idx, row in enumerate(variants, 1):
+                        # Use .get() with defaults to handle missing columns
+                        desc = clean_value(row.get('Description'), 'description')
+                        account = clean_value(row.get('Account'), 'account')
+                        location = clean_value(row.get('Location'), 'location')
+                        company_id = clean_value(row.get('Company ID'), 'company id')
+                        project = clean_value(row.get('Project'), 'project')
+                        department = clean_value(row.get('Department'), 'department')
+                        
                         result += f"---\n**Option {idx}:**\n"
-                        result += f"- **Description:** {row['Description']}\n"
-                        result += f"- **Account:** {row['Account']}\n"
-                        result += f"- **Location:** {row['Location']}\n"
-                        result += f"- **Company ID:** {row['Company ID']}\n"
-                        result += f"- **Project:** {row['Project']}\n"
-                        result += f"- **Department:** {row['Department']}\n\n"
+                        result += f"- **Description:** {desc}\n"
+                        result += f"- **Account:** {account}\n"
+                        result += f"- **Location:** {location}\n"
+                        result += f"- **Company ID:** {company_id}\n"
+                        result += f"- **Project:** {project}\n"
+                        result += f"- **Department:** {department}\n\n"
                     
                     st.session_state.extracted_context = {
                         "team": None,
@@ -1574,14 +1606,22 @@ def process_charging_question(user_input: str) -> str:
                         result = f"**Operations - {subteam_name} - {description}**\n\n"
                         result += f"This charging code has **{len(rows)} options**:\n\n"
                         
-                        for idx, row in enumerate(rows, 1):
+                        for idx, row in enumerate(variants, 1):
+                            # Use .get() with defaults to handle missing columns
+                            desc = clean_value(row.get('Description'), 'description')
+                            account = clean_value(row.get('Account'), 'account')
+                            location = clean_value(row.get('Location'), 'location')
+                            company_id = clean_value(row.get('Company ID'), 'company id')
+                            project = clean_value(row.get('Project'), 'project')
+                            department = clean_value(row.get('Department'), 'department')
+                            
                             result += f"---\n**Option {idx}:**\n"
-                            result += f"- **Description:** {row['Description']}\n"
-                            result += f"- **Account:** {row['Account']}\n"
-                            result += f"- **Location:** {row['Location']}\n"
-                            result += f"- **Company ID:** {row['Company ID']}\n"
-                            result += f"- **Project:** {row['Project']}\n"
-                            result += f"- **Department:** {row['Department']}\n\n"
+                            result += f"- **Description:** {desc}\n"
+                            result += f"- **Account:** {account}\n"
+                            result += f"- **Location:** {location}\n"
+                            result += f"- **Company ID:** {company_id}\n"
+                            result += f"- **Project:** {project}\n"
+                            result += f"- **Department:** {department}\n\n"
                         
                         st.session_state.extracted_context = {
                             "team": None,
