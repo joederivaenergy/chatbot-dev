@@ -26,6 +26,11 @@ CSV_FILES = {
     'Tech Services': 'csvs/Guidelines_cleaned_Tech_Services.csv',
 }
 
+# --- Reference CSV Files ---
+REFERENCE_CSV_FILES = {
+    'department_list': 'csvs/Guidelines_cleaned_department_list.csv'
+}
+
 # ============================================
 # LOAD CSV DATA
 # ============================================
@@ -34,6 +39,8 @@ CSV_FILES = {
 def load_all_csvs():
     """Load all CSV files into memory"""
     data = {}
+    
+    # Load team-specific CSVs
     for team, filepath in CSV_FILES.items():
         if os.path.exists(filepath):
             try:
@@ -49,6 +56,23 @@ def load_all_csvs():
         else:
             st.warning(f"CSV not found for {team}: {filepath}")
             data[team] = pd.DataFrame()
+    
+    # Load reference CSVs
+    for ref_type, filepath in REFERENCE_CSV_FILES.items():
+        if os.path.exists(filepath):
+            try:
+                df = pd.read_csv(filepath, encoding='utf-8-sig')  # Handle BOM
+                for col in df.columns:
+                    if df[col].dtype == 'object':
+                        df[col] = df[col].str.strip()
+                data[ref_type] = df
+            except Exception as e:
+                st.error(f"Error loading {ref_type} CSV: {e}")
+                data[ref_type] = pd.DataFrame()
+        else:
+            st.warning(f"Reference CSV not found: {filepath}")
+            data[ref_type] = pd.DataFrame()
+    
     return data
 
 # Load CSVs at startup
@@ -220,7 +244,7 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-with st.sidebar.expander("⚙️ Tools", expanded=True):
+with st.sidebar.expander("⚙️ **Tools**", expanded=True):
     if st.button("🗑️ Clear Chat"):
         reset_history()
         st.rerun()
@@ -294,7 +318,7 @@ def call_claude(system_prompt: str, user_message: str, include_history: bool = T
 # ============================================
 
 CHARGING_DETECTION_PROMPT = """
-You are Diva, a charging guidelines assistant for Deriva Energy.
+You are Diva, a charging guidelines and department information assistant for Deriva Energy.
 
 Determine if the user's question is about CHARGING GUIDELINES or something else.
 
@@ -304,7 +328,13 @@ Charging questions are about:
 - Where to charge specific work (ERP, labor, projects, etc.)
 - Team-specific charging information
 
-NOT charging questions:
+Department questions are about:
+- Department names, numbers, or codes
+- Department information and details
+- How many departments exist
+- Listing or searching for departments
+
+NOT charging/department questions:
 - General greetings (hi, hello)
 - General questions about Deriva Energy
 - Questions about policies not related to charging
@@ -789,11 +819,126 @@ def process_charging_question(user_input: str) -> str:
     return result               
 
 # ============================================
+# DEPARTMENT QUERY FUNCTIONS
+# ============================================
+
+def is_department_question(user_query: str) -> bool:
+    """Detect if the user is asking about departments"""
+    query_lower = user_query.lower()
+    
+    department_keywords = [
+        'department', 'dept', 'departments', 'depts',
+        'department number', 'dept number', 'department code',
+        'how many department', 'list department', 'show department',
+        'what department', 'which department', 'all department'
+    ]
+    
+    return any(keyword in query_lower for keyword in department_keywords)
+
+def search_departments(query: str) -> pd.DataFrame:
+    """Search for departments based on user query"""
+    if 'department_list' not in ALL_TEAM_DATA:
+        return pd.DataFrame()
+    
+    df = ALL_TEAM_DATA['department_list']
+    query_lower = query.lower()
+    
+    # If asking for all departments or count
+    if any(word in query_lower for word in ['all', 'list', 'show all', 'how many']):
+        return df
+    
+    # Search by department number
+    dept_numbers = re.findall(r'\b\d{4}\b', query)
+    if dept_numbers:
+        return df[df['Department Number'].astype(str).isin(dept_numbers)]
+    
+    # Search by name, HR function group, or HR group
+    search_cols = ['Department Name', 'HR Function Group', 'HR Group']
+    mask = pd.Series([False] * len(df))
+    
+    for col in search_cols:
+        if col in df.columns:
+            mask |= df[col].astype(str).str.lower().str.contains(query_lower, na=False, regex=False)
+    
+    return df[mask]
+
+def format_department_info(departments_df: pd.DataFrame, query: str) -> str:
+    """Format department information for display"""
+    if departments_df.empty:
+        return "I couldn't find any departments matching your query. Please try again with different keywords."
+    
+    query_lower = query.lower()
+    
+    # If asking for count or all departments
+    if any(word in query_lower for word in ['how many', 'count', 'total']):
+        total = len(departments_df)
+        response = f"**Total Departments: {total}**\n\n"
+        
+        # Group by HR Function Group
+        if 'HR Function Group' in departments_df.columns:
+            grouped = departments_df.groupby('HR Function Group').size().reset_index(name='Count')
+            response += "**Breakdown by HR Function Group:**\n"
+            for _, row in grouped.iterrows():
+                response += f"- {row['HR Function Group']}: {row['Count']} department(s)\n"
+        
+        return response
+    
+    # If asking for list of all departments
+    if any(word in query_lower for word in ['list', 'all', 'show all']) and len(departments_df) > 5:
+        response = f"**Found {len(departments_df)} departments:**\n\n"
+        
+        # Group by HR Function Group for better organization
+        if 'HR Function Group' in departments_df.columns:
+            for group in departments_df['HR Function Group'].unique():
+                group_depts = departments_df[departments_df['HR Function Group'] == group]
+                response += f"\n**{group}:**\n"
+                for _, row in group_depts.iterrows():
+                    response += f"- {row['Department Number']}: {row['Department Name']}\n"
+        else:
+            for _, row in departments_df.iterrows():
+                response += f"- {row['Department Number']}: {row['Department Name']}\n"
+        
+        return response
+    
+    # Detailed view for specific departments (≤5 results)
+    if len(departments_df) <= 5:
+        response = f"**Found {len(departments_df)} department(s):**\n\n"
+        
+        for idx, row in departments_df.iterrows():
+            response += f"**{row['Department Number']} - {row['Department Name']}**\n"
+            if pd.notna(row.get('Resp Center')):
+                response += f"- Responsibility Center: {row['Resp Center']}\n"
+            if pd.notna(row.get('HR Function Group')):
+                response += f"- HR Function Group: {row['HR Function Group']}\n"
+            if pd.notna(row.get('HR Group')):
+                response += f"- HR Group: {row['HR Group']}\n"
+            if pd.notna(row.get('SG&A/OPS/DEVEX')):
+                response += f"- Category: {row['SG&A/OPS/DEVEX']}\n"
+            response += "\n"
+        
+        return response
+    
+    # More than 5 but not asking for all - show summary
+    response = f"**Found {len(departments_df)} departments. Here are the first 10:**\n\n"
+    for _, row in departments_df.head(10).iterrows():
+        response += f"- {row['Department Number']}: {row['Department Name']}\n"
+    
+    if len(departments_df) > 10:
+        response += f"\n*...and {len(departments_df) - 10} more. Please refine your search for specific departments.*"
+    
+    return response
+
+def process_department_question(user_input: str) -> str:
+    """Process department-related questions"""
+    departments = search_departments(user_input)
+    return format_department_info(departments, user_input)
+
+# ============================================
 # MAIN PROCESSING LOGIC
 # ============================================
 
 def process_message(user_input: str) -> str:
-    """Main message processing - routes to charging or general conversation"""
+    """Main message processing - routes to charging, department, or general conversation"""
     
     # Handle greetings
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
@@ -806,7 +951,12 @@ def process_message(user_input: str) -> str:
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
-        return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
+        return "Hi! I'm Diva, your charging guidelines assistant. I can help you with charging codes and department information. How can I help you today?"
+    
+    # Check for department questions (before charging flow check)
+    if is_department_question(user_input):
+        st.session_state.in_charging_flow = False
+        return process_department_question(user_input)
     
     # If we're already in a charging flow (answering clarifications), continue
     if st.session_state.in_charging_flow:
