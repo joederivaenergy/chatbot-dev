@@ -985,10 +985,10 @@ def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict,
             else:
                 # Multiple variants - show all
                 result = f"**Operations - {selected_subteam} - {description}**\n\n"
-                result += f"This charging code has **{len(rows)} variants**:\n\n"
+                result += f"This charging code has **{len(rows)} options**:\n\n"
                 
                 for idx, row in enumerate(rows, 1):
-                    result += f"---\n**VARIANT {idx}:**\n"
+                    result += f"---\n**Option {idx}:**\n"
                     result += f"- **Description:** {row['Description']}\n"
                     result += f"- **Account:** {row['Account']}\n"
                     result += f"- **Location:** {row['Location']}\n"
@@ -1026,10 +1026,10 @@ def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict,
             else:
                 # Multiple variants
                 result = f"**Operations - {subteam_name} - {description}**\n\n"
-                result += f"This charging code has **{len(rows)} variants**:\n\n"
+                result += f"This charging code has **{len(rows)} options**:\n\n"
                 
                 for idx, row in enumerate(rows, 1):
-                    result += f"---\n**VARIANT {idx}:**\n"
+                    result += f"---\n**Option {idx}:**\n"
                     result += f"- **Description:** {row['Description']}\n"
                     result += f"- **Account:** {row['Account']}\n"
                     result += f"- **Location:** {row['Location']}\n"
@@ -1072,7 +1072,7 @@ def format_operations_results(grouped_results: Dict[str, List[pd.Series]]) -> st
         else:
             # Multiple variants of the same description
             result = f"**Operations - {description}**\n\n"
-            result += f"This charging code has **{len(variants)} variants** based on department/location:\n\n"
+            result += f"This charging code has **{len(variants)} options** based on department/location:\n\n"
             
             # Track if any variant has XXXX
             has_any_xxxx = False
@@ -1091,7 +1091,7 @@ def format_operations_results(grouped_results: Dict[str, List[pd.Series]]) -> st
                 if has_xxxx:
                     has_any_xxxx = True
                 
-                result += f"---\n**VARIANT {idx}:**\n"
+                result += f"---\n**Option {idx}:**\n"
                 result += f"- **Description:** {desc}\n"
                 result += f"- **Account:** {account}\n"
                 result += f"- **Location:** {location}\n"
@@ -1113,7 +1113,7 @@ def format_operations_results(grouped_results: Dict[str, List[pd.Series]]) -> st
         if variant_count == 1:
             result += f"{idx}. {description}\n"
         else:
-            result += f"{idx}. {description} ({variant_count} variants)\n"
+            result += f"{idx}. {description} ({variant_count} options)\n"
     
     result += "\nWhich one are you looking for? (You can reply with the number or name)"
     
@@ -1142,10 +1142,10 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                 return format_charging_info(row)
             else:
                 result = f"**Operations - {selected_desc}**\n\n"
-                result += f"This charging code has **{len(variants)} variants**:\n\n"
+                result += f"This charging code has **{len(variants)} options**:\n\n"
                 
                 for idx, row in enumerate(variants, 1):
-                    result += f"---\n**VARIANT {idx}:**\n"
+                    result += f"---\n**Option {idx}:**\n"
                     result += f"- **Description:** {row['Description']}\n"
                     result += f"- **Account:** {row['Account']}\n"
                     result += f"- **Location:** {row['Location']}\n"
@@ -1168,10 +1168,10 @@ def handle_operations_selection(user_input: str, grouped_results: Dict[str, List
                 return format_charging_info(row)
             else:
                 result = f"**Operations - {desc}**\n\n"
-                result += f"This charging code has **{len(variants)} variants**:\n\n"
+                result += f"This charging code has **{len(variants)} options**:\n\n"
                 
                 for idx, row in enumerate(variants, 1):
-                    result += f"---\n**VARIANT {idx}:**\n"
+                    result += f"---\n**Option {idx}:**\n"
                     result += f"- **Description:** {row['Description']}\n"
                     result += f"- **Account:** {row['Account']}\n"
                     result += f"- **Location:** {row['Location']}\n"
@@ -1346,7 +1346,7 @@ def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
         if has_xxxx:
             has_any_xxxx = True
         
-        result += f"---\n**OPTION {idx}:**\n"
+        result += f"---\n**Option {idx}:**\n"
         result += f"- **Description:** {desc}\n"
         result += f"- **Account:** {account}\n"
         result += f"- **Location:** {location}\n"
@@ -1510,10 +1510,10 @@ def process_charging_question(user_input: str) -> str:
                 else:
                     # Multiple variants - show all
                     result = f"**Operations - {subteam_name} - {exact_description}**\n\n"
-                    result += f"This charging code has **{len(rows)} variants**:\n\n"
+                    result += f"This charging code has **{len(rows)} options**:\n\n"
                     
                     for idx, row in enumerate(rows, 1):
-                        result += f"---\n**VARIANT {idx}:**\n"
+                        result += f"---\n**Option {idx}:**\n"
                         result += f"- **Description:** {row['Description']}\n"
                         result += f"- **Account:** {row['Account']}\n"
                         result += f"- **Location:** {row['Location']}\n"
@@ -1572,10 +1572,10 @@ def process_charging_question(user_input: str) -> str:
                     else:
                         # Multiple variants
                         result = f"**Operations - {subteam_name} - {description}**\n\n"
-                        result += f"This charging code has **{len(rows)} variants**:\n\n"
+                        result += f"This charging code has **{len(rows)} options**:\n\n"
                         
                         for idx, row in enumerate(rows, 1):
-                            result += f"---\n**VARIANT {idx}:**\n"
+                            result += f"---\n**Option {idx}:**\n"
                             result += f"- **Description:** {row['Description']}\n"
                             result += f"- **Account:** {row['Account']}\n"
                             result += f"- **Location:** {row['Location']}\n"
