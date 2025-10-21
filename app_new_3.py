@@ -705,6 +705,58 @@ def is_likely_new_query(user_input: str) -> bool:
     return False
 
 # ============================================
+# HELPER FUNCTION: Clean and format values
+# ============================================
+def clean_value(value, field_name=""):
+    """
+    Clean a value for display:
+    - Convert NaN/None to "N/A"
+    - Remove .0 from integers (especially Account numbers)
+    - Keep strings as-is
+    """
+    # Handle NaN, None, or empty strings
+    if pd.isna(value) or value is None or str(value).strip() == "":
+        return "N/A"
+    
+    # Handle numeric values
+    if isinstance(value, (int, float, np.integer, np.floating)):
+        # Check if it's actually an integer (no decimal part)
+        if float(value) == int(value):
+            return str(int(value))
+        else:
+            return str(value)
+    
+    # Handle string values
+    value_str = str(value).strip()
+    
+    # Check if string looks like "123.0" and convert to integer
+    if field_name.lower() == "account" or field_name.lower() == "company id":
+        try:
+            float_val = float(value_str)
+            if float_val == int(float_val):
+                return str(int(float_val))
+        except (ValueError, OverflowError):
+            pass
+    
+    return value_str
+
+def check_for_xxxx_in_project(project_value):
+    """
+    Check if project contains 'XXXX' or 'xxxx' and return appropriate note.
+    Returns tuple: (has_xxxx, note_text)
+    """
+    if pd.isna(project_value):
+        return False, ""
+    
+    project_str = str(project_value).strip()
+    
+    # Check for XXXX in various forms
+    if 'XXXX' in project_str.upper():
+        return True, "\n\n**Note:** XXXX = Site location code"
+    
+    return False, ""
+
+# ============================================
 # CSV SEARCH FUNCTIONS (WHOLE WORD MATCHING)
 # ============================================
 
@@ -1018,31 +1070,51 @@ def format_operations_results(grouped_results: Dict[str, List[pd.Series]]) -> st
             result = f"**Operations - {description}**\n\n"
             result += f"This charging code has **{len(variants)} variants** based on department/location:\n\n"
             
+            # Track if any variant has XXXX
+            has_any_xxxx = False
+            
             for idx, row in enumerate(variants, 1):
+                # Clean all values
+                desc = clean_value(row.get('Description'), 'description')
+                account = clean_value(row.get('Account'), 'account')
+                location = clean_value(row.get('Location'), 'location')
+                company_id = clean_value(row.get('Company ID'), 'company id')
+                project = clean_value(row.get('Project'), 'project')
+                department = clean_value(row.get('Department'), 'department')
+                
+                # Check for XXXX
+                has_xxxx, _ = check_for_xxxx_in_project(project)
+                if has_xxxx:
+                    has_any_xxxx = True
+                
                 result += f"---\n**VARIANT {idx}:**\n"
-                result += f"- **Description:** {row['Description']}\n"
-                result += f"- **Account:** {row['Account']}\n"
-                result += f"- **Location:** {row['Location']}\n"
-                result += f"- **Company ID:** {row['Company ID']}\n"
-                result += f"- **Project:** {row['Project']}\n"
-                result += f"- **Department:** {row['Department']}\n\n"
+                result += f"- **Description:** {desc}\n"
+                result += f"- **Account:** {account}\n"
+                result += f"- **Location:** {location}\n"
+                result += f"- **Company ID:** {company_id}\n"
+                result += f"- **Project:** {project}\n"
+                result += f"- **Department:** {department}\n\n"
+            
+            # Add XXXX note at the end if any variant has it
+            if has_any_xxxx:
+                result += "\n**Note:** XXXX = Site location code\n"
             
             return result.strip()
     
     # Multiple different descriptions found
     result = f"I found **{len(grouped_results)} different charging codes** in Operations:\n\n"
     
-    for idx, (description, variants) in enumerate(grouped_results.items(), 1):
-        result += f"**{idx}. {description}**"
-        
-        if len(variants) > 1:
-            result += f" _(has {len(variants)} variants)_"
-        
-        result += "\n"
+    for idx, description in enumerate(grouped_results.keys(), 1):
+        variant_count = len(grouped_results[description])
+        if variant_count == 1:
+            result += f"{idx}. {description}\n"
+        else:
+            result += f"{idx}. {description} ({variant_count} variants)\n"
     
-    result += "\n**Which one are you looking for?** (Reply with the number or description)"
+    result += "\nWhich one are you looking for? (You can reply with the number or name)"
     
     return result
+
 
 def handle_operations_selection(user_input: str, grouped_results: Dict[str, List[pd.Series]]) -> str:
     """
@@ -1221,32 +1293,69 @@ def process_reference_question(user_input: str, reference_type: str) -> str:
 
 def format_charging_info(row: pd.Series) -> str:
     """Format a single charging code with markdown bullets"""
-    result = f"""- **Description:** {row['Description']}
-- **Account:** {row['Account']}
-- **Location:** {row['Location']}
-- **Company ID:** {row['Company ID']}
-- **Project:** {row['Project']}
-- **Department:** {row['Department']}"""
+    
+    # Clean all values
+    description = clean_value(row.get('Description'), 'description')
+    account = clean_value(row.get('Account'), 'account')
+    location = clean_value(row.get('Location'), 'location')
+    company_id = clean_value(row.get('Company ID'), 'company id')
+    project = clean_value(row.get('Project'), 'project')
+    department = clean_value(row.get('Department'), 'department')
+    
+    # Check for XXXX in project
+    has_xxxx, xxxx_note = check_for_xxxx_in_project(project)
+    
+    result = f"""- **Description:** {description}
+- **Account:** {account}
+- **Location:** {location}
+- **Company ID:** {company_id}
+- **Project:** {project}
+- **Department:** {department}"""
+    
+    # Add XXXX note if needed
+    if has_xxxx:
+        result += xxxx_note
+    
     return result
 
 def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
     """Format multiple variants of the same description"""
-    description = matches.iloc[0]['Description']
+    description = clean_value(matches.iloc[0].get('Description'), 'description')
     
     result = f"**{team} Team - {description}**\n\n"
     result += f"This charging code has **{len(matches)} options**. Please refer to the department list for more details:\n\n"
     
+    # Track if any variant has XXXX
+    has_any_xxxx = False
+    
     for idx, (_, row) in enumerate(matches.iterrows(), 1):
+        # Clean all values
+        desc = clean_value(row.get('Description'), 'description')
+        account = clean_value(row.get('Account'), 'account')
+        location = clean_value(row.get('Location'), 'location')
+        company_id = clean_value(row.get('Company ID'), 'company id')
+        project = clean_value(row.get('Project'), 'project')
+        department = clean_value(row.get('Department'), 'department')
+        
+        # Check for XXXX
+        has_xxxx, _ = check_for_xxxx_in_project(project)
+        if has_xxxx:
+            has_any_xxxx = True
         
         result += f"---\n**OPTION {idx}:**\n"
-        result += f"- **Description:** {row['Description']}\n"
-        result += f"- **Account:** {row['Account']}\n"
-        result += f"- **Location:** {row['Location']}\n"
-        result += f"- **Company ID:** {row['Company ID']}\n"
-        result += f"- **Project:** {row['Project']}\n"
-        result += f"- **Department:** {row['Department']}\n\n"
+        result += f"- **Description:** {desc}\n"
+        result += f"- **Account:** {account}\n"
+        result += f"- **Location:** {location}\n"
+        result += f"- **Company ID:** {company_id}\n"
+        result += f"- **Project:** {project}\n"
+        result += f"- **Department:** {department}\n\n"
+    
+    # Add XXXX note at the end if any variant has it
+    if has_any_xxxx:
+        result += "\n**Note:** XXXX = Site location code\n"
     
     return result.strip()
+
 
 # ============================================
 # HANDLE USER SELECTING FROM LIST
