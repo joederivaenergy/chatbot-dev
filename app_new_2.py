@@ -293,7 +293,7 @@ class DynamoDBChatHistory:
 # ============================================
 
 st.set_page_config(
-    page_icon="deriva.jpg", 
+    page_icon="��", 
     page_title="Diva the Chatbot", 
     layout="centered", 
     initial_sidebar_state="expanded"
@@ -331,8 +331,7 @@ chat_history = DynamoDBChatHistory(
 # ============================================
 
 with st.sidebar:
-    st.image("deriva.jpg", width=200)
-    st.title("Diva The Chatbot")
+    st.title("�� Diva The Chatbot")
     st.markdown("Your AI assistant for charging codes and company information.")
     
     st.divider()
