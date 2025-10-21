@@ -28,7 +28,7 @@ CSV_FILES = {
 
 # --- Reference CSV Files ---
 REFERENCE_CSV_FILES = {
-    'department_list': 'csvs/Guidelines_cleaned_department_list.csv'
+    'department_list': 'csvs/Guidelines_cleaned_dept_list.csv'
 }
 
 # ============================================
