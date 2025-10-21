@@ -362,7 +362,7 @@ def is_charging_question(user_query: str) -> bool:
     # Quick heuristic check first
     charging_keywords = [
         "charge", "charging", "code", "codes", "account", "project", 
-        "department", "expense", "time", "labor", "erp"
+        "department", "expense", "time", "labor", "timesheet", "bill"
     ]
     
     user_lower = user_query.lower()
