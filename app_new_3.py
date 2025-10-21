@@ -951,7 +951,7 @@ def process_message(user_input: str) -> str:
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
-        return "Hi! I'm Diva, your charging guidelines assistant. I can help you with charging codes and department information. How can I help you today?"
+        return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
     
     # Check for department questions (before charging flow check)
     if is_department_question(user_input):
