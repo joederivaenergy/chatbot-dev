@@ -765,25 +765,31 @@ def search_operations_by_description(keywords: str) -> Dict[str, List[pd.Series]
     Search Operations team by description and group results by description.
     Returns a dictionary where keys are unique descriptions and values are lists of matching rows.
     """
-    if 'Operations' not in ALL_TEAM_DATA or ALL_TEAM_DATA['Operations'].empty:
-        return {}
+    # Get all Operations sub-teams
+    operations_teams = [team for team in ALL_TEAM_DATA.keys() if team.startswith('Operations_')]
     
-    df = ALL_TEAM_DATA['Operations']
+    if not operations_teams:
+        return {}
     
     # Split keywords into individual words
     search_words = [w.strip().lower() for w in keywords.split() if w.strip()]
     
-    # Find all matching rows
+    # Find all matching rows across all Operations sub-teams
     matching_rows = []
-    for idx, row in df.iterrows():
-        description = str(row['Description']).lower()
-        description_words = re.findall(r'\b\w+\b', description)
-        
-        # Check if any search word matches a whole word in description
-        for search_word in search_words:
-            if search_word in description_words:
-                matching_rows.append(row)
-                break
+    for ops_team in operations_teams:
+        df = ALL_TEAM_DATA[ops_team]
+        if df.empty:
+            continue
+            
+        for idx, row in df.iterrows():
+            description = str(row['Description']).lower()
+            description_words = re.findall(r'\b\w+\b', description)
+            
+            # Check if any search word matches a whole word in description
+            for search_word in search_words:
+                if search_word in description_words:
+                    matching_rows.append(row)
+                    break
     
     # Group by description
     grouped_results = {}
