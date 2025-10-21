@@ -760,13 +760,17 @@ def get_charging_data(team: str, exact_description: str, location: str = None) -
 # OPERATIONS-SPECIFIC SEARCH
 # ============================================
 
-def search_operations_by_description(keywords: str) -> Dict[str, List[pd.Series]]:
+def search_operations_by_description(keywords: str, subteam: str = None) -> Dict[str, List[pd.Series]]:
     """
     Search Operations team by description and group results by description.
+    If subteam is provided, only search that specific subteam.
     Returns a dictionary where keys are unique descriptions and values are lists of matching rows.
     """
-    # Get all Operations sub-teams
-    operations_teams = [team for team in ALL_TEAM_DATA.keys() if team.startswith('Operations_')]
+    # Get all Operations sub-teams or just the specified one
+    if subteam:
+        operations_teams = [subteam] if subteam in ALL_TEAM_DATA else []
+    else:
+        operations_teams = [team for team in ALL_TEAM_DATA.keys() if team.startswith('Operations_')]
     
     if not operations_teams:
         return {}
@@ -800,6 +804,196 @@ def search_operations_by_description(keywords: str) -> Dict[str, List[pd.Series]
         grouped_results[desc].append(row)
     
     return grouped_results
+
+# ============================================
+# Function to get operations subteams for a description
+# ============================================
+def get_operations_subteams_for_description(description: str) -> Dict[str, List[pd.Series]]:
+    """
+    Find which Operations sub-teams have a specific description.
+    Returns dict with subteam names as keys and matching rows as values.
+    """
+    subteam_results = {}
+    
+    operations_teams = [team for team in ALL_TEAM_DATA.keys() if team.startswith('Operations_')]
+    
+    for ops_team in operations_teams:
+        df = ALL_TEAM_DATA[ops_team]
+        if df.empty:
+            continue
+        
+        # Find rows with matching description (case-insensitive)
+        matches = df[df['Description'].str.lower() == description.lower()]
+        
+        if not matches.empty:
+            # Convert team name to readable format
+            readable_name = ops_team.replace('Operations_', '').replace('_', ' ')
+            subteam_results[readable_name] = matches.to_dict('records')
+    
+    return subteam_results
+
+# ============================================
+# Function to format operations subteam list
+# ============================================
+def format_operations_subteam_question(description: str, subteam_results: Dict) -> str:
+    """
+    Format a clarifying question asking which Operations sub-team the user needs.
+    """
+    subteam_names = list(subteam_results.keys())
+    
+    result = f"I found charging codes for **'{description}'** in multiple Operations teams:\n\n"
+    
+    for idx, subteam in enumerate(subteam_names, 1):
+        result += f"{idx}. {subteam}\n"
+    
+    result += f"\nWhich Operations team are you asking about?"
+    
+    return result
+
+# ============================================
+# Function to detect operations subteam from user input
+# ============================================
+def extract_operations_subteam(user_input: str) -> str:
+    """
+    Extract Operations sub-team from user input.
+    Returns the full team key (e.g., 'Operations_Wind_Sites') or None.
+    """
+    user_lower = user_input.lower()
+    
+    # Map of keywords to team names
+    subteam_mapping = {
+        'high voltage': 'Operations_High_Voltage',
+        'mst fs': 'Operations_MST_FS',
+        'fs': 'Operations_MST_FS',
+        'mst gbx': 'Operations_MST_GBX',
+        'gbx': 'Operations_MST_GBX',
+        'gearbox': 'Operations_MST_GBX',
+        'mst lc': 'Operations_MST_LC',
+        'lc': 'Operations_MST_LC',
+        'non controllable': 'Operations_Non_Controllable_QM',
+        'qm': 'Operations_Non_Controllable_QM',
+        'ops support': 'Operations_Ops_Support',
+        'operations support': 'Operations_Ops_Support',
+        'solar': 'Operations_Solar_Sites',
+        'solar sites': 'Operations_Solar_Sites',
+        'wind': 'Operations_Wind_Sites',
+        'wind sites': 'Operations_Wind_Sites',
+        'blade': 'Operations_Blade_Maintenance_Repair',
+        'blade maintenance': 'Operations_Blade_Maintenance_Repair',
+        'blade repair': 'Operations_Blade_Maintenance_Repair',
+    }
+    
+    # Check for matches
+    for keyword, team_key in subteam_mapping.items():
+        if keyword in user_lower:
+            return team_key
+    
+    # Check if user input is a number (selecting from list)
+    user_input_stripped = user_input.strip()
+    if user_input_stripped.isdigit():
+        # This will be handled by the selection logic
+        return None
+    
+    return None
+
+# ============================================
+# Handle operations subteam selection
+# ============================================
+def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict, description: str):
+    """
+    Handle when user selects an Operations sub-team from a list.
+    """
+    user_input_stripped = user_input.strip()
+    
+    # Check if user input is a number
+    if user_input_stripped.isdigit():
+        selection_num = int(user_input_stripped)
+        subteam_names = list(pending_subteams.keys())
+        
+        if 1 <= selection_num <= len(subteam_names):
+            selected_subteam = subteam_names[selection_num - 1]
+            rows = pending_subteams[selected_subteam]
+            
+            # If only one variant, return it directly
+            if len(rows) == 1:
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.operations_subteam = None
+                st.session_state.pending_operations_subteams = {}
+                st.session_state.in_charging_flow = False
+                return format_charging_info(rows[0])
+            else:
+                # Multiple variants - show all
+                result = f"**Operations - {selected_subteam} - {description}**\n\n"
+                result += f"This charging code has **{len(rows)} variants**:\n\n"
+                
+                for idx, row in enumerate(rows, 1):
+                    result += f"---\n**VARIANT {idx}:**\n"
+                    result += f"- **Description:** {row['Description']}\n"
+                    result += f"- **Account:** {row['Account']}\n"
+                    result += f"- **Location:** {row['Location']}\n"
+                    result += f"- **Company ID:** {row['Company ID']}\n"
+                    result += f"- **Project:** {row['Project']}\n"
+                    result += f"- **Department:** {row['Department']}\n\n"
+                
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.operations_subteam = None
+                st.session_state.pending_operations_subteams = {}
+                st.session_state.in_charging_flow = False
+                return result.strip()
+    
+    # Check if user mentioned a subteam name
+    for subteam_name in pending_subteams.keys():
+        if subteam_name.lower() in user_input.lower():
+            rows = pending_subteams[subteam_name]
+            
+            if len(rows) == 1:
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.operations_subteam = None
+                st.session_state.pending_operations_subteams = {}
+                st.session_state.in_charging_flow = False
+                return format_charging_info(rows[0])
+            else:
+                # Multiple variants
+                result = f"**Operations - {subteam_name} - {description}**\n\n"
+                result += f"This charging code has **{len(rows)} variants**:\n\n"
+                
+                for idx, row in enumerate(rows, 1):
+                    result += f"---\n**VARIANT {idx}:**\n"
+                    result += f"- **Description:** {row['Description']}\n"
+                    result += f"- **Account:** {row['Account']}\n"
+                    result += f"- **Location:** {row['Location']}\n"
+                    result += f"- **Company ID:** {row['Company ID']}\n"
+                    result += f"- **Project:** {row['Project']}\n"
+                    result += f"- **Department:** {row['Department']}\n\n"
+                
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.operations_subteam = None
+                st.session_state.pending_operations_subteams = {}
+                st.session_state.in_charging_flow = False
+                return result.strip()
+    
+    return None
+
 
 def format_operations_results(grouped_results: Dict[str, List[pd.Series]]) -> str:
     """
@@ -1092,21 +1286,23 @@ def check_if_selecting_from_list(user_input: str, extracted: Dict) -> str:
 # ============================================
 
 def process_charging_question(user_input: str) -> str:
-    """Process charging guidelines question with special Operations handling"""
+    """Process charging-related questions"""
     
-    # Mark that we're in charging flow
     st.session_state.in_charging_flow = True
     
-    # Check if this looks like a new query (fallback detection)
-    if is_likely_new_query(user_input):
-        # For NEW charging questions, completely reset context
-        st.session_state.extracted_context = {
-            "team": None,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        st.session_state.operations_search_results = {}
+    # Merge any new info with existing context
+    if st.session_state.extracted_context["team"] or st.session_state.extracted_context["keywords"]:
+        if is_likely_new_query(user_input) and not is_follow_up(user_input):
+            st.session_state.extracted_context = {
+                "team": None,
+                "keywords": None,
+                "location": None,
+                "exact_description": None
+            }
+            st.session_state.operations_search_results = {}
+            st.session_state.operations_subteam = None
+            if 'pending_operations_subteams' in st.session_state:
+                st.session_state.pending_operations_subteams = {}
     
     # Extract information
     extracted = extract_query_info(user_input)
@@ -1129,6 +1325,29 @@ def process_charging_question(user_input: str) -> str:
     # ============================================
     
     if team == "Operations":
+        # Check if we're waiting for operations subteam selection
+        if 'pending_operations_subteams' in st.session_state and st.session_state.pending_operations_subteams:
+            pending_desc = st.session_state.get('pending_operations_description', '')
+            selection_result = handle_operations_subteam_selection(
+                user_input,
+                st.session_state.pending_operations_subteams,
+                pending_desc
+            )
+            
+            if selection_result:
+                return selection_result
+            else:
+                # Couldn't understand selection, ask again
+                return format_operations_subteam_question(
+                    pending_desc,
+                    st.session_state.pending_operations_subteams
+                )
+        
+        # Check if user specified an operations subteam
+        detected_subteam = extract_operations_subteam(user_input)
+        if detected_subteam:
+            st.session_state.operations_subteam = detected_subteam
+        
         # Check if user is selecting from previous Operations results
         if st.session_state.operations_search_results:
             selection_result = handle_operations_selection(
@@ -1145,41 +1364,42 @@ def process_charging_question(user_input: str) -> str:
                     "exact_description": None
                 }
                 st.session_state.operations_search_results = {}
+                st.session_state.operations_subteam = None
                 st.session_state.in_charging_flow = False
                 return selection_result
         
         # If we have an exact description, search for it
         if exact_description:
-            # Search for all variants of this description
-            grouped_results = search_operations_by_description(exact_description)
+            # First check if this description exists in multiple subteams
+            subteam_results = get_operations_subteams_for_description(exact_description)
             
-            if not grouped_results:
+            if not subteam_results:
                 st.session_state.extracted_context["exact_description"] = None
                 st.session_state.operations_search_results = {}
                 return f"I couldn't find charging codes for '{exact_description}' in Operations team.\n\nPlease refer to the [O&M Charging Guidelines]({CHARGING_GUIDELINES_LINK}) for more information."
             
-            # Check if the exact description is in results
-            if exact_description in grouped_results:
-                variants = grouped_results[exact_description]
+            # If description exists in only one subteam, return results directly
+            if len(subteam_results) == 1:
+                subteam_name = list(subteam_results.keys())[0]
+                rows = subteam_results[subteam_name]
                 
-                if len(variants) == 1:
-                    # Single result
-                    row = variants[0]
+                if len(rows) == 1:
+                    # Single unique result
                     st.session_state.extracted_context = {
                         "team": None,
                         "keywords": None,
                         "location": None,
                         "exact_description": None
                     }
-                    st.session_state.operations_search_results = {}
+                    st.session_state.operations_subteam = None
                     st.session_state.in_charging_flow = False
-                    return format_charging_info(row)
+                    return format_charging_info(rows[0])
                 else:
                     # Multiple variants - show all
-                    result = f"**Operations - {exact_description}**\n\n"
-                    result += f"This charging code has **{len(variants)} variants**:\n\n"
+                    result = f"**Operations - {subteam_name} - {exact_description}**\n\n"
+                    result += f"This charging code has **{len(rows)} variants**:\n\n"
                     
-                    for idx, row in enumerate(variants, 1):
+                    for idx, row in enumerate(rows, 1):
                         result += f"---\n**VARIANT {idx}:**\n"
                         result += f"- **Description:** {row['Description']}\n"
                         result += f"- **Account:** {row['Account']}\n"
@@ -1194,13 +1414,21 @@ def process_charging_question(user_input: str) -> str:
                         "location": None,
                         "exact_description": None
                     }
-                    st.session_state.operations_search_results = {}
+                    st.session_state.operations_subteam = None
                     st.session_state.in_charging_flow = False
                     return result.strip()
+            
+            # Description exists in multiple subteams - ask clarifying question
+            st.session_state.pending_operations_subteams = subteam_results
+            st.session_state.pending_operations_description = exact_description
+            return format_operations_subteam_question(exact_description, subteam_results)
         
         # Search by keywords for Operations
         if keywords:
-            grouped_results = search_operations_by_description(keywords)
+            # Use specific subteam if detected
+            subteam_to_search = st.session_state.operations_subteam if st.session_state.operations_subteam else None
+            
+            grouped_results = search_operations_by_description(keywords, subteam_to_search)
             
             if not grouped_results:
                 st.session_state.operations_search_results = {}
@@ -1209,45 +1437,53 @@ def process_charging_question(user_input: str) -> str:
             # If only one unique description found
             if len(grouped_results) == 1:
                 description = list(grouped_results.keys())[0]
-                variants = grouped_results[description]
                 
-                st.session_state.extracted_context["exact_description"] = description
+                # Check which subteams have this description
+                subteam_results = get_operations_subteams_for_description(description)
                 
-                if len(variants) == 1:
-                    # Single unique result
-                    row = variants[0]
-                    st.session_state.extracted_context = {
-                        "team": None,
-                        "keywords": None,
-                        "location": None,
-                        "exact_description": None
-                    }
-                    st.session_state.operations_search_results = {}
-                    st.session_state.in_charging_flow = False
-                    return format_charging_info(row)
-                else:
-                    # Multiple variants of same description - show all
-                    result = f"**Operations - {description}**\n\n"
-                    result += f"This charging code has **{len(variants)} variants**:\n\n"
+                # If only in one subteam, return results
+                if len(subteam_results) == 1:
+                    subteam_name = list(subteam_results.keys())[0]
+                    rows = subteam_results[subteam_name]
                     
-                    for idx, row in enumerate(variants, 1):
-                        result += f"---\n**VARIANT {idx}:**\n"
-                        result += f"- **Description:** {row['Description']}\n"
-                        result += f"- **Account:** {row['Account']}\n"
-                        result += f"- **Location:** {row['Location']}\n"
-                        result += f"- **Company ID:** {row['Company ID']}\n"
-                        result += f"- **Project:** {row['Project']}\n"
-                        result += f"- **Department:** {row['Department']}\n\n"
-                    
-                    st.session_state.extracted_context = {
-                        "team": None,
-                        "keywords": None,
-                        "location": None,
-                        "exact_description": None
-                    }
-                    st.session_state.operations_search_results = {}
-                    st.session_state.in_charging_flow = False
-                    return result.strip()
+                    if len(rows) == 1:
+                        st.session_state.extracted_context = {
+                            "team": None,
+                            "keywords": None,
+                            "location": None,
+                            "exact_description": None
+                        }
+                        st.session_state.operations_subteam = None
+                        st.session_state.in_charging_flow = False
+                        return format_charging_info(rows[0])
+                    else:
+                        # Multiple variants
+                        result = f"**Operations - {subteam_name} - {description}**\n\n"
+                        result += f"This charging code has **{len(rows)} variants**:\n\n"
+                        
+                        for idx, row in enumerate(rows, 1):
+                            result += f"---\n**VARIANT {idx}:**\n"
+                            result += f"- **Description:** {row['Description']}\n"
+                            result += f"- **Account:** {row['Account']}\n"
+                            result += f"- **Location:** {row['Location']}\n"
+                            result += f"- **Company ID:** {row['Company ID']}\n"
+                            result += f"- **Project:** {row['Project']}\n"
+                            result += f"- **Department:** {row['Department']}\n\n"
+                        
+                        st.session_state.extracted_context = {
+                            "team": None,
+                            "keywords": None,
+                            "location": None,
+                            "exact_description": None
+                        }
+                        st.session_state.operations_subteam = None
+                        st.session_state.in_charging_flow = False
+                        return result.strip()
+                
+                # Description in multiple subteams - ask clarifying question
+                st.session_state.pending_operations_subteams = subteam_results
+                st.session_state.pending_operations_description = description
+                return format_operations_subteam_question(description, subteam_results)
             
             # Multiple different descriptions found - let user choose
             st.session_state.operations_search_results = grouped_results
