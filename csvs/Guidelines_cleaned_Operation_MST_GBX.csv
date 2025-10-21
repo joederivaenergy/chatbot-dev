@@ -1,4 +1,4 @@
-﻿Description,Company  ID,Location,Department,Project,Account,Account Name
+﻿Description,Company ID,Location,Department,Project,Account,Account Name
 Labor (Deriva FTE),"(75736) Deriva Energy Services, LLC",CGBT,8131,From work order,512101,Salaries and Wages - Regular Hours - Salaried
 Contract Workers (Labor),"(75736) Deriva Energy Services, LLC",CGBT,8131,From work order,515220,Consultant - Staff Augmentation
 Vehicle Fuel / Gas,"(75736) Deriva Energy Services, LLC",CGBT,8131,From work order,514501,Vehicle Fuel / Gas
@@ -12,11 +12,7 @@ Travel - Flight / Airfare,"(75736) Deriva Energy Services, LLC",CGBT,8131,From w
 Travel - Mileage Reimbursement,"(75736) Deriva Energy Services, LLC",CGBT,8131,From work order,517101,Transportation - Mileage Reimbursement
 Travel - Other Transportation,"(75736) Deriva Energy Services, LLC",CGBT,8131,From work order,517100,Transportation - Other
 Travel - Tolls,"(75736) Deriva Energy Services, LLC",CGBT,8131,From work order,517102,Transportation - Tolls and Parking
-,,,,,,
 "Unproductive time (R&R, Vacation, Sick, ect.)","(75736) Deriva Energy Services, LLC",CGBT,8131,No code needed,,
-,,,,,,
-,,,,,,
-Manager,,,,,,
 Respective expense item,"(75736) Deriva Energy Services, LLC",CGBT,8131,CGBT25G001,,
 Respective expense item,"(75752) Deriva Energy Wind, LLC",DWOP,8131,DWOP25G001,,
 Uniforms,"(75736) Deriva Energy Services, LLC",CGBT,8131,MSTDWOP,514154,Supplies Safety Gear
