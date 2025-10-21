@@ -259,7 +259,17 @@ chat_history = DynamoDBChatHistory(
 def reset_history():
     try:
         chat_history.clear()
-        reset_charging_state()
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        st.session_state.operations_search_results = {}
+        st.session_state.operations_subteam = None
+        st.session_state.pending_operations_subteams = {}
+        st.session_state.pending_operations_description = ""
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
@@ -761,59 +771,6 @@ def check_for_xxxx_in_project(project_value):
     return False, ""
 
 # ============================================
-# HELPER FUNCTIONS - DRY PRINCIPLE
-# ============================================
-
-def reset_charging_state():
-    """Reset all charging-related session state"""
-    reset_charging_state()
-
-def extract_clean_row_data(row) -> dict:
-    """Extract and clean all standard fields from a row"""
-    return {
-        'description': clean_value(row.get('Description'), 'description'),
-        'account': clean_value(row.get('Account'), 'account'),
-        'location': clean_value(row.get('Location'), 'location'),
-        'company_id': clean_value(row.get('Company ID'), 'company id'),
-        'project': clean_value(row.get('Project'), 'project'),
-        'department': clean_value(row.get('Department'), 'department')
-    }
-
-def format_variant_block(idx: int, row_data: dict, label: str = "VARIANT") -> str:
-    """Format a single variant/option block for display"""
-    return f"""---
-**{label} {idx}:**
-- **Description:** {row_data['description']}
-- **Account:** {row_data['account']}
-- **Location:** {row_data['location']}
-- **Company ID:** {row_data['company_id']}
-- **Project:** {row_data['project']}
-- **Department:** {row_data['department']}
-
-"""
-
-def format_variants_with_xxxx_check(variants: List, label: str = "VARIANT") -> Tuple[str, bool]:
-    """Format multiple variants and detect XXXX codes"""
-    result = ""
-    has_any_xxxx = False
-    
-    for idx, row in enumerate(variants, 1):
-        row_data = extract_clean_row_data(row)
-        result += format_variant_block(idx, row_data, label)
-        
-        has_xxxx, _ = check_for_xxxx_in_project(row_data['project'])
-        if has_xxxx:
-            has_any_xxxx = True
-    
-    return result, has_any_xxxx
-
-def add_xxxx_note_if_needed(result: str, has_xxxx: bool) -> str:
-    """Add XXXX note to result if needed"""
-    if has_xxxx:
-        return result + "\n**Note:** XXXX = Site location code\n"
-    return result
-
-# ============================================
 # CSV SEARCH FUNCTIONS (WHOLE WORD MATCHING)
 # ============================================
 
@@ -1025,7 +982,15 @@ def handle_operations_subteam_selection(user_input: str, pending_subteams: Dict,
             
             # If only one variant, return it directly
             if len(rows) == 1:
-                reset_charging_state()
+                st.session_state.extracted_context = {
+                    "team": None,
+                    "keywords": None,
+                    "location": None,
+                    "exact_description": None
+                }
+                st.session_state.operations_subteam = None
+                st.session_state.pending_operations_subteams = {}
+                st.session_state.in_charging_flow = False
                 return format_charging_info(rows[0])
             else:
                 # Multiple variants - show all
@@ -1800,7 +1765,17 @@ def process_message(user_input: str) -> str:
     # Handle greetings
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        reset_charging_state()
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        st.session_state.operations_search_results = {}
+        st.session_state.operations_subteam = None
+        st.session_state.pending_operations_subteams = {}
+        st.session_state.pending_operations_description = ""
         return "Hi! I'm Diva, your charging guidelines assistant. How can I help you today?"
     
     # If we're already in a charging flow, continue
