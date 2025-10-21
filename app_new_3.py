@@ -230,6 +230,9 @@ if "in_charging_flow" not in st.session_state:
 if "operations_search_results" not in st.session_state:
     st.session_state.operations_search_results = {}
 
+if "operations_subteam" not in st.session_state:
+    st.session_state.operations_subteam = None
+
 # ============================================
 # SIDEBAR
 # ============================================
