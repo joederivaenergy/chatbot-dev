@@ -7,6 +7,7 @@ import pandas as pd
 from typing import Dict, List, Tuple
 import time
 import re
+from difflib import SequenceMatcher
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
@@ -26,115 +27,13 @@ CSV_FILES = {
     'Tech Services': 'csvs/Guidelines_cleaned_Tech_Services.csv',
 }
 
+# --- IMPROVEMENT 2: Guideline link constant ---
+GUIDELINES_LINK = "https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true"
+
 # --- Reference CSV Files ---
 REFERENCE_CSV_FILES = {
     'department_list': 'csvs/Guidelines_cleaned_dept_list.csv'
 }
-
-# ============================================
-# HELPER FUNCTION: NORMALIZE TEXT FOR MATCHING
-# ============================================
-
-def normalize_for_matching(text: str) -> str:
-    """
-    Normalize text to handle plural/singular variations and common differences.
-    This helps match 'contractor' with 'contractors', 'employee' with 'employees', etc.
-    """
-    if not isinstance(text, str):
-        return ""
-    
-    text = text.lower().strip()
-    
-    # Remove common punctuation
-    text = re.sub(r'[,.\-_/]', ' ', text)
-    
-    # Remove extra whitespace
-    text = re.sub(r'\s+', ' ', text)
-    
-    return text
-
-def create_search_variants(text: str) -> List[str]:
-    """
-    Create variations of the search text to match plural/singular forms.
-    Returns a list of possible variations to search for.
-    """
-    if not isinstance(text, str):
-        return [""]
-    
-    variants = [text]
-    text_lower = text.lower().strip()
-    
-    # Add the normalized version
-    normalized = normalize_for_matching(text)
-    if normalized not in variants:
-        variants.append(normalized)
-    
-    # Handle plural/singular variations
-    words = text_lower.split()
-    variant_words = []
-    
-    for word in words:
-        word_variants = [word]
-        
-        # If ends with 's', add singular form
-        if word.endswith('s') and len(word) > 1:
-            singular = word[:-1]
-            word_variants.append(singular)
-            
-            # Handle words ending in 'ies' -> 'y' (e.g., companies -> company)
-            if word.endswith('ies') and len(word) > 3:
-                word_variants.append(word[:-3] + 'y')
-            
-            # Handle words ending in 'es' -> remove 'es' (e.g., boxes -> box)
-            if word.endswith('es') and len(word) > 2:
-                word_variants.append(word[:-2])
-        
-        # If doesn't end with 's', add plural forms
-        else:
-            word_variants.append(word + 's')
-            
-            # Handle words ending in 'y' -> 'ies' (e.g., company -> companies)
-            if word.endswith('y') and len(word) > 1:
-                word_variants.append(word[:-1] + 'ies')
-            
-            # Handle words that need 'es' (e.g., box -> boxes)
-            if word.endswith(('s', 'x', 'z', 'ch', 'sh')):
-                word_variants.append(word + 'es')
-        
-        variant_words.append(word_variants)
-    
-    # If single word, just return its variants
-    if len(variant_words) == 1:
-        return list(set(variant_words[0]))
-    
-    # For multi-word phrases, we'll use the original and normalized versions
-    return list(set(variants))
-
-def flexible_search(df: pd.DataFrame, search_column: str, search_term: str) -> pd.DataFrame:
-    """
-    Perform flexible search that handles plural/singular variations.
-    Returns matching rows from the dataframe.
-    """
-    if df.empty or search_column not in df.columns:
-        return pd.DataFrame()
-    
-    # Create search variants
-    search_variants = create_search_variants(search_term)
-    
-    # Create a mask for matching rows
-    mask = pd.Series([False] * len(df))
-    
-    # Normalize the column for searching
-    normalized_column = df[search_column].apply(normalize_for_matching)
-    
-    # Search for each variant
-    for variant in search_variants:
-        variant_normalized = normalize_for_matching(variant)
-        if variant_normalized:
-            # Check if the normalized variant appears in the normalized column
-            mask |= normalized_column.str.contains(variant_normalized, case=False, na=False, regex=False)
-    
-    return df[mask]
 
 # ============================================
 # LOAD CSV DATA
@@ -293,7 +192,7 @@ class DynamoDBChatHistory:
 # ============================================
 
 st.set_page_config(
-    page_icon="��", 
+    page_icon="deriva.jpg", 
     page_title="Diva the Chatbot", 
     layout="centered", 
     initial_sidebar_state="expanded"
@@ -317,26 +216,30 @@ if "extracted_context" not in st.session_state:
 if "in_charging_flow" not in st.session_state:
     st.session_state.in_charging_flow = False
 
-# ============================================
-# CHAT HISTORY INSTANCE
-# ============================================
-
-chat_history = DynamoDBChatHistory(
-    table_name=DDB_TABLE_NAME,
-    session_id=st.session_state["session_id"]
-)
+# --- IMPROVEMENT 4: Store potential fuzzy matches ---
+if "fuzzy_matches" not in st.session_state:
+    st.session_state.fuzzy_matches = []
 
 # ============================================
 # SIDEBAR
 # ============================================
 
-with st.sidebar:
-    st.title("�� Diva The Chatbot")
-    st.markdown("Your AI assistant for charging codes and company information.")
-    
-    st.divider()
-    
-    if st.button("��️ Clear Chat History"):
+# Add logo at the very top of sidebar
+if os.path.exists("Deriva-Logo.png"):
+    st.sidebar.image("Deriva-Logo.png", width=200)
+else:
+    st.sidebar.warning("⚠️ logo.png not found")
+
+st.sidebar.title(" ")
+
+# Initialize chat history
+chat_history = DynamoDBChatHistory(
+    table_name=DDB_TABLE_NAME,
+    session_id=st.session_state["session_id"]
+)
+
+def reset_history():
+    try:
         chat_history.clear()
         st.session_state.extracted_context = {
             "team": None,
@@ -345,258 +248,614 @@ with st.sidebar:
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
+        st.session_state.fuzzy_matches = []
+        st.success("Chat cleared!")
+    except Exception as e:
+        st.warning(f"Could not clear history: {e}")
+
+with st.sidebar.expander("⚙️ **Tools**", expanded=True):
+    if st.button("��️ Clear Chat"):
+        reset_history()
         st.rerun()
+
+with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
+    st.markdown(f"""    
+    About charging questions, Diva provides the following information based on description:
+    - Account Number
+    - Location
+    - Company ID
+    - Project (Concur, Timesheets)
+    - Department    
+    ---
     
-    st.divider()
-    st.markdown("### Quick Tips")
-    st.markdown("- Ask about charging codes")
-    st.markdown("- Search for departments")
-    st.markdown("- Get company information")
+    For additional info, please refer to [O&M Charging Guidelines]({GUIDELINES_LINK}).
+    """)
+
+st.sidebar.divider()
+st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
+
+with st.sidebar.expander("�� Support"):
+    st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 # ============================================
-# HELPER FUNCTIONS
+# HEADER
 # ============================================
+
+st.markdown("<h1 style='text-align: center;'>⚡Meet Diva!</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines and More</p>", unsafe_allow_html=True)
+
+# ============================================
+# LLM HELPER FUNCTIONS
+# ============================================
+
+def call_claude(system_prompt: str, user_message: str, include_history: bool = True) -> str:
+    """Call Claude via Bedrock with conversation history"""
+    try:
+        # Build the message with history if needed
+        if include_history:
+            history = chat_history.get_formatted_history()
+            if history != "No previous conversation.":
+                full_message = history + f"\nCurrent question: {user_message}"
+            else:
+                full_message = user_message
+        else:
+            full_message = user_message
+        
+        response = bedrock_runtime.invoke_model(
+            modelId=BEDROCK_MODEL_ID,
+            body=json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 2000,
+                "system": system_prompt,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": full_message
+                    }
+                ]
+            })
+        )
+        
+        result = json.loads(response['body'].read())
+        return result['content'][0]['text']
+    except Exception as e:
+        st.error(f"Error calling Claude: {e}")
+        return None
+
+# ============================================
+# CHARGING QUESTION DETECTION
+# ============================================
+
+CHARGING_DETECTION_PROMPT = """
+You are Diva, a charging guidelines and department information assistant for Deriva Energy.
+
+Determine if the user's question is about CHARGING GUIDELINES or something else.
+
+Charging questions are about:
+- How to charge time/expenses
+- Charging codes, account numbers, projects, departments
+- Where to charge specific work (ERP, labor, projects, etc.)
+- Team-specific charging information
+
+Department questions are about:
+- Department names, numbers, or codes
+- Department information and details
+- How many departments exist
+- Listing or searching for departments
+
+NOT charging/department questions:
+- General greetings (hi, hello)
+- General questions about Deriva Energy
+- Questions about policies not related to charging
+- Casual conversation
+- Questions about other topics
+
+Return ONLY valid JSON:
+{
+  "is_charging_question": true | false,
+  "confidence": "high" | "medium" | "low"
+}
+
+Examples:
+- "how to charge erp" → {"is_charging_question": true, "confidence": "high"}
+- "where do I charge labor?" → {"is_charging_question": true, "confidence": "high"}
+- "IT team charging codes" → {"is_charging_question": true, "confidence": "high"}
+- "what's the weather today?" → {"is_charging_question": false, "confidence": "high"}
+- "tell me about Deriva Energy" → {"is_charging_question": false, "confidence": "high"}
+- "who is the CEO?" → {"is_charging_question": false, "confidence": "high"}
+"""
 
 def is_charging_question(user_query: str) -> bool:
-    """Detect if the question is about charging codes"""
-    query_lower = user_query.lower()
+    """Detect if the question is about charging guidelines"""
     
+    # Quick heuristic check first
     charging_keywords = [
-        'charge', 'charging', 'account', 'code', 'cost',
-        'expense', 'budget', 'billing', 'invoice',
-        'gl', 'general ledger', 'account number'
+        "charge", "charging", "code", "codes", "account", "project", 
+        "department", "expense", "time", "labor", "timesheet", "bill"
     ]
     
-    return any(keyword in query_lower for keyword in charging_keywords)
-
-def is_likely_new_query(user_query: str) -> bool:
-    """Check if this seems like a new question vs continuing conversation"""
-    query_lower = user_query.lower().strip()
+    user_lower = user_query.lower()
+    has_charging_keyword = any(keyword in user_lower for keyword in charging_keywords)
     
-    # Question words indicate new query
-    question_starters = ['what', 'where', 'when', 'who', 'why', 'how', 'which', 'can', 'could', 'would', 'should']
-    if any(query_lower.startswith(q) for q in question_starters):
-        return True
-    
-    # Continuation words indicate not new
-    continuation_words = ['yes', 'no', 'yeah', 'nope', 'correct', 'wrong', 'right', 'that', 'this', 'it']
-    if any(query_lower.startswith(c) for c in continuation_words):
+    # If no charging keywords and it's a question, likely not charging
+    if not has_charging_keyword and len(user_query.split()) > 3:
         return False
     
-    # If it's longer and doesn't reference previous context, likely new
-    if len(query_lower.split()) > 5:
+    # Use LLM for uncertain cases
+    response = call_claude(CHARGING_DETECTION_PROMPT, user_query, include_history=False)
+    
+    if not response:
+        # Default to charging question if LLM fails and has keywords
+        return has_charging_keyword
+    
+    try:
+        content = response.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+        
+        m = re.search(r'\{.*\}', content, re.DOTALL)
+        data = json.loads(m.group() if m else content)
+        
+        return data.get("is_charging_question", has_charging_keyword)
+    except:
+        return has_charging_keyword
+
+# ============================================
+# NATURAL LANGUAGE RESPONSE
+# ============================================
+
+GENERAL_ASSISTANT_PROMPT = """
+You are Diva, a friendly and helpful assistant for Deriva Energy employees.
+
+IMPORTANT CONTEXT:
+- "Charging" in this context means TIME CHARGING and EXPENSE CHARGING for accounting/billing purposes
+- This is about charging time to projects, departments, and cost centers
+- This is NOT about electric vehicle charging or battery charging
+- You help with: timesheet codes, expense report codes, project codes, department codes, account numbers
+
+Your primary purpose is to help with charging guidelines, but you can also answer general questions conversationally.
+
+Guidelines:
+- Be friendly, concise, and professional
+- For questions about Deriva Energy that you don't know, say you're primarily designed for charging guidelines
+- Keep responses brief (2-4 sentences unless more detail is needed)
+- If the question seems related to charging, gently guide them: "If you're asking about charging guidelines, I can help with that!"
+
+You are an internal tool for Deriva Energy employees.
+"""
+
+def generate_natural_response(user_query: str) -> str:
+    """Generate natural language response for non-charging questions"""
+    
+    response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
+    
+    if not response:
+        return "I'm here to help! My specialty is charging guidelines. Could you rephrase your question or ask about charging codes?"
+    
+    return response
+
+# ============================================
+# EXTRACTION PROMPT
+# ============================================
+
+EXTRACTION_PROMPT = """
+You are Diva, a charging guidelines assistant. Extract key information from the user's query.
+
+Extract:
+1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Legal, Corporate, Land Services, Commercial, Development, Tech Services, Operations)
+2. **keywords**: Key words the user wants to search for (e.g., "erp", "labor", "maintenance")
+3. **location**: Specific location if mentioned (e.g., "DSOP", "DSOL")
+4. **is_new_query**: Is this a NEW charging question or a follow-up/clarification? (true/false)
+
+RULES FOR is_new_query:
+- TRUE if: User asks "how to charge X", "where to charge Y", "codes for Z", or any new charging question
+- FALSE if: User gives short answers like "IT", "Houston", "1", "option 2" (these are clarifications)
+- TRUE if: User asks about a DIFFERENT project/activity than previous conversation
+- FALSE if: User is answering assistant's clarification questions
+
+Return ONLY valid JSON:
+{
+  "team": "IT" | "Finance" | "HR" | "Legal" | "Corporate" | "Land Services" | "Commercial" | "Development" | "Tech Services" | "Operations" | null,
+  "keywords": "search terms" | null,
+  "location": "location name" | null,
+  "is_new_query": true | false
+}
+
+Examples:
+- "how to charge erp" → {"team": null, "keywords": "erp", "location": null, "is_new_query": true}
+- Previous asked team, Current: "IT" → {"team": "IT", "keywords": null, "location": null, "is_new_query": false}
+- Previous: "Core ERP codes", Current: "what about HR labor?" → {"team": null, "keywords": "labor", "location": null, "is_new_query": true}
+- Previous: showed 3 locations, Current: "DSOL" → {"team": null, "keywords": null, "location": "DSOL", "is_new_query": false}
+"""
+
+# ============================================
+# EXTRACTION - RESET TEAM FOR NEW QUERIES (UPDATED)
+# ============================================
+
+def extract_query_info(user_query: str) -> Dict:
+    """Extract team, keywords, and location from user query"""
+    
+    response = call_claude(EXTRACTION_PROMPT, user_query, include_history=True)
+    
+    if not response:
+        return st.session_state.extracted_context.copy()
+    
+    try:
+        content = response.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+        
+        m = re.search(r'\{.*\}', content, re.DOTALL)
+        data = json.loads(m.group() if m else content)
+        
+        is_new_query = data.get("is_new_query", False)
+        
+        # If it's a new query, COMPLETELY RESET context (including team)
+        # User must specify team again for each new charging question
+        if is_new_query:
+            extracted = {
+                "team": data.get("team"),  # Only use if explicitly mentioned in new query
+                "keywords": data.get("keywords"),
+                "location": data.get("location"),
+                "exact_description": None
+            }
+            
+            st.session_state.extracted_context = extracted
+            st.session_state.fuzzy_matches = []  # Clear fuzzy matches for new query
+            return extracted
+        
+        # If it's a follow-up, merge with existing context
+        extracted = {
+            "team": data.get("team"),
+            "keywords": data.get("keywords"),
+            "location": data.get("location"),
+            "exact_description": st.session_state.extracted_context.get("exact_description")
+        }
+        
+        # Merge with existing context
+        merged = {}
+        for key in ["team", "keywords", "location", "exact_description"]:
+            if extracted.get(key):
+                merged[key] = extracted[key]
+            elif st.session_state.extracted_context.get(key):
+                merged[key] = st.session_state.extracted_context[key]
+            else:
+                merged[key] = None
+        
+        st.session_state.extracted_context = merged
+        return merged
+        
+    except Exception as e:
+        return st.session_state.extracted_context.copy()
+
+# ============================================
+# HELPER: DETECT NEW QUERY (FALLBACK)
+# ============================================
+
+def is_likely_new_query(user_input: str) -> bool:
+    """Fallback detection if LLM extraction fails"""
+    user_lower = user_input.lower().strip()
+    
+    # Phrases that indicate new queries
+    new_query_phrases = [
+        "how to charge",
+        "where to charge",
+        "charge for",
+        "charging for",
+        "codes for",
+        "what about",
+        "how about",
+        "need codes",
+        "looking for"
+    ]
+    
+    for phrase in new_query_phrases:
+        if phrase in user_lower:
+            return True
+    
+    # If it's a short answer (likely clarification)
+    if len(user_input.split()) <= 3:
+        return False
+    
+    # If it contains question words, likely new
+    question_words = ["how", "what", "where", "which", "can", "do"]
+    first_word = user_lower.split()[0] if user_lower.split() else ""
+    if first_word in question_words:
         return True
     
     return False
 
-def call_claude_api(prompt: str, max_tokens: int = 2000) -> str:
-    """Call Claude API via AWS Bedrock"""
-    try:
-        body = json.dumps({
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": max_tokens,
-            "temperature": 0.7,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        })
+# ============================================
+# IMPROVEMENT 4: FUZZY MATCHING HELPER FUNCTIONS
+# ============================================
+
+def normalize_text(text: str) -> str:
+    """Normalize text for comparison - handles plural, case, extra spaces"""
+    if not text:
+        return ""
+    text = text.lower().strip()
+    # Remove punctuation
+    text = re.sub(r'[^\w\s]', '', text)
+    # Remove extra spaces
+    text = re.sub(r'\s+', ' ', text)
+    return text
+
+def get_singular_form(word: str) -> str:
+    """Simple singularization - handles common cases"""
+    word = word.lower()
+    if word.endswith('ies'):
+        return word[:-3] + 'y'
+    elif word.endswith('es'):
+        return word[:-2]
+    elif word.endswith('s') and not word.endswith('ss'):
+        return word[:-1]
+    return word
+
+def similarity_score(str1: str, str2: str) -> float:
+    """Calculate similarity between two strings"""
+    return SequenceMatcher(None, normalize_text(str1), normalize_text(str2)).ratio()
+
+def find_fuzzy_matches(keywords: str, descriptions: List[str], threshold: float = 0.75) -> List[Dict]:
+    """
+    Find potential matches for keywords in descriptions with similarity scoring
+    Returns list of dicts with 'description', 'score', and 'match_type'
+    """
+    fuzzy_results = []
+    keyword_words = normalize_text(keywords).split()
+    
+    for desc in descriptions:
+        desc_normalized = normalize_text(desc)
+        desc_words = desc_normalized.split()
         
-        response = bedrock_runtime.invoke_model(
-            modelId=BEDROCK_MODEL_ID,
-            body=body
-        )
+        # Check for various match types
+        match_type = None
+        match_score = 0.0
         
-        response_body = json.loads(response['body'].read())
-        return response_body['content'][0]['text']
+        # Check each keyword word
+        for kw in keyword_words:
+            kw_singular = get_singular_form(kw)
+            
+            for dw in desc_words:
+                dw_singular = get_singular_form(dw)
+                
+                # Exact match (normalized)
+                if kw == dw:
+                    match_type = "exact"
+                    match_score = max(match_score, 1.0)
+                    break
+                
+                # Singular/plural match
+                elif kw_singular == dw_singular and kw != dw:
+                    match_type = "plural/singular"
+                    match_score = max(match_score, 0.95)
+                
+                # Abbreviation check (kw could be abbreviation of dw)
+                elif len(kw) <= 5 and dw.startswith(kw):
+                    match_type = "abbreviation"
+                    match_score = max(match_score, 0.90)
+                
+                # High similarity
+                elif similarity_score(kw, dw) >= threshold:
+                    match_type = "similar"
+                    match_score = max(match_score, similarity_score(kw, dw))
+        
+        if match_score >= threshold and match_type:
+            fuzzy_results.append({
+                'description': desc,
+                'score': match_score,
+                'match_type': match_type
+            })
     
-    except Exception as e:
-        st.error(f"Error calling Claude API: {e}")
-        return "I'm having trouble connecting right now. Please try again."
+    # Sort by score (highest first)
+    fuzzy_results.sort(key=lambda x: x['score'], reverse=True)
+    return fuzzy_results
 
 # ============================================
-# CONTEXT EXTRACTION
+# CSV SEARCH FUNCTIONS (IMPROVED WITH FUZZY MATCHING)
 # ============================================
 
-def extract_initial_context(user_query: str) -> Dict:
+def search_descriptions_by_keywords(team: str, keywords: str) -> Tuple[List[str], List[Dict]]:
     """
-    Extract team, keywords, location, and description from user query.
-    CRITICAL: This function should ONLY extract context, NOT generate account numbers.
-    """
-    
-    prompt = f"""You are helping to extract context from a user's question about charging codes.
-
-User question: "{user_query}"
-
-Available teams: {', '.join(CSV_FILES.keys())}
-
-Extract the following information ONLY if explicitly mentioned or clearly implied:
-1. Team/Department (must be one of the available teams listed above)
-2. Keywords for searching (specific terms like 'travel', 'office supplies', etc.)
-3. Location (if mentioned, like 'Texas', 'Oklahoma', etc.)
-4. Exact description phrase (the main thing they're asking about - could be plural or singular)
-
-IMPORTANT: 
-- Only extract information that is clearly present in the query
-- Do NOT make up or infer information that isn't there
-- Do NOT generate account numbers or codes
-- For description, extract the exact phrase they used
-
-Return ONLY a JSON object with these keys: team, keywords, location, exact_description
-If something is not mentioned, use null for that field.
-
-Example response format:
-{{"team": "IT", "keywords": "laptop", "location": null, "exact_description": "laptop purchases"}}"""
-
-    response = call_claude_api(prompt, max_tokens=500)
-    
-    try:
-        # Try to extract JSON from response
-        json_match = re.search(r'\{.*\}', response, re.DOTALL)
-        if json_match:
-            context = json.loads(json_match.group())
-            return context
-        else:
-            return {"team": None, "keywords": None, "location": None, "exact_description": None}
-    except json.JSONDecodeError:
-        return {"team": None, "keywords": None, "location": None, "exact_description": None}
-
-# ============================================
-# CHARGING QUERY PROCESSING - WITH STRICT VALIDATION
-# ============================================
-
-def search_charging_codes_strict(team: str, description: str, location: str = None) -> pd.DataFrame:
-    """
-    Search for charging codes with STRICT validation against CSV data.
-    Uses flexible matching to handle plural/singular variations.
-    NEVER returns data that doesn't exist in the CSV.
+    Search for descriptions containing whole words from keywords
+    Returns: (exact_matches, fuzzy_matches)
     """
     if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
-        return pd.DataFrame()
+        return [], []
     
     df = ALL_TEAM_DATA[team]
     
-    # Use flexible search for description matching
-    if description:
-        matched_df = flexible_search(df, 'description', description)
-    else:
-        matched_df = df
+    # Split keywords into individual words
+    search_words = [w.strip().lower() for w in keywords.split() if w.strip()]
     
-    # Filter by location if specified
-    if location and 'location' in matched_df.columns:
-        # Use flexible search for location too
-        matched_df = flexible_search(matched_df, 'location', location)
+    exact_matching_descriptions = set()
+    all_descriptions = []
     
-    return matched_df
+    for idx, row in df.iterrows():
+        description = str(row['Description'])
+        all_descriptions.append(description)
+        description_lower = description.lower()
+        description_words = re.findall(r'\b\w+\b', description_lower)
+        
+        # Check if any search word matches a whole word in description (exact match)
+        for search_word in search_words:
+            if search_word in description_words:
+                exact_matching_descriptions.add(description)
+                break
+    
+    exact_matches = sorted(list(exact_matching_descriptions))
+    
+    # If no exact matches, look for fuzzy matches
+    fuzzy_matches = []
+    if not exact_matches:
+        fuzzy_matches = find_fuzzy_matches(keywords, all_descriptions, threshold=0.75)
+    
+    return exact_matches, fuzzy_matches
 
-def validate_account_numbers(account_numbers: List[str], team: str) -> Tuple[List[str], List[str]]:
-    """
-    Validate that account numbers actually exist in the CSV.
-    Returns (valid_numbers, invalid_numbers)
-    """
+def get_charging_data(team: str, exact_description: str, location: str = None) -> Tuple[pd.DataFrame, bool]:
+    """Get charging data for exact description"""
     if team not in ALL_TEAM_DATA or ALL_TEAM_DATA[team].empty:
-        return [], account_numbers
+        return pd.DataFrame(), False
     
     df = ALL_TEAM_DATA[team]
     
-    # Check if 'account' column exists
-    if 'account' not in df.columns:
-        return [], account_numbers
+    # Exact match on description
+    matches = df[df['Description'] == exact_description]
     
-    valid_accounts = df['account'].astype(str).tolist()
+    if matches.empty:
+        return pd.DataFrame(), False
     
-    valid = []
-    invalid = []
+    # Check if multiple locations
+    has_multiple = len(matches) > 1
     
-    for acc in account_numbers:
-        if str(acc) in valid_accounts:
-            valid.append(acc)
-        else:
-            invalid.append(acc)
+    # Filter by location if specified and multiple exist
+    if location and has_multiple:
+        location_matches = matches[matches['Location'].str.lower() == location.lower()]
+        if not location_matches.empty:
+            matches = location_matches
     
-    return valid, invalid
+    return matches, has_multiple
 
-def format_charging_results(results_df: pd.DataFrame, query: str) -> str:
+# ============================================
+# FORMATTING FUNCTIONS (IMPROVED)
+# ============================================
+
+def format_department_value(dept_value) -> str:
     """
-    Format the charging code results for display.
-    ONLY shows data that actually exists in the CSV.
+    IMPROVEMENT 3: Format department value as integer without .0
     """
-    if results_df.empty:
-        return None  # Will trigger a "not found" message
+    try:
+        # Convert to float first, then to int to remove decimals
+        dept_int = int(float(dept_value))
+        return str(dept_int)
+    except (ValueError, TypeError):
+        # If conversion fails, return as string
+        return str(dept_value)
+
+def format_charging_info(row: pd.Series) -> str:
+    """Format a single charging code with markdown bullets"""
+    result = f"""- **Description:** {row['Description']}
+- **Account:** {row['Account']}
+- **Location:** {row['Location']}
+- **Company ID:** {row['Company ID']}
+- **Project:** {row['Project']}
+- **Department:** {format_department_value(row['Department'])}"""
+    return result
+
+def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
+    """Format multiple variants of the same description"""
+    description = matches.iloc[0]['Description']
     
-    # Limit to top 10 results
-    display_df = results_df.head(10)
+    result = f"**{team} Team - {description}**\n\n"
+    result += f"This charging code has **{len(matches)} options**. Please refer to the department list for more details:\n\n"
     
-    response = f"**Found {len(results_df)} charging code(s)**"
-    if len(results_df) > 10:
-        response += f" (showing first 10)"
-    response += ":\n\n"
-    
-    for idx, row in display_df.iterrows():
-        response += f"**Account: {row['account']}**\n"
-        response += f"- Description: {row['description']}\n"
+    for idx, (_, row) in enumerate(matches.iterrows(), 1):
         
-        if 'location' in row and pd.notna(row['location']):
-            response += f"- Location: {row['location']}\n"
-        
-        if 'notes' in row and pd.notna(row['notes']):
-            response += f"- Notes: {row['notes']}\n"
-        
-        response += "\n"
+        result += f"---\n**OPTION {idx}:**\n"
+        result += f"- **Description:** {row['Description']}\n"
+        result += f"- **Account:** {row['Account']}\n"
+        result += f"- **Location:** {row['Location']}\n"
+        result += f"- **Company ID:** {row['Company ID']}\n"
+        result += f"- **Project:** {row['Project']}\n"
+        result += f"- **Department:** {format_department_value(row['Department'])}\n\n"
     
-    if len(results_df) > 10:
-        response += f"*...and {len(results_df) - 10} more results. Please refine your search if needed.*"
+    return result.strip()
+
+# ============================================
+# HANDLE USER SELECTING FROM LIST
+# ============================================
+
+def check_if_selecting_from_list(user_input: str, extracted: Dict) -> str:
+    """Check if user is selecting a description from a list"""
+    team = extracted.get("team")
+    keywords = extracted.get("keywords")
     
-    return response
+    if not team or not keywords:
+        return None
+    
+    # Get matching descriptions
+    exact_matches, fuzzy_matches = search_descriptions_by_keywords(team, keywords)
+    
+    # Combine both types of matches for selection
+    all_matches = exact_matches if exact_matches else [fm['description'] for fm in st.session_state.fuzzy_matches]
+    
+    if len(all_matches) <= 1:
+        return None
+    
+    # Check if user input is a number
+    user_input_clean = user_input.strip()
+    if user_input_clean.isdigit():
+        idx = int(user_input_clean) - 1
+        if 0 <= idx < len(all_matches):
+            return all_matches[idx]
+    
+    # Check if user input matches one of the descriptions
+    user_lower = user_input_clean.lower()
+    for desc in all_matches:
+        if desc.lower() == user_lower or desc.lower() in user_lower:
+            return desc
+    
+    return None
+
+# ============================================
+# CHARGING FLOW - IMPROVED (UPDATED)
+# ============================================
 
 def process_charging_question(user_input: str) -> str:
-    """Process charging-related questions with STRICT validation"""
+    """Process charging guidelines question"""
     
+    # Mark that we're in charging flow
     st.session_state.in_charging_flow = True
     
-    # Check if we have existing context
-    context = st.session_state.extracted_context
+    # Check if this looks like a new query (fallback detection)
+    if is_likely_new_query(user_input):
+        # For NEW charging questions, completely reset context
+        # User must specify team again
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.fuzzy_matches = []
     
-    # If no context yet, extract it
-    if not context.get("team") and not context.get("exact_description"):
-        context = extract_initial_context(user_input)
-        st.session_state.extracted_context = context
+    # Extract information
+    extracted = extract_query_info(user_input)
     
-    # If we still don't have enough info, ask for it
-    if not context.get("team"):
-        available_teams = ', '.join(CSV_FILES.keys())
-        return f"To help you find the right charging code, which team or department is this for?\n\nAvailable teams: {available_teams}"
+    # Check if user is selecting from a list (including fuzzy matches)
+    if extracted.get("keywords") and not extracted.get("exact_description"):
+        selected_description = check_if_selecting_from_list(user_input, extracted)
+        if selected_description:
+            st.session_state.extracted_context["exact_description"] = selected_description
+            extracted["exact_description"] = selected_description
+            st.session_state.fuzzy_matches = []  # Clear fuzzy matches after selection
     
-    if not context.get("exact_description"):
-        return "What type of expense or activity are you looking to charge? (e.g., 'travel expenses', 'office supplies', 'contractor payments')"
+    # Continue with normal processing
+    team = extracted.get("team")
+    keywords = extracted.get("keywords")
+    location = extracted.get("location")
+    exact_description = extracted.get("exact_description")
     
-    # Now search with the context we have
-    team = context["team"]
-    description = context["exact_description"]
-    location = context.get("location")
+    # IMPROVEMENT 1 & 2: Step 1 - Need team (ALWAYS ask for new charging questions with numbered list)
+    if not team:
+        teams_list = list(CSV_FILES.keys())
+        result = "Which team are you with? Please select by number or name:\n\n"
+        for idx, team_name in enumerate(teams_list, 1):
+            result += f"{idx}. {team_name}\n"
+        result += f"\n�� *If you're unsure which team to select, please refer to the [Charging Guidelines]({GUIDELINES_LINK}).*"
+        return result
     
-    # STRICT SEARCH - only return what exists in CSV
-    results = search_charging_codes_strict(team, description, location)
-    
-    if results.empty:
-        # Try broader search without location
-        if location:
-            results = search_charging_codes_strict(team, description, None)
-            
-            if not results.empty:
-                formatted = format_charging_results(results, user_input)
-                return formatted + "\n\n*Note: I found results for other locations. Let me know if you need codes specific to a location.*"
-        
-        # Still no results - provide helpful message
-        response = f"I couldn't find any charging codes matching '{description}' in the {team} team."
-        response += "\n\nTry:"
-        response += "\n- Using different keywords (e.g., 'contractor' instead of 'consultants')"
-        response += "\n- Checking if you have the right team selected"
-        response += "\n- Asking me to list all codes for this team"
-        
-        # Reset context for next search
+    # Check if team is Operations - redirect to guidelines
+    if team and team.lower() == "operations":
         st.session_state.extracted_context = {
             "team": None,
             "keywords": None,
@@ -604,52 +863,114 @@ def process_charging_question(user_input: str) -> str:
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
+        st.session_state.fuzzy_matches = []
+        return f"For Operations team charging codes, please refer to the **Operations tabs** in the [O&M Charging Guidelines]({GUIDELINES_LINK})."
+    
+    # Step 2: Need keywords (if no exact description yet)
+    if not keywords and not exact_description:
+        return "What would you like to charge for?"
+    
+    # Step 3: If we have exact description, get the data
+    if exact_description:
+        matches, has_multiple = get_charging_data(team, exact_description, location)
         
-        return response
+        if matches.empty:
+            st.session_state.extracted_context["exact_description"] = None
+            return f"I couldn't find charging codes for '{exact_description}' in {team} team."
+        
+        # If multiple variants exist, show all of them
+        if has_multiple:
+            # After providing answer, completely clear context
+            st.session_state.extracted_context = {
+                "team": None,
+                "keywords": None,
+                "location": None,
+                "exact_description": None
+            }
+            st.session_state.in_charging_flow = False
+            st.session_state.fuzzy_matches = []
+            
+            return format_multiple_variants(team, matches)
+        
+        # Single result - return the charging info
+        row = matches.iloc[0]
+        
+        # After providing answer, completely clear context
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        st.session_state.fuzzy_matches = []
+        
+        return format_charging_info(row)
     
-    # Format and return results
-    formatted_response = format_charging_results(results, user_input)
+    # Step 4: Search for descriptions matching keywords
+    exact_matches, fuzzy_matches = search_descriptions_by_keywords(team, keywords)
     
-    # Reset context after successful search
-    st.session_state.extracted_context = {
-        "team": None,
-        "keywords": None,
-        "location": None,
-        "exact_description": None
-    }
-    st.session_state.in_charging_flow = False
+    # IMPROVEMENT 4: Handle fuzzy matches if no exact matches
+    if not exact_matches and fuzzy_matches:
+        # Store fuzzy matches in session state
+        st.session_state.fuzzy_matches = fuzzy_matches
+        
+        result = f"I found {len(fuzzy_matches)} similar charging descriptions in {team} team. "
+        result += "These may differ slightly from your search (plural/singular, abbreviation, or similar wording):\n\n"
+        
+        for idx, match_info in enumerate(fuzzy_matches[:10], 1):  # Show top 10
+            desc = match_info['description']
+            match_type = match_info['match_type']
+            result += f"{idx}. {desc}"
+            if match_type != "exact":
+                result += f" *({match_type} match)*"
+            result += "\n"
+        
+        result += "\nWhich one are you looking for? (Select by number or name)"
+        return result
     
-    return formatted_response
-
-# ============================================
-# GENERAL CONVERSATION HANDLING
-# ============================================
-
-def generate_natural_response(user_input: str) -> str:
-    """Generate conversational response using Claude"""
+    if not exact_matches:
+        return f"I couldn't find any charging information regarding '{keywords}' in {team} team. Could you check the description and try again?"
     
-    # Get chat history for context
-    history = chat_history.get_formatted_history()
+    # If only one matching description, get its data
+    if len(exact_matches) == 1:
+        st.session_state.extracted_context["exact_description"] = exact_matches[0]
+        matches, has_multiple = get_charging_data(team, exact_matches[0], location)
+        
+        # If multiple variants, show all
+        if has_multiple:
+            st.session_state.extracted_context = {
+                "team": None,
+                "keywords": None,
+                "location": None,
+                "exact_description": None
+            }
+            st.session_state.in_charging_flow = False
+            st.session_state.fuzzy_matches = []
+            
+            return format_multiple_variants(team, matches)
+        
+        # Single result
+        row = matches.iloc[0]
+        
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        st.session_state.fuzzy_matches = []
+        
+        return format_charging_info(row)
     
-    prompt = f"""You are Diva, a helpful AI assistant for Deriva Energy employees.
-
-{history}
-
-Current user message: "{user_input}"
-
-Guidelines:
-- Be conversational and helpful
-- If asked about charging codes, guide them to ask specific questions
-- If asked about departments, help them search
-- Keep responses concise and friendly
-- Do NOT make up account numbers or codes
-- Do NOT provide specific charging information unless you have verified it from the database
-
-Respond naturally to the user's message:"""
-
-    response = call_claude_api(prompt, max_tokens=1000)
+    # Multiple different descriptions found
+    result = f"I found {len(exact_matches)} charging codes matching '{keywords}' in {team} team:\n\n"
+    for idx, desc in enumerate(exact_matches, 1):
+        result += f"{idx}. {desc}\n"
+    result += "\nWhich one are you looking for? (Select by number or name)"
     
-    return response               
+    return result
 
 # ============================================
 # DEPARTMENT QUERY FUNCTIONS
@@ -669,7 +990,7 @@ def is_department_question(user_query: str) -> bool:
     return any(keyword in query_lower for keyword in department_keywords)
 
 def search_departments(query: str) -> pd.DataFrame:
-    """Search for departments based on user query using flexible matching"""
+    """Search for departments based on user query"""
     if 'department_list' not in ALL_TEAM_DATA:
         return pd.DataFrame()
     
@@ -685,20 +1006,18 @@ def search_departments(query: str) -> pd.DataFrame:
     if dept_numbers:
         return df[df['Department Number'].astype(str).isin(dept_numbers)]
     
-    # Search by name, HR function group, or HR group using flexible search
+    # Search by name, HR function group, or HR group
     search_cols = ['Department Name', 'HR Function Group', 'HR Group']
     mask = pd.Series([False] * len(df))
     
     for col in search_cols:
         if col in df.columns:
-            # Use flexible search for each column
-            matched = flexible_search(df, col, query)
-            mask |= df.index.isin(matched.index)
+            mask |= df[col].astype(str).str.lower().str.contains(query_lower, na=False, regex=False)
     
     return df[mask]
 
 def format_department_info(departments_df: pd.DataFrame, query: str) -> str:
-    """Format department information for display"""
+    """Format department information for display (IMPROVED - formats department numbers as integers)"""
     if departments_df.empty:
         return "I couldn't find any departments matching your query. Please try again with different keywords."
     
@@ -728,10 +1047,12 @@ def format_department_info(departments_df: pd.DataFrame, query: str) -> str:
                 group_depts = departments_df[departments_df['HR Function Group'] == group]
                 response += f"\n**{group}:**\n"
                 for _, row in group_depts.iterrows():
-                    response += f"- {row['Department Number']}: {row['Department Name']}\n"
+                    dept_num = format_department_value(row['Department Number'])
+                    response += f"- {dept_num}: {row['Department Name']}\n"
         else:
             for _, row in departments_df.iterrows():
-                response += f"- {row['Department Number']}: {row['Department Name']}\n"
+                dept_num = format_department_value(row['Department Number'])
+                response += f"- {dept_num}: {row['Department Name']}\n"
         
         return response
     
@@ -740,7 +1061,8 @@ def format_department_info(departments_df: pd.DataFrame, query: str) -> str:
         response = f"**Found {len(departments_df)} department(s):**\n\n"
         
         for idx, row in departments_df.iterrows():
-            response += f"**{row['Department Number']} - {row['Department Name']}**\n"
+            dept_num = format_department_value(row['Department Number'])
+            response += f"**{dept_num} - {row['Department Name']}**\n"
             if pd.notna(row.get('Resp Center')):
                 response += f"- Responsibility Center: {row['Resp Center']}\n"
             if pd.notna(row.get('HR Function Group')):
@@ -756,7 +1078,8 @@ def format_department_info(departments_df: pd.DataFrame, query: str) -> str:
     # More than 5 but not asking for all - show summary
     response = f"**Found {len(departments_df)} departments. Here are the first 10:**\n\n"
     for _, row in departments_df.head(10).iterrows():
-        response += f"- {row['Department Number']}: {row['Department Name']}\n"
+        dept_num = format_department_value(row['Department Number'])
+        response += f"- {dept_num}: {row['Department Name']}\n"
     
     if len(departments_df) > 10:
         response += f"\n*...and {len(departments_df) - 10} more. Please refine your search for specific departments.*"
@@ -786,6 +1109,7 @@ def process_message(user_input: str) -> str:
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
+        st.session_state.fuzzy_matches = []
         return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
     
     # Check for department questions (before charging flow check)
@@ -799,6 +1123,7 @@ def process_message(user_input: str) -> str:
         if is_likely_new_query(user_input) and not is_charging_question(user_input):
             # Exit charging flow and handle as general question
             st.session_state.in_charging_flow = False
+            st.session_state.fuzzy_matches = []
             return generate_natural_response(user_input)
         else:
             # Continue charging flow
@@ -810,6 +1135,7 @@ def process_message(user_input: str) -> str:
     else:
         # Handle as general conversation
         st.session_state.in_charging_flow = False
+        st.session_state.fuzzy_matches = []
         return generate_natural_response(user_input)
 
 # ============================================
