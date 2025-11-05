@@ -733,7 +733,7 @@ def process_charging_question(user_input: str) -> str:
             "exact_description": None
         }
         st.session_state.in_charging_flow = False
-        return "For Operations team charging codes, please refer to the **Operations tabs** in the [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true)."
+        return "For Operations team charging codes, please refer to the **Operations Sections** in the [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true)."
     
     # Step 2: Need keywords (if no exact description yet)
     if not keywords and not exact_description:
