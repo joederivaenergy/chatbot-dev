@@ -832,7 +832,6 @@ def is_department_question(user_query: str) -> bool:
         'how many department', 'list department', 'show department',
         'what department', 'which department', 'all department'
     ]
-    
     return any(keyword in query_lower for keyword in department_keywords)
 
 def search_departments(query: str) -> pd.DataFrame:
