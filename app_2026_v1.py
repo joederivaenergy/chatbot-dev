@@ -420,6 +420,64 @@ Guidelines:
 You are an internal tool for Deriva Energy employees.
 """
 
+MASTER_ASSISTANT_PROMPT = """
+You are Diva, a highly capable personal AI assistant similar to Claude.
+
+You can:
+- Answer general questions (technical, analytical, casual)
+- Help with coding, writing, and reasoning
+- Remember past conversations and user preferences
+- Use tools when helpful
+
+Available tools:
+- charging_tool: charging codes, timesheets, expenses
+- department_tool: department info and lists
+
+Guidelines:
+- Be accurate and concise
+- Use markdown and structure when helpful
+- Ask clarifying questions if needed
+- Use tools ONLY when relevant
+- Otherwise, answer directly
+
+You have access to conversation history and user memory.
+"""
+
+def charging_tool(user_input: str) -> str:
+    return process_charging_question(user_input)
+
+def department_tool(user_input: str) -> str:
+    return process_department_question(user_input)
+
+TOOL_DECISION_PROMPT = """
+Decide whether the user query requires a tool.
+
+Tools:
+- charging_tool: time/expense charging, codes, projects
+- department_tool: departments, department numbers
+- none: general questions
+
+Return ONLY valid JSON:
+{
+  "tool": "charging_tool" | "department_tool" | "none"
+}
+"""
+
+def decide_tool(user_input: str) -> str:
+    response = call_claude(
+        TOOL_DECISION_PROMPT,
+        user_input,
+        include_history=True
+    )
+
+    try:
+        data = json.loads(re.search(r'\{.*\}', response, re.DOTALL).group())
+        return data.get("tool", "none")
+    except:
+        return "none"
+
+
+
 def generate_natural_response(user_query: str) -> str:
     """Generate natural language response for non-charging questions"""
     
@@ -936,13 +994,57 @@ def process_department_question(user_input: str) -> str:
 # MAIN PROCESSING LOGIC
 # ============================================
 
-def process_message(user_input: str) -> str:
-    """Main message processing - routes to charging, department, or general conversation"""
+# def process_message(user_input: str) -> str:
+#     """Main message processing - routes to charging, department, or general conversation"""
     
-    # Handle greetings
-    greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
-    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
-        # Clear context on greeting
+#     # Handle greetings
+#     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
+#     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g) for g in greetings):
+#         # Clear context on greeting
+#         st.session_state.extracted_context = {
+#             "team": None,
+#             "keywords": None,
+#             "location": None,
+#             "exact_description": None
+#         }
+#         st.session_state.in_charging_flow = False
+#         return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
+    
+#     # Check for department questions (before charging flow check)
+#     if is_department_question(user_input):
+#         st.session_state.in_charging_flow = False
+#         return process_department_question(user_input)
+    
+#     # If we're already in a charging flow (answering clarifications), continue
+#     if st.session_state.in_charging_flow:
+#         # Check if it's a new question or continuing the flow
+#         if is_likely_new_query(user_input) and not is_charging_question(user_input):
+#             # Exit charging flow and handle as general question
+#             st.session_state.in_charging_flow = False
+#             return generate_natural_response(user_input)
+#         else:
+#             # Continue charging flow
+#             return process_charging_question(user_input)
+    
+#     # Detect if this is a charging question
+#     if is_charging_question(user_input):
+#         return process_charging_question(user_input)
+#     else:
+#         # Handle as general conversation
+#         st.session_state.in_charging_flow = False
+#         return generate_natural_response(user_input)
+
+
+def process_message(user_input: str) -> str:
+    user_input_clean = user_input.lower().strip()
+
+    # 1️⃣ Handle greetings (keep deterministic)
+    greetings = [
+        "hi", "hello", "hey", "yo", "hiya",
+        "good morning", "good afternoon", "good evening"
+    ]
+
+    if user_input_clean in greetings or any(user_input_clean.startswith(g) for g in greetings):
         st.session_state.extracted_context = {
             "team": None,
             "keywords": None,
@@ -951,30 +1053,39 @@ def process_message(user_input: str) -> str:
         }
         st.session_state.in_charging_flow = False
         return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
-    
-    # Check for department questions (before charging flow check)
-    if is_department_question(user_input):
-        st.session_state.in_charging_flow = False
-        return process_department_question(user_input)
-    
-    # If we're already in a charging flow (answering clarifications), continue
-    if st.session_state.in_charging_flow:
-        # Check if it's a new question or continuing the flow
+
+    # 2️⃣ If we are mid charging flow, prioritize continuation
+    if st.session_state.get("in_charging_flow"):
+        # If user clearly switches topic, exit charging flow
         if is_likely_new_query(user_input) and not is_charging_question(user_input):
-            # Exit charging flow and handle as general question
             st.session_state.in_charging_flow = False
-            return generate_natural_response(user_input)
         else:
-            # Continue charging flow
-            return process_charging_question(user_input)
-    
-    # Detect if this is a charging question
-    if is_charging_question(user_input):
-        return process_charging_question(user_input)
-    else:
-        # Handle as general conversation
+            return charging_tool(user_input)
+
+    # 3️⃣ Let Claude decide which tool to use
+    tool = decide_tool(user_input)
+
+    # 4️⃣ Safety fallback (important!)
+    if tool == "none" and is_charging_question(user_input):
+        tool = "charging_tool"
+
+    # 5️⃣ Execute selected tool
+    if tool == "charging_tool":
+        st.session_state.in_charging_flow = True
+        return charging_tool(user_input)
+
+    if tool == "department_tool":
         st.session_state.in_charging_flow = False
-        return generate_natural_response(user_input)
+        return department_tool(user_input)
+
+    # 6️⃣ Default: Claude-like general assistant
+    st.session_state.in_charging_flow = False
+    return call_claude(
+        MASTER_ASSISTANT_PROMPT,
+        user_input,
+        include_history=True
+    )
+
 
 # ============================================
 # RENDER EXISTING CHAT HISTORY
@@ -986,6 +1097,62 @@ for msg in messages:
     content = msg.get('content', '')
     with st.chat_message(role):
         st.markdown(content)
+
+
+MEMORY_EXTRACTION_PROMPT = """
+Extract long-term personal information worth remembering.
+
+Examples:
+- Preferences (e.g., "prefers concise answers")
+- Ongoing projects
+- Skills or roles
+
+Return JSON list or empty list:
+[
+  {"type": "preference", "content": "..."}
+]
+"""
+
+def extract_and_store_memory(user_input: str, user_id: str):
+    response = call_claude(
+        MEMORY_EXTRACTION_PROMPT,
+        user_input,
+        include_history=False
+    )
+
+    try:
+        memories = json.loads(re.search(r'\[.*\]', response, re.DOTALL).group())
+    except:
+        return
+
+    table = dynamodb.Table("diva_user_memory")
+
+    for mem in memories:
+        table.put_item(Item={
+            "user_id": user_id,
+            "memory_id": str(uuid.uuid4()),
+            "memory_type": mem["type"],
+            "content": mem["content"]
+        })
+
+def load_user_memory(user_id: str) -> str:
+    table = dynamodb.Table("diva_user_memory")
+    response = table.query(
+        KeyConditionExpression=boto3.dynamodb.conditions.Key("user_id").eq(user_id)
+    )
+
+    if not response.get("Items"):
+        return ""
+
+    memory_text = "Known user memory:\n"
+    for item in response["Items"]:
+        memory_text += f"- {item['content']}\n"
+
+    return memory_text
+
+memory = load_user_memory(st.session_state["session_id"])
+
+system_prompt = MASTER_ASSISTANT_PROMPT + "\n\n" + memory
 
 # ============================================
 # CHAT INPUT & PROCESSING
