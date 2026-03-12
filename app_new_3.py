@@ -46,7 +46,7 @@ MODES = {
         "label": "General Chat",
         "icon": " ",
         "color": "#4A90D9",
-        "description": "Chat freely with Diva — ask anything!",
+        "description": "Ask questions, explore ideas, and get instant answers!",
         "button_style": "primary"
     },
     "charging": {
@@ -846,7 +846,7 @@ def process_message(user_input: str) -> str:
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g + " ") for g in greetings):
         if mode == "general":
-            return "Hi there! I'm Diva, your AI assistant. How can I help you today? ��"
+            return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
         elif mode == "charging":
             return "Hi! I'm in **Charging Guidelines** mode. Ask me about charging codes, accounts, projects, or departments!"
         elif mode == "chilton":
@@ -871,7 +871,7 @@ def process_message(user_input: str) -> str:
             return (
                 "I'm currently focused on **Charging Guidelines**. "
                 "Ask me about charging codes, account numbers, projects, or departments. "
-                "If you'd like to chat freely, switch to **�� General Chat** mode in the sidebar!"
+                "If you'd like to chat freely, switch to ** General Chat** mode in the sidebar!"
             )
 
     # ---- CHILTON MODE ----
