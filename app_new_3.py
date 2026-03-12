@@ -299,6 +299,12 @@ else:
 
 st.sidebar.markdown("---")
 
+# Initialize chat history
+chat_history = DynamoDBChatHistory(
+    table_name=DDB_TABLE_NAME,
+    session_id=st.session_state["session_id"]
+)
+
 def reset_history():
     try:
         chat_history.clear()
@@ -322,9 +328,9 @@ with st.sidebar.expander(" ** **", expanded=True):
 st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
 
 current_mode = st.session_state.chat_mode
-general_active = "1" if current_mode == "general" else ""
-charging_active = "2" if current_mode == "charging" else ""
-chilton_active = "3" if current_mode == "chilton" else ""
+general_active = " " if current_mode == "general" else ""
+charging_active = " " if current_mode == "charging" else ""
+chilton_active = " " if current_mode == "chilton" else ""
 
 def set_mode(mode: str):
     if st.session_state.chat_mode != mode:
@@ -349,14 +355,6 @@ if st.sidebar.button(f"{charging_active} Charging Guidelines", key="btn_charging
 if st.sidebar.button(f"{chilton_active} Chilton Manual", key="btn_chilton"):
     set_mode("chilton")
     st.rerun()
-
-st.sidebar.markdown("---")
-
-# Initialize chat history
-chat_history = DynamoDBChatHistory(
-    table_name=DDB_TABLE_NAME,
-    session_id=st.session_state["session_id"]
-)
 
 # Mode-specific info panels
 if current_mode == "charging":
