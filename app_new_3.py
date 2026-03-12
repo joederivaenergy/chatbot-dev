@@ -298,10 +298,6 @@ else:
     st.sidebar.markdown("## ⚡ Diva")
 
 st.sidebar.markdown("---")
-
-if st.sidebar.button("🗑️ Clear Chat"):
-    reset_history()
-    st.rerun()
     
 # --- MODE SELECTOR ---
 st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
@@ -356,6 +352,10 @@ def reset_history():
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
+
+if st.sidebar.button("🗑️ Clear Chat"):
+    reset_history()
+    st.rerun()
 
 # Mode-specific info panels
 if current_mode == "charging":
