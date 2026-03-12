@@ -245,6 +245,7 @@ div[data-testid="stButton"] > button {
 /* Left-align sidebar buttons */
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
     text-align: left;
+    justify-content: flex-start;
 }
 
 /* Active mode banner */
