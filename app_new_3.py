@@ -299,7 +299,7 @@ else:
 
 st.sidebar.markdown("---")
 
-if st.button("🗑️ Clear Chat"):
+if st.sidebar.button("🗑️ Clear Chat"):
     reset_history()
     st.rerun()
     
