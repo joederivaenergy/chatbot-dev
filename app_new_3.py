@@ -356,6 +356,8 @@ if st.sidebar.button(f"{chilton_active} Chilton Manual", key="btn_chilton"):
     set_mode("chilton")
     st.rerun()
 
+st.sidebar.markdown("---")
+
 # Mode-specific info panels
 if current_mode == "charging":
     with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
