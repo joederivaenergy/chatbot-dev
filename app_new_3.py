@@ -260,7 +260,7 @@ section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
     padding: 12px 16px;
     margin-bottom: 6px;
     font-size: 0.95rem;
-    border: 1.5px solid #ddd;
+    border: 3px solid #ddd;
     background-color: #f8f9fa;
     color: #333;
 }
@@ -357,9 +357,9 @@ with st.sidebar.expander(" ** **", expanded=True):
 st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
 
 current_mode = st.session_state.chat_mode
-general_active = " " if current_mode == "general" else ""
-charging_active = " " if current_mode == "charging" else ""
-chilton_active = " " if current_mode == "chilton" else ""
+general_active = "✅ " if current_mode == "general" else ""
+charging_active = "✅ " if current_mode == "charging" else ""
+chilton_active = "✅ " if current_mode == "chilton" else ""
 
 def set_mode(mode: str):
     if st.session_state.chat_mode != mode:
