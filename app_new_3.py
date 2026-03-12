@@ -353,10 +353,6 @@ def reset_history():
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
 
-if st.sidebar.button("🗑️ Clear Chat"):
-    reset_history()
-    st.rerun()
-
 # Mode-specific info panels
 if current_mode == "charging":
     with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
@@ -385,6 +381,11 @@ elif current_mode == "chilton":
         """)
 
 st.sidebar.divider()
+if st.sidebar.button("🗑️ Clear Chat"):
+    reset_history()
+    st.rerun()
+    
+st.sidebar.divider()
 st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
 with st.sidebar.expander("📧 Support"):
@@ -395,7 +396,7 @@ with st.sidebar.expander("📧 Support"):
 # ============================================
 
 st.markdown("<h1 style='text-align: center;'>⚡ Meet Diva!</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot for Charging Guidelines and More</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot</p>", unsafe_allow_html=True)
 
 # Active mode banner
 mode_info = MODES[current_mode]
