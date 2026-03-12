@@ -43,22 +43,22 @@ CHILTON_CSV_FILES = {
 
 MODES = {
     "general": {
-        "label": "�� General Chat",
-        "icon": "��",
+        "label": "General Chat",
+        "icon": " ",
         "color": "#4A90D9",
         "description": "Chat freely with Diva — ask anything!",
         "button_style": "primary"
     },
     "charging": {
-        "label": "⚡ Charging Guidelines",
-        "icon": "⚡",
+        "label": "Charging Guidelines",
+        "icon": " ",
         "color": "#F5A623",
         "description": "Get charging codes, account numbers, projects & departments.",
         "button_style": "secondary"
     },
     "chilton": {
-        "label": "�� Chilton Manual",
-        "icon": "��",
+        "label": "Chilton Manual",
+        "icon": " ",
         "color": "#7ED321",
         "description": "Wind farm maintenance & troubleshooting guidance.",
         "button_style": "secondary"
@@ -298,14 +298,33 @@ else:
     st.sidebar.markdown("## ⚡ Diva")
 
 st.sidebar.markdown("---")
+
+def reset_history():
+    try:
+        chat_history.clear()
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
+        st.success("Chat cleared!")
+    except Exception as e:
+        st.warning(f"Could not clear history: {e}")
+        
+with st.sidebar.expander(" ** **", expanded=True):
+    if st.button("New Session"):
+        reset_history()
+        st.rerun()
     
 # --- MODE SELECTOR ---
 st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
 
 current_mode = st.session_state.chat_mode
-general_active = "��" if current_mode == "general" else ""
-charging_active = "��" if current_mode == "charging" else ""
-chilton_active = "��" if current_mode == "chilton" else ""
+general_active = "1" if current_mode == "general" else ""
+charging_active = "2" if current_mode == "charging" else ""
+chilton_active = "3" if current_mode == "chilton" else ""
 
 def set_mode(mode: str):
     if st.session_state.chat_mode != mode:
@@ -339,20 +358,6 @@ chat_history = DynamoDBChatHistory(
     session_id=st.session_state["session_id"]
 )
 
-def reset_history():
-    try:
-        chat_history.clear()
-        st.session_state.extracted_context = {
-            "team": None,
-            "keywords": None,
-            "location": None,
-            "exact_description": None
-        }
-        st.session_state.in_charging_flow = False
-        st.success("Chat cleared!")
-    except Exception as e:
-        st.warning(f"Could not clear history: {e}")
-
 # Mode-specific info panels
 if current_mode == "charging":
     with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
@@ -381,9 +386,6 @@ elif current_mode == "chilton":
         """)
 
 st.sidebar.divider()
-if st.sidebar.button("🗑️ Clear Chat"):
-    reset_history()
-    st.rerun()
 
 with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
