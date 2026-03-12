@@ -295,12 +295,16 @@ if "in_charging_flow" not in st.session_state:
 if os.path.exists("Deriva-Logo.png"):
     st.sidebar.image("Deriva-Logo.png", width=200)
 else:
-    st.sidebar.markdown("## �� Diva")
+    st.sidebar.markdown("## ⚡ Diva")
 
 st.sidebar.markdown("---")
 
+if st.button("🗑️ Clear Chat"):
+    reset_history()
+    st.rerun()
+    
 # --- MODE SELECTOR ---
-st.sidebar.markdown('<div class="sidebar-section">�� Select Mode</div>', unsafe_allow_html=True)
+st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
 
 current_mode = st.session_state.chat_mode
 
@@ -316,25 +320,17 @@ def set_mode(mode: str):
         }
         st.session_state.in_charging_flow = False
 
-col1, col2, col3 = st.sidebar.columns([1, 1, 1])
+if st.sidebar.button(f"{general_active} General Chat", key="btn_general"):
+    set_mode("general")
+    st.rerun()
 
-with col1:
-    general_active = "��" if current_mode == "general" else ""
-    if st.button(f"{general_active}��\nChat", key="btn_general", help="Free conversation with Diva"):
-        set_mode("general")
-        st.rerun()
+if st.sidebar.button(f"{charging_active} Charging Guidelines", key="btn_charging"):
+    set_mode("charging")
+    st.rerun()
 
-with col2:
-    charging_active = "��" if current_mode == "charging" else ""
-    if st.button(f"{charging_active}⚡\nCharging", key="btn_charging", help="Charging Guidelines mode"):
-        set_mode("charging")
-        st.rerun()
-
-with col3:
-    chilton_active = "��" if current_mode == "chilton" else ""
-    if st.button(f"{chilton_active}��\nChilton", key="btn_chilton", help="Chilton Manual / Wind Farm Maintenance"):
-        set_mode("chilton")
-        st.rerun()
+if st.sidebar.button(f"{chilton_active} Chilton Manual", key="btn_chilton"):
+    set_mode("chilton")
+    st.rerun()
 
 st.sidebar.markdown("---")
 
@@ -357,11 +353,6 @@ def reset_history():
         st.success("Chat cleared!")
     except Exception as e:
         st.warning(f"Could not clear history: {e}")
-
-with st.sidebar.expander("⚙️ **Tools**", expanded=True):
-    if st.button("��️ Clear Chat"):
-        reset_history()
-        st.rerun()
 
 # Mode-specific info panels
 if current_mode == "charging":
@@ -393,7 +384,7 @@ elif current_mode == "chilton":
 st.sidebar.divider()
 st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
-with st.sidebar.expander("��️ Support"):
+with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
 # ============================================
