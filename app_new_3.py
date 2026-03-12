@@ -242,6 +242,11 @@ div[data-testid="stButton"] > button {
     transition: all 0.2s ease;
 }
 
+/* Left-align sidebar buttons */
+section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
+    text-align: left;
+}
+
 /* Active mode banner */
 .mode-banner {
     padding: 10px 16px;
