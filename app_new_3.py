@@ -307,6 +307,9 @@ if st.button("🗑️ Clear Chat"):
 st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
 
 current_mode = st.session_state.chat_mode
+general_active = "��" if current_mode == "general" else ""
+charging_active = "��" if current_mode == "charging" else ""
+chilton_active = "��" if current_mode == "chilton" else ""
 
 def set_mode(mode: str):
     if st.session_state.chat_mode != mode:
