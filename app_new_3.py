@@ -384,13 +384,11 @@ st.sidebar.divider()
 if st.sidebar.button("🗑️ Clear Chat"):
     reset_history()
     st.rerun()
-    
-st.sidebar.divider()
-st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
 with st.sidebar.expander("📧 Support"):
     st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
+st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 # ============================================
 # HEADER
 # ============================================
