@@ -243,17 +243,6 @@ div[data-testid="stButton"] > button {
     transition: all 0.2s ease;
 }
 
-/* Left-align sidebar buttons */
-# section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
-#     text-align: left;
-#     justify-content: flex-start;
-#     padding: 12px 16px;
-#     margin-bottom: 6px;
-#     font-size: 0.95rem;
-#     border: 1.5px solid #ddd;
-#     background-color: #f8f9fa;
-#     color: #333;
-# }
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
     text-align: left;
     justify-content: flex-start;
@@ -266,7 +255,7 @@ section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
 }
 
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-    background-color: #e8f0fe;
+    background-color: #888;
     border-color: #4A90D9;
     color: #1a6fa8;
 }
