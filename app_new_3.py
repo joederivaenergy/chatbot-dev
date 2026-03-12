@@ -255,7 +255,7 @@ section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
 }
 
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-    background-color: #888;
+    background-color: #f0f2f6;
     border-color: #4A90D9;
     color: #1a6fa8;
 }
