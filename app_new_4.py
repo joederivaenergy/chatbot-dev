@@ -7,6 +7,8 @@ import pandas as pd
 from typing import Dict, List, Tuple
 import time
 import re
+import base64
+import io
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
@@ -472,12 +474,131 @@ appropriate mode using the sidebar buttons for more focused help.
 Keep responses concise and friendly. You are an internal tool for Deriva Energy employees.
 """
 
-def generate_natural_response(user_query: str) -> str:
-    """Generate natural language response for general chat mode"""
-    response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
+# def generate_natural_response(user_query: str) -> str:
+#     """Generate natural language response for general chat mode"""
+#     response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
+#     if not response:
+#         return "I'm here to help! Could you rephrase your question?"
+#     return response
+
+def generate_natural_response(user_query: str, uploaded_files: list = None) -> str:
+    """Generate response, optionally with attached files/images"""
+    if uploaded_files:
+        response = call_claude_with_media(GENERAL_ASSISTANT_PROMPT, user_query, uploaded_files)
+    else:
+        response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
     if not response:
         return "I'm here to help! Could you rephrase your question?"
     return response
+
+# ============================================
+# FILE / IMAGE PROCESSING (GENERAL CHAT)
+# ============================================
+
+SUPPORTED_IMAGE_TYPES = ["png", "jpg", "jpeg", "gif", "webp"]
+SUPPORTED_FILE_TYPES = ["pdf", "txt", "csv", "py", "json", "md", "docx"]
+
+def encode_image_to_base64(file_bytes: bytes) -> str:
+    """Encode image bytes to base64 string"""
+    return base64.standard_b64encode(file_bytes).decode("utf-8")
+
+def extract_text_from_file(uploaded_file) -> str:
+    """Extract text content from uploaded file"""
+    filename = uploaded_file.name.lower()
+    file_bytes = uploaded_file.read()
+
+    if filename.endswith(".txt") or filename.endswith(".md") or filename.endswith(".py"):
+        return file_bytes.decode("utf-8", errors="ignore")
+
+    elif filename.endswith(".csv"):
+        try:
+            df = pd.read_csv(io.BytesIO(file_bytes))
+            return f"CSV File: {uploaded_file.name}\n\n{df.to_string(index=False)}"
+        except Exception as e:
+            return f"Could not parse CSV: {e}"
+
+    elif filename.endswith(".json"):
+        try:
+            data = json.loads(file_bytes.decode("utf-8"))
+            return f"JSON File: {uploaded_file.name}\n\n{json.dumps(data, indent=2)}"
+        except Exception as e:
+            return f"Could not parse JSON: {e}"
+
+    elif filename.endswith(".pdf"):
+        try:
+            import pypdf
+            reader = pypdf.PdfReader(io.BytesIO(file_bytes))
+            text = ""
+            for page in reader.pages:
+                text += page.extract_text() + "\n"
+            return f"PDF File: {uploaded_file.name}\n\n{text}"
+        except ImportError:
+            return "PDF support requires `pypdf`. Run: pip install pypdf"
+        except Exception as e:
+            return f"Could not parse PDF: {e}"
+
+    else:
+        return f"[Unsupported file type: {uploaded_file.name}]"
+
+
+def call_claude_with_media(system_prompt: str, user_message: str, uploaded_files: list) -> str:
+    """Call Claude with text + optional images/files"""
+    try:
+        content_blocks = []
+
+        for uploaded_file in uploaded_files:
+            file_ext = uploaded_file.name.split(".")[-1].lower()
+            uploaded_file.seek(0)  # reset pointer
+
+            if file_ext in SUPPORTED_IMAGE_TYPES:
+                # Add as image block
+                image_data = encode_image_to_base64(uploaded_file.read())
+                media_type_map = {
+                    "jpg": "image/jpeg", "jpeg": "image/jpeg",
+                    "png": "image/png", "gif": "image/gif", "webp": "image/webp"
+                }
+                media_type = media_type_map.get(file_ext, "image/png")
+                content_blocks.append({
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": media_type,
+                        "data": image_data
+                    }
+                })
+            else:
+                # Extract text and add as text block
+                file_text = extract_text_from_file(uploaded_file)
+                content_blocks.append({
+                    "type": "text",
+                    "text": f"[Attached file: {uploaded_file.name}]\n\n{file_text}"
+                })
+
+        # Add the user's text message
+        history = chat_history.get_formatted_history()
+        if history != "No previous conversation.":
+            full_text = history + f"\nCurrent question: {user_message}"
+        else:
+            full_text = user_message
+
+        content_blocks.append({"type": "text", "text": full_text})
+
+        response = bedrock_runtime.invoke_model(
+            modelId=BEDROCK_MODEL_ID,
+            body=json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 4000,
+                "system": system_prompt,
+                "messages": [{"role": "user", "content": content_blocks}]
+            })
+        )
+
+        result = json.loads(response['body'].read())
+        return result['content'][0]['text']
+
+    except Exception as e:
+        st.error(f"Error calling Claude with media: {e}")
+        return None
 
 # ============================================
 # CHARGING QUESTION DETECTION
@@ -849,12 +970,53 @@ def process_chilton_question(user_input: str) -> str:
 # MAIN PROCESSING LOGIC
 # ============================================
 
-def process_message(user_input: str) -> str:
-    """Route message to the correct handler based on active mode"""
+# def process_message(user_input: str) -> str:
+#     """Route message to the correct handler based on active mode"""
     
+#     mode = st.session_state.chat_mode
+
+#     # Handle greetings regardless of mode
+#     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
+#     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g + " ") for g in greetings):
+#         if mode == "general":
+#             return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
+#         elif mode == "charging":
+#             return "Hi! I'm in **Charging Guidelines** mode. Ask me about charging codes, accounts, projects, or departments!"
+#         elif mode == "chilton":
+#             return "Hi! I'm in **Chilton Manual** mode. Ask me about wind turbine maintenance, troubleshooting, or procedures!"
+
+#     # ---- GENERAL MODE ----
+#     if mode == "general":
+#         st.session_state.in_charging_flow = False
+#         return generate_natural_response(user_input)
+
+#     # ---- CHARGING MODE ----
+#     elif mode == "charging":
+#         if is_department_question(user_input):
+#             st.session_state.in_charging_flow = False
+#             return process_department_question(user_input)
+#         if st.session_state.in_charging_flow:
+#             return process_charging_question(user_input)
+#         if is_charging_question(user_input):
+#             return process_charging_question(user_input)
+#         else:
+#             # Still in charging mode but question seems off-topic — redirect politely
+#             return (
+#                 "I'm currently focused on **Charging Guidelines**. "
+#                 "Ask me about charging codes, account numbers, projects, or departments. "
+#                 "If you'd like to chat freely, switch to ** General Chat** mode in the sidebar!"
+#             )
+
+#     # ---- CHILTON MODE ----
+#     elif mode == "chilton":
+#         return process_chilton_question(user_input)
+
+#     # Fallback
+#     return generate_natural_response(user_input)
+
+def process_message(user_input: str, uploaded_files: list = None) -> str:
     mode = st.session_state.chat_mode
 
-    # Handle greetings regardless of mode
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
     if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g + " ") for g in greetings):
         if mode == "general":
@@ -867,7 +1029,7 @@ def process_message(user_input: str) -> str:
     # ---- GENERAL MODE ----
     if mode == "general":
         st.session_state.in_charging_flow = False
-        return generate_natural_response(user_input)
+        return generate_natural_response(user_input, uploaded_files=uploaded_files)
 
     # ---- CHARGING MODE ----
     elif mode == "charging":
@@ -879,18 +1041,16 @@ def process_message(user_input: str) -> str:
         if is_charging_question(user_input):
             return process_charging_question(user_input)
         else:
-            # Still in charging mode but question seems off-topic — redirect politely
             return (
                 "I'm currently focused on **Charging Guidelines**. "
                 "Ask me about charging codes, account numbers, projects, or departments. "
-                "If you'd like to chat freely, switch to ** General Chat** mode in the sidebar!"
+                "If you'd like to chat freely, switch to **General Chat** mode in the sidebar!"
             )
 
     # ---- CHILTON MODE ----
     elif mode == "chilton":
         return process_chilton_question(user_input)
 
-    # Fallback
     return generate_natural_response(user_input)
 
 # ============================================
