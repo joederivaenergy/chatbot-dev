@@ -1068,25 +1068,43 @@ for msg in messages:
 # CHAT INPUT & PROCESSING
 # ============================================
 
-# Dynamic placeholder based on mode
 placeholders = {
     "general": "Ask me anything...",
     "charging": "Ask about charging codes, accounts, or departments...",
     "chilton": "Ask about wind turbine maintenance or procedures..."
 }
 
+# --- File uploader (only show in General mode) ---
+uploaded_files = None
+if st.session_state.chat_mode == "general":
+    uploaded_files = st.file_uploader(
+        "📎 Attach files or images (optional)",
+        type=SUPPORTED_IMAGE_TYPES + SUPPORTED_FILE_TYPES,
+        accept_multiple_files=True,
+        key="file_uploader",
+        label_visibility="collapsed",
+        help="Supports: PNG, JPG, GIF, WEBP, PDF, TXT, CSV, PY, JSON, MD"
+    )
+
 user_input = st.chat_input(placeholders.get(st.session_state.chat_mode, "Type your message..."))
 
 if user_input:
+    # Build display message with file names
+    display_message = user_input
+    if uploaded_files:
+        file_names = ", ".join([f.name for f in uploaded_files])
+        display_message += f"\n\n📎 *Attached: {file_names}*"
+
     with st.chat_message("user"):
-        st.markdown(user_input)
-    chat_history.add_message("user", user_input)
+        st.markdown(display_message)
+    chat_history.add_message("user", display_message)
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            response = process_message(user_input)
+            response = process_message(user_input, uploaded_files=uploaded_files)
             st.markdown(response)
     chat_history.add_message("assistant", response)
+
 
 # ============================================
 # FOOTER
