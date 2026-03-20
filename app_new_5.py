@@ -1212,13 +1212,30 @@ if st.session_state.chat_mode == "general":
 
         chat_history.add_message("user", display_message)
 
+        # with st.chat_message("assistant"):
+        #     with st.spinner("Thinking..."):
+        #         # Reset file pointers before sending
+        #         if uploaded_files:
+        #             for f in uploaded_files:
+        #                 f.seek(0)
+        #         response = process_message(user_input,
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                # Reset file pointers before sending
-                if uploaded_files:
-                    for f in uploaded_files:
-                        f.seek(0)
-                response = process_message(user_input,
+        with st.spinner("Thinking..."):
+            # Reset file pointers before sending
+            if uploaded_files:
+                for f in uploaded_files:
+                    f.seek(0)
+
+            response = process_message(user_input, uploaded_files)
+
+            # Display assistant response
+            st.markdown(response)
+
+    # Save assistant response to history
+    chat_history.add_message("assistant", response)
+
+    # Clear uploaded files after sending
+    st.session_state.pending_files = []
 
 # ============================================
 # FOOTER
