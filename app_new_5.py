@@ -214,7 +214,7 @@ class DynamoDBChatHistory:
         if not messages:
             return "No previous conversation."
         history_text = "Previous conversation:\n"
-        for msg in messages[-10:]:
+        for msg in messages[-8:]:
             role = msg.get('message_type', 'user')
             content = msg.get('content', '')
             history_text += f"{role.upper()}: {content}\n"
@@ -495,7 +495,7 @@ def call_claude(system_prompt: str, user_message: str, include_history: bool = T
             modelId=BEDROCK_MODEL_ID,
             body=json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 2000,
+                "max_tokens": 4096,
                 "system": system_prompt,
                 "messages": [{"role": "user", "content": full_message}]
             })
