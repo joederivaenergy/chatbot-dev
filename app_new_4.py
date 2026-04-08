@@ -446,7 +446,7 @@ def call_claude(system_prompt: str, user_message: str, include_history: bool = T
             modelId=BEDROCK_MODEL_ID,
             body=json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 2000,
+                "max_tokens": 4096,
                 "system": system_prompt,
                 "messages": [{"role": "user", "content": full_message}]
             })
