@@ -328,11 +328,8 @@ html, body, [class*="css"] {
 
 /* ── Sidebar ── */
 section[data-testid="stSidebar"] {
-    background: #0f1117;
-    border-right: 1px solid #1e2130;
-}
-section[data-testid="stSidebar"] * {
-    color: #e2e8f0 !important;
+    background: #ffffff;
+    border-right: 1px solid #e8ecf0;
 }
 
 /* ── Sidebar section labels ── */
@@ -341,7 +338,7 @@ section[data-testid="stSidebar"] * {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #4a5568 !important;
+    color: #9ca3af;
     margin: 18px 0 8px 0;
     padding-left: 2px;
 }
@@ -359,21 +356,22 @@ section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
     border-radius: 8px;
     border: 1px solid transparent;
     background: transparent;
-    color: #94a3b8 !important;
+    color: #374151;
     transition: all 0.15s ease;
     cursor: pointer;
 }
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-    background: #1a1f2e !important;
-    color: #e2e8f0 !important;
-    border-color: #2d3748;
+    background: #f3f4f6 !important;
+    color: #111827 !important;
+    border-color: #e5e7eb;
 }
 
 /* ── Active mode button ── */
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="primary"] {
-    background: #1a2744 !important;
-    color: #60a5fa !important;
-    border-color: #2563eb;
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border-color: #bfdbfe !important;
+    font-weight: 600 !important;
 }
 
 /* ── New chat button ── */
@@ -390,6 +388,7 @@ section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="prim
 }
 .new-chat-btn > div[data-testid="stButton"] > button:hover {
     background: #1e40af !important;
+    color: #fff !important;
 }
 
 /* ── Session history items ── */
@@ -400,29 +399,44 @@ section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="prim
     padding: 8px 10px;
     border-radius: 8px;
     margin-bottom: 2px;
-    cursor: pointer;
     transition: background 0.12s ease;
 }
 .session-item:hover {
-    background: #1a1f2e;
+    background: #f3f4f6;
 }
 .session-item.active {
-    background: #1a2744;
+    background: #eff6ff;
     border-left: 3px solid #2563eb;
+    padding-left: 7px;
 }
 .session-title {
     font-size: 0.83rem;
     font-weight: 500;
-    color: #cbd5e1;
+    color: #1f2937;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 160px;
+    max-width: 170px;
 }
 .session-date {
     font-size: 0.72rem;
-    color: #4a5568;
+    color: #9ca3af;
     margin-top: 1px;
+}
+/* clickable session row button — invisible, full width */
+.session-load-btn > div[data-testid="stButton"] > button {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    text-align: left !important;
+    font-size: 0.83rem !important;
+    font-weight: 500 !important;
+    color: #1f2937 !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }
 
 /* ── Mode banner ── */
@@ -488,7 +502,7 @@ section[data-testid="stSidebar"] [data-testid="stFileUploader"] * {
 
 /* ── Divider ── */
 section[data-testid="stSidebar"] hr {
-    border-color: #1e2130 !important;
+    border-color: #e5e7eb !important;
     margin: 12px 0 !important;
 }
 
@@ -583,6 +597,34 @@ with st.sidebar:
                 st.session_state.in_charging_flow = False
                 st.rerun()
 
+    # ── MODE INFO PANELS ──
+    if st.session_state.chat_mode == "charging":
+        with st.expander("ℹ️ About Charging Guidelines", expanded=False):
+            st.markdown("""
+About charging questions, Diva provides:
+- Account Number
+- Location
+- Company ID
+- Project
+- Department
+---
+**Note**: the project ID is for Concur and Timesheets.
+
+For more info: [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true)
+            """)
+
+    elif st.session_state.chat_mode == "chilton":
+        with st.expander("ℹ️ About Chilton Manual", expanded=False):
+            st.markdown("""
+The Chilton Manual mode helps with:
+- Wind turbine maintenance procedures
+- Troubleshooting guides
+- Scheduled maintenance tasks
+- Component-specific guidance
+---
+*CSV data for this module will be loaded when available.*
+            """)
+
     st.divider()
 
     # ── FILE UPLOADER (General mode only) ──
@@ -603,66 +645,67 @@ with st.sidebar:
                 st.caption(f"�� {f.name}")
         st.divider()
 
-    # ── CHAT HISTORY ──
-    st.markdown('<div class="sidebar-label">Recent Chats</div>', unsafe_allow_html=True)
+    # ── CHAT HISTORY (collapsible) ──
+    with st.expander("�� Recent Chats", expanded=True):
+        recent_sessions = session_manager.get_recent_sessions(limit=20)
 
-    recent_sessions = session_manager.get_recent_sessions(limit=20)
+        if not recent_sessions:
+            st.caption("No previous chats yet.")
+        else:
+            for sess in recent_sessions:
+                sid = sess.get('session_id', '')
+                title = sess.get('title', 'New conversation')
+                updated = sess.get('updated_at', '')
+                is_current = sid == st.session_state["session_id"]
 
-    if not recent_sessions:
-        st.caption("No previous chats.")
-    else:
-        for sess in recent_sessions:
-            sid = sess.get('session_id', '')
-            title = sess.get('title', 'New conversation')
-            updated = sess.get('updated_at', '')
-            is_current = sid == st.session_state["session_id"]
+                # Format relative date
+                try:
+                    dt = datetime.fromisoformat(updated)
+                    now = datetime.utcnow()
+                    delta = now - dt
+                    if delta.days == 0:
+                        date_label = "Today"
+                    elif delta.days == 1:
+                        date_label = "Yesterday"
+                    elif delta.days < 7:
+                        date_label = f"{delta.days}d ago"
+                    else:
+                        date_label = dt.strftime("%b %d")
+                except:
+                    date_label = ""
 
-            # Format date
-            try:
-                dt = datetime.fromisoformat(updated)
-                now = datetime.utcnow()
-                delta = now - dt
-                if delta.days == 0:
-                    date_label = "Today"
-                elif delta.days == 1:
-                    date_label = "Yesterday"
-                elif delta.days < 7:
-                    date_label = f"{delta.days} days ago"
-                else:
-                    date_label = dt.strftime("%b %d")
-            except:
-                date_label = ""
-
-            # Truncate title
-            display_title = title[:28] + "…" if len(title) > 28 else title
-
-            col1, col2 = st.columns([5, 1])
-            with col1:
+                # Truncate title
+                display_title = title[:26] + "…" if len(title) > 26 else title
                 active_class = "active" if is_current else ""
-                st.markdown(
-                    f"""<div class="session-item {active_class}">
-                        <div>
+
+                col1, col2 = st.columns([6, 1])
+                with col1:
+                    # Render styled card; clicking the button below loads the session
+                    st.markdown(
+                        f"""<div class="session-item {active_class}">
                             <div class="session-title">{display_title}</div>
                             <div class="session-date">{date_label}</div>
-                        </div>
-                    </div>""",
-                    unsafe_allow_html=True
-                )
-                if st.button("Load", key=f"load_{sid}", help=f"Load: {title}"):
-                    st.session_state["session_id"] = sid
-                    st.session_state.extracted_context = {
-                        "team": None, "keywords": None, "location": None, "exact_description": None
-                    }
-                    st.session_state.in_charging_flow = False
-                    st.session_state.session_initialized = True
-                    st.rerun()
-            with col2:
-                if st.button("��", key=f"del_{sid}", help="Delete this chat"):
-                    session_manager.delete_session(sid)
-                    if is_current:
-                        st.session_state["session_id"] = str(uuid.uuid4())
-                        st.session_state.session_initialized = False
-                    st.rerun()
+                        </div>""",
+                        unsafe_allow_html=True
+                    )
+                    # Invisible-styled button that acts as the clickable row
+                    st.markdown('<div class="session-load-btn">', unsafe_allow_html=True)
+                    if st.button(f"↩ {display_title}", key=f"load_{sid}", help=f"Load: {title}"):
+                        st.session_state["session_id"] = sid
+                        st.session_state.extracted_context = {
+                            "team": None, "keywords": None, "location": None, "exact_description": None
+                        }
+                        st.session_state.in_charging_flow = False
+                        st.session_state.session_initialized = True
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+                with col2:
+                    if st.button("��", key=f"del_{sid}", help="Delete this chat"):
+                        session_manager.delete_session(sid)
+                        if is_current:
+                            st.session_state["session_id"] = str(uuid.uuid4())
+                            st.session_state.session_initialized = False
+                        st.rerun()
 
     st.divider()
 
