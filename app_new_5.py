@@ -9,13 +9,12 @@ import time
 import re
 import base64
 import io
-from datetime import datetime
 
 # --- Config ---
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+# BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
 BEDROCK_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-sonnet-4-6")
 DDB_TABLE_NAME = os.getenv("DDB_TABLE_NAME", "diva_chat_history")
-DDB_SESSIONS_TABLE = os.getenv("DDB_SESSIONS_TABLE", "diva_sessions")
 
 # --- CSV File Paths ---
 CSV_FILES = {
@@ -30,11 +29,16 @@ CSV_FILES = {
     'Tech Services': 'csvs/Guidelines_cleaned_Tech_Services.csv',
 }
 
+# --- Reference CSV Files ---
 REFERENCE_CSV_FILES = {
     'department_list': 'csvs/Guidelines_cleaned_dept_list.csv'
 }
 
-CHILTON_CSV_FILES = {}
+# --- Chilton Manual CSV Files (placeholder - add paths when ready) ---
+CHILTON_CSV_FILES = {
+    # 'wind_turbine_maintenance': 'csvs/chilton_wind_turbine.csv',
+    # Add your Chilton Manual CSVs here
+}
 
 # ============================================
 # MODES
@@ -43,21 +47,24 @@ CHILTON_CSV_FILES = {}
 MODES = {
     "general": {
         "label": "General Chat",
-        "icon": "��",
+        "icon": " ",
         "color": "#4A90D9",
         "description": "Ask questions, explore ideas, and get instant answers!",
+        "button_style": "primary"
     },
     "charging": {
         "label": "Charging Guidelines",
-        "icon": "��",
+        "icon": " ",
         "color": "#F5A623",
         "description": "Get charging codes, account numbers, projects & departments.",
+        "button_style": "secondary"
     },
     "chilton": {
         "label": "Chilton Manual",
-        "icon": "��",
+        "icon": " ",
         "color": "#7ED321",
         "description": "Wind farm maintenance & troubleshooting guidance.",
+        "button_style": "secondary"
     }
 }
 
@@ -67,7 +74,9 @@ MODES = {
 
 @st.cache_data
 def load_all_csvs():
+    """Load all CSV files into memory"""
     data = {}
+    
     for team, filepath in CSV_FILES.items():
         if os.path.exists(filepath):
             try:
@@ -77,10 +86,11 @@ def load_all_csvs():
                         df[col] = df[col].str.strip()
                 data[team] = df
             except Exception as e:
+                st.error(f"Error loading {team} CSV: {e}")
                 data[team] = pd.DataFrame()
         else:
             data[team] = pd.DataFrame()
-
+    
     for ref_type, filepath in REFERENCE_CSV_FILES.items():
         if os.path.exists(filepath):
             try:
@@ -90,6 +100,7 @@ def load_all_csvs():
                         df[col] = df[col].str.strip()
                 data[ref_type] = df
             except Exception as e:
+                st.error(f"Error loading {ref_type} CSV: {e}")
                 data[ref_type] = pd.DataFrame()
         else:
             data[ref_type] = pd.DataFrame()
@@ -103,21 +114,21 @@ def load_all_csvs():
                         df[col] = df[col].str.strip()
                 data[name] = df
             except Exception as e:
+                st.error(f"Error loading Chilton CSV {name}: {e}")
                 data[name] = pd.DataFrame()
-
+    
     return data
 
 ALL_TEAM_DATA = load_all_csvs()
 
 # ============================================
-# AWS CLIENTS
+# AWS CLIENTS & DYNAMODB SETUP
 # ============================================
 
 bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
 
-def create_tables_if_not_exist():
-    # Chat history table
+def create_dynamodb_table_if_not_exists():
     try:
         table = dynamodb.Table(DDB_TABLE_NAME)
         table.load()
@@ -136,108 +147,17 @@ def create_tables_if_not_exist():
                 BillingMode='PAY_PER_REQUEST'
             )
             table.wait_until_exists()
+            st.success(f"✅ Created DynamoDB table '{DDB_TABLE_NAME}'")
         except Exception as e:
-            st.error(f"❌ Failed to create chat table: {e}")
+            st.error(f"❌ Failed to create table: {e}")
             return False
-
-    # Sessions metadata table
-    try:
-        table = dynamodb.Table(DDB_SESSIONS_TABLE)
-        table.load()
-    except dynamodb.meta.client.exceptions.ResourceNotFoundException:
-        try:
-            table = dynamodb.create_table(
-                TableName=DDB_SESSIONS_TABLE,
-                KeySchema=[
-                    {'AttributeName': 'session_id', 'KeyType': 'HASH'},
-                ],
-                AttributeDefinitions=[
-                    {'AttributeName': 'session_id', 'AttributeType': 'S'},
-                ],
-                BillingMode='PAY_PER_REQUEST'
-            )
-            table.wait_until_exists()
-        except Exception as e:
-            st.error(f"❌ Failed to create sessions table: {e}")
-            return False
-
+    except Exception as e:
+        st.error(f"❌ Error checking table: {e}")
+        return False
     return True
 
-if not create_tables_if_not_exist():
+if not create_dynamodb_table_if_not_exists():
     st.stop()
-
-# ============================================
-# SESSION MANAGER
-# ============================================
-
-class SessionManager:
-    def __init__(self):
-        self.table = dynamodb.Table(DDB_SESSIONS_TABLE)
-        self.chat_table = dynamodb.Table(DDB_TABLE_NAME)
-
-    def upsert_session(self, session_id: str, title: str = None, mode: str = "general"):
-        now = datetime.utcnow().isoformat()
-        item = {
-            'session_id': session_id,
-            'updated_at': now,
-            'mode': mode,
-        }
-        # Only set created_at and title on first creation
-        try:
-            existing = self.table.get_item(Key={'session_id': session_id}).get('Item')
-            if existing:
-                # Update timestamp and optionally title
-                update_expr = "SET updated_at = :ua"
-                expr_vals = {':ua': now}
-                if title and not existing.get('title'):
-                    update_expr += ", title = :t"
-                    expr_vals[':t'] = title
-                self.table.update_item(
-                    Key={'session_id': session_id},
-                    UpdateExpression=update_expr,
-                    ExpressionAttributeValues=expr_vals
-                )
-            else:
-                item['created_at'] = now
-                item['title'] = title or "New conversation"
-                self.table.put_item(Item=item)
-        except Exception as e:
-            st.error(f"Session upsert error: {e}")
-
-    def get_recent_sessions(self, limit: int = 20) -> List[Dict]:
-        try:
-            response = self.table.scan()
-            sessions = response.get('Items', [])
-            sessions.sort(key=lambda x: x.get('updated_at', ''), reverse=True)
-            return sessions[:limit]
-        except Exception as e:
-            return []
-
-    def delete_session(self, session_id: str):
-        try:
-            # Delete session metadata
-            self.table.delete_item(Key={'session_id': session_id})
-            # Delete all messages
-            response = self.chat_table.query(
-                KeyConditionExpression=boto3.dynamodb.conditions.Key('session_id').eq(session_id)
-            )
-            for item in response.get('Items', []):
-                self.chat_table.delete_item(
-                    Key={
-                        'session_id': item['session_id'],
-                        'message_timestamp': str(item['message_timestamp'])
-                    }
-                )
-        except Exception as e:
-            st.error(f"Delete session error: {e}")
-
-    def get_session(self, session_id: str) -> Dict:
-        try:
-            return self.table.get_item(Key={'session_id': session_id}).get('Item', {})
-        except:
-            return {}
-
-session_manager = SessionManager()
 
 # ============================================
 # DYNAMODB CHAT HISTORY
@@ -245,9 +165,11 @@ session_manager = SessionManager()
 
 class DynamoDBChatHistory:
     def __init__(self, table_name: str, session_id: str):
+        self.table_name = table_name
         self.session_id = session_id
-        self.table = dynamodb.Table(table_name)
-
+        self.dynamodb = boto3.resource("dynamodb", region_name=AWS_REGION)
+        self.table = self.dynamodb.Table(table_name)
+    
     def get_messages(self) -> List[Dict]:
         try:
             response = self.table.query(
@@ -256,8 +178,9 @@ class DynamoDBChatHistory:
             )
             return response.get('Items', [])
         except Exception as e:
+            st.warning(f"Could not load chat history: {e}")
             return []
-
+    
     def add_message(self, role: str, content: str):
         try:
             self.table.put_item(
@@ -270,7 +193,7 @@ class DynamoDBChatHistory:
             )
         except Exception as e:
             st.error(f"Failed to save message: {e}")
-
+    
     def clear(self):
         try:
             response = self.table.query(
@@ -286,13 +209,19 @@ class DynamoDBChatHistory:
         except Exception as e:
             st.error(f"Failed to clear history: {e}")
 
+    # ----------------------------------------------------------------
+    # FIX #1 — replaces get_formatted_history()
+    # Old approach flattened all history into a single user text block,
+    # which caused Claude to lose conversation context after a few turns.
+    # This returns a proper alternating messages[] array for Bedrock.
+    # ----------------------------------------------------------------
     def get_messages_for_bedrock(self) -> List[Dict]:
         """Return properly formatted messages array for Bedrock API"""
         messages = self.get_messages()
         formatted = []
-        for msg in messages[-20:]:  # last 20 messages for context window
+        for msg in messages[-20:]:  # keep last 20 messages for context window
             role = msg.get('message_type', 'user')
-            # Normalize role
+            # Normalize role names stored in DynamoDB
             if role in ('ai', 'assistant'):
                 role = 'assistant'
             else:
@@ -300,218 +229,90 @@ class DynamoDBChatHistory:
             content = msg.get('content', '')
             if content:
                 formatted.append({"role": role, "content": content})
-        return formatted
+        # Bedrock requires strictly alternating roles — merge any consecutive same-role messages
+        cleaned = []
+        for msg in formatted:
+            if cleaned and cleaned[-1]["role"] == msg["role"]:
+                cleaned[-1]["content"] += "\n" + msg["content"]
+            else:
+                cleaned.append(msg)
+        return cleaned
 
 # ============================================
-# PAGE CONFIG
+# STREAMLIT PAGE CONFIG
 # ============================================
 
 st.set_page_config(
-    page_icon="⚡",
-    page_title="Diva — Deriva Energy",
+    page_icon="deriva.jpg",
+    page_title="Diva the Chatbot",
     layout="centered",
     initial_sidebar_state="expanded"
 )
 
 # ============================================
-# POLISHED CSS
+# CUSTOM CSS
 # ============================================
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-/* ── Global ── */
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-}
-
-/* ── Sidebar ── */
-section[data-testid="stSidebar"] {
-    background: #ffffff;
-    border-right: 1px solid #e8ecf0;
-}
-
-/* ── Sidebar section labels ── */
-.sidebar-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #9ca3af;
-    margin: 18px 0 8px 0;
-    padding-left: 2px;
-}
-
-/* ── Mode buttons ── */
-section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
+/* Mode button styling */
+div[data-testid="stButton"] > button {
     width: 100%;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+section[data-testid="stSidebar"] div[data-testid="stButton"] > button {
     text-align: left;
     justify-content: flex-start;
-    padding: 10px 14px;
-    margin-bottom: 4px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: #374151;
-    transition: all 0.15s ease;
-    cursor: pointer;
+    padding: 12px 16px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    border: 3px solid #ddd;
+    background-color: #f8f9fa;
+    color: #333;
 }
+
 section[data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-    background: #f3f4f6 !important;
-    color: #111827 !important;
-    border-color: #e5e7eb;
+    background-color: #f0f2f6;
+    border-color: #4A90D9;
+    color: #1a6fa8;
 }
 
-/* ── Active mode button ── */
-section[data-testid="stSidebar"] div[data-testid="stButton"] > button[kind="primary"] {
-    background: #eff6ff !important;
-    color: #1d4ed8 !important;
-    border-color: #bfdbfe !important;
-    font-weight: 600 !important;
-}
-
-/* ── New chat button ── */
-.new-chat-btn > div[data-testid="stButton"] > button {
-    background: #1d4ed8 !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    padding: 10px 14px !important;
-    width: 100% !important;
-    transition: background 0.15s ease !important;
-}
-.new-chat-btn > div[data-testid="stButton"] > button:hover {
-    background: #1e40af !important;
-    color: #fff !important;
-}
-
-/* ── Session history items ── */
-.session-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 10px;
-    border-radius: 8px;
-    margin-bottom: 2px;
-    transition: background 0.12s ease;
-}
-.session-item:hover {
-    background: #f3f4f6;
-}
-.session-item.active {
-    background: #eff6ff;
-    border-left: 3px solid #2563eb;
-    padding-left: 7px;
-}
-.session-title {
-    font-size: 0.83rem;
-    font-weight: 500;
-    color: #1f2937;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 170px;
-}
-.session-date {
-    font-size: 0.72rem;
-    color: #9ca3af;
-    margin-top: 1px;
-}
-/* clickable session row button — invisible, full width */
-.session-load-btn > div[data-testid="stButton"] > button {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    text-align: left !important;
-    font-size: 0.83rem !important;
-    font-weight: 500 !important;
-    color: #1f2937 !important;
-    cursor: pointer !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-}
-
-/* ── Mode banner ── */
+/* Active mode banner */
 .mode-banner {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 18px;
+    padding: 10px 16px;
     border-radius: 10px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    margin-bottom: 16px;
-}
-.mode-banner-general  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-.mode-banner-charging { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
-.mode-banner-chilton  { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-
-/* ── Header ── */
-.diva-header {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
     text-align: center;
-    padding: 8px 0 4px 0;
 }
-.diva-header h1 {
-    font-size: 2rem;
+.mode-banner-general  { background: #e8f4fd; color: #1a6fa8; border: 1.5px solid #4A90D9; }
+.mode-banner-charging { background: #fff8ec; color: #a0660a; border: 1.5px solid #F5A623; }
+.mode-banner-chilton  { background: #f0faec; color: #3a7a10; border: 1.5px solid #7ED321; }
+
+/* Sidebar section headers */
+.sidebar-section {
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: -0.5px;
-    color: #0f172a;
-    margin: 0;
-}
-.diva-header p {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin: 4px 0 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    margin: 16px 0 6px 0;
 }
 
-/* ── Chat messages ── */
-[data-testid="stChatMessage"] {
-    border-radius: 12px;
-    padding: 4px 0;
-}
-
-/* ── Input box ── */
-[data-testid="stChatInputContainer"] {
-    border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
-    background: #fff;
-}
-[data-testid="stChatInputContainer"]:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
-}
-
-/* ── File uploader in sidebar ── */
-section[data-testid="stSidebar"] [data-testid="stFileUploader"] {
-    background: #1a1f2e;
-    border: 1px dashed #2d3748;
-    border-radius: 8px;
-    padding: 8px;
-}
-section[data-testid="stSidebar"] [data-testid="stFileUploader"] * {
-    font-size: 0.8rem !important;
-}
-
-/* ── Divider ── */
-section[data-testid="stSidebar"] hr {
-    border-color: #e5e7eb !important;
-    margin: 12px 0 !important;
-}
-
-/* ── Footer ── */
-.footer-note {
-    text-align: center;
-    font-size: 0.72rem;
-    color: #94a3b8;
-    padding: 8px 0;
+/* FIX #2 — pin file uploader just above the chat input bar, never moves */
+.pinned-uploader {
+    position: fixed;
+    bottom: 70px;          /* sits just above st.chat_input bar (~60px tall) */
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(698px, 90vw); /* matches Streamlit centered layout max-width */
+    z-index: 100;
+    background: white;
+    padding: 4px 0 2px 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -524,332 +325,295 @@ if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
 if "chat_mode" not in st.session_state:
-    st.session_state.chat_mode = "general"
+    st.session_state.chat_mode = "general"  # default: free chat
 
 if "extracted_context" not in st.session_state:
     st.session_state.extracted_context = {
-        "team": None, "keywords": None, "location": None, "exact_description": None
+        "team": None,
+        "keywords": None,
+        "location": None,
+        "exact_description": None
     }
 
 if "in_charging_flow" not in st.session_state:
     st.session_state.in_charging_flow = False
 
-if "session_initialized" not in st.session_state:
-    st.session_state.session_initialized = False
+# ============================================
+# SIDEBAR
+# ============================================
 
-# Initialize chat history object
+if os.path.exists("Deriva-Logo.png"):
+    st.sidebar.image("Deriva-Logo.png", width=200)
+else:
+    st.sidebar.markdown("## ⚡ Diva")
+
+st.sidebar.markdown("---")
+
+# Initialize chat history
 chat_history = DynamoDBChatHistory(
     table_name=DDB_TABLE_NAME,
     session_id=st.session_state["session_id"]
 )
 
-# Register session in sessions table on first load
-if not st.session_state.session_initialized:
-    session_manager.upsert_session(
-        session_id=st.session_state["session_id"],
-        mode=st.session_state.chat_mode
-    )
-    st.session_state.session_initialized = True
-
-# ============================================
-# SIDEBAR
-# ============================================
-
-with st.sidebar:
-    # Logo
-    if os.path.exists("Deriva-Logo.png"):
-        st.image("Deriva-Logo.png", width=160)
-    else:
-        st.markdown("### ⚡ Diva")
-
-    st.divider()
-
-    # ── NEW CHAT BUTTON ──
-    st.markdown('<div class="new-chat-btn">', unsafe_allow_html=True)
-    if st.button("＋  New Chat", key="new_chat_btn"):
-        # Save current and start fresh
-        new_id = str(uuid.uuid4())
-        st.session_state["session_id"] = new_id
+def reset_history():
+    try:
+        chat_history.clear()
         st.session_state.extracted_context = {
-            "team": None, "keywords": None, "location": None, "exact_description": None
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
         }
         st.session_state.in_charging_flow = False
-        st.session_state.session_initialized = False
+        st.success("Chat cleared!")
+    except Exception as e:
+        st.warning(f"Could not clear history: {e}")
+        
+with st.sidebar.expander(" ** **", expanded=True):
+    if st.button("New Session"):
+        reset_history()
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    
+# --- MODE SELECTOR ---
+st.sidebar.markdown('<div class="sidebar-section">⚙️ Select Mode</div>', unsafe_allow_html=True)
 
-    # ── MODE SELECTOR ──
-    st.markdown('<div class="sidebar-label">Mode</div>', unsafe_allow_html=True)
+current_mode = st.session_state.chat_mode
+general_active = "✅ " if current_mode == "general" else ""
+charging_active = "✅ " if current_mode == "charging" else ""
+chilton_active = "✅ " if current_mode == "chilton" else ""
 
-    current_mode = st.session_state.chat_mode
+def set_mode(mode: str):
+    if st.session_state.chat_mode != mode:
+        st.session_state.chat_mode = mode
+        # Reset charging context when switching modes
+        st.session_state.extracted_context = {
+            "team": None,
+            "keywords": None,
+            "location": None,
+            "exact_description": None
+        }
+        st.session_state.in_charging_flow = False
 
-    for mode_key, mode_info in MODES.items():
-        is_active = current_mode == mode_key
-        label = f"{mode_info['icon']}  {mode_info['label']}"
-        if is_active:
-            label = "✓  " + label
-        if st.button(label, key=f"mode_{mode_key}", type="primary" if is_active else "secondary"):
-            if current_mode != mode_key:
-                st.session_state.chat_mode = mode_key
-                st.session_state.extracted_context = {
-                    "team": None, "keywords": None, "location": None, "exact_description": None
-                }
-                st.session_state.in_charging_flow = False
-                st.rerun()
+if st.sidebar.button(f"{general_active} General Chat", key="btn_general"):
+    set_mode("general")
+    st.rerun()
 
-    # ── MODE INFO PANELS ──
-    if st.session_state.chat_mode == "charging":
-        with st.expander("ℹ️ About Charging Guidelines", expanded=False):
-            st.markdown("""
-About charging questions, Diva provides:
-- Account Number
-- Location
-- Company ID
-- Project
-- Department
----
-**Note**: the project ID is for Concur and Timesheets.
+if st.sidebar.button(f"{charging_active} Charging Guidelines", key="btn_charging"):
+    set_mode("charging")
+    st.rerun()
 
-For more info: [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true)
-            """)
+if st.sidebar.button(f"{chilton_active} Chilton Manual", key="btn_chilton"):
+    set_mode("chilton")
+    st.rerun()
 
-    elif st.session_state.chat_mode == "chilton":
-        with st.expander("ℹ️ About Chilton Manual", expanded=False):
-            st.markdown("""
-The Chilton Manual mode helps with:
-- Wind turbine maintenance procedures
-- Troubleshooting guides
-- Scheduled maintenance tasks
-- Component-specific guidance
----
-*CSV data for this module will be loaded when available.*
-            """)
+st.sidebar.markdown("---")
 
-    st.divider()
+# Mode-specific info panels
+if current_mode == "charging":
+    with st.sidebar.expander("ℹ️ Charging Guidelines", expanded=False):
+        st.markdown("""
+        About charging questions, Diva provides:
+        - Account Number
+        - Location
+        - Company ID
+        - Project
+        - Department
+        ---
+        **Note**: the project ID is for Concur and Timesheets.
+        For more info: [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true)
+        """)
 
-    # ── FILE UPLOADER (General mode only) ──
-    uploaded_files = None
-    if st.session_state.chat_mode == "general":
-        st.markdown('<div class="sidebar-label">�� Attach Files</div>', unsafe_allow_html=True)
-        SUPPORTED_IMAGE_TYPES = ["png", "jpg", "jpeg", "gif", "webp"]
-        SUPPORTED_FILE_TYPES = ["pdf", "txt", "csv", "py", "json", "md"]
-        uploaded_files = st.file_uploader(
-            "Attach files or images",
-            type=SUPPORTED_IMAGE_TYPES + SUPPORTED_FILE_TYPES,
-            accept_multiple_files=True,
-            key="file_uploader",
-            label_visibility="collapsed"
-        )
-        if uploaded_files:
-            for f in uploaded_files:
-                st.caption(f"�� {f.name}")
-        st.divider()
+elif current_mode == "chilton":
+    with st.sidebar.expander("ℹ️ Chilton Manual", expanded=False):
+        st.markdown("""
+        The Chilton Manual mode helps with:
+        - Wind turbine maintenance procedures
+        - Troubleshooting guides
+        - Scheduled maintenance tasks
+        - Component-specific guidance
+        ---
+        *CSV data for this module will be loaded when available.*
+        """)
 
-    # ── CHAT HISTORY (collapsible) ──
-    with st.expander("�� Recent Chats", expanded=True):
-        recent_sessions = session_manager.get_recent_sessions(limit=20)
+st.sidebar.divider()
 
-        if not recent_sessions:
-            st.caption("No previous chats yet.")
-        else:
-            for sess in recent_sessions:
-                sid = sess.get('session_id', '')
-                title = sess.get('title', 'New conversation')
-                updated = sess.get('updated_at', '')
-                is_current = sid == st.session_state["session_id"]
+with st.sidebar.expander("�� Support"):
+    st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
 
-                # Format relative date
-                try:
-                    dt = datetime.fromisoformat(updated)
-                    now = datetime.utcnow()
-                    delta = now - dt
-                    if delta.days == 0:
-                        date_label = "Today"
-                    elif delta.days == 1:
-                        date_label = "Yesterday"
-                    elif delta.days < 7:
-                        date_label = f"{delta.days}d ago"
-                    else:
-                        date_label = dt.strftime("%b %d")
-                except:
-                    date_label = ""
-
-                # Truncate title
-                display_title = title[:26] + "…" if len(title) > 26 else title
-                active_class = "active" if is_current else ""
-
-                col1, col2 = st.columns([6, 1])
-                with col1:
-                    # Render styled card; clicking the button below loads the session
-                    st.markdown(
-                        f"""<div class="session-item {active_class}">
-                            <div class="session-title">{display_title}</div>
-                            <div class="session-date">{date_label}</div>
-                        </div>""",
-                        unsafe_allow_html=True
-                    )
-                    # Invisible-styled button that acts as the clickable row
-                    st.markdown('<div class="session-load-btn">', unsafe_allow_html=True)
-                    if st.button(f"↩ {display_title}", key=f"load_{sid}", help=f"Load: {title}"):
-                        st.session_state["session_id"] = sid
-                        st.session_state.extracted_context = {
-                            "team": None, "keywords": None, "location": None, "exact_description": None
-                        }
-                        st.session_state.in_charging_flow = False
-                        st.session_state.session_initialized = True
-                        st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
-                with col2:
-                    if st.button("��", key=f"del_{sid}", help="Delete this chat"):
-                        session_manager.delete_session(sid)
-                        if is_current:
-                            st.session_state["session_id"] = str(uuid.uuid4())
-                            st.session_state.session_initialized = False
-                        st.rerun()
-
-    st.divider()
-
-    # ── SUPPORT ──
-    with st.expander("�� Support"):
-        st.markdown("[Report an issue](mailto:joe.cheng@derivaenergy.com)")
-
-    st.caption("Diva is for internal Deriva Energy use only. It may contain errors.")
+st.sidebar.caption("Diva The AI Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.")
 
 # ============================================
 # HEADER
 # ============================================
 
-st.markdown("""
-<div class="diva-header">
-    <h1>⚡ Diva</h1>
-    <p>Deriva Energy's AI Assistant</p>
-</div>
-""", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>⚡ Meet Diva!</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Deriva's AI Chatbot</p>", unsafe_allow_html=True)
 
-# Mode banner
-mode_info = MODES[st.session_state.chat_mode]
+# Active mode banner
+mode_info = MODES[current_mode]
+banner_class = f"mode-banner mode-banner-{current_mode}"
 st.markdown(
-    f'<div class="mode-banner mode-banner-{st.session_state.chat_mode}">'
-    f'{mode_info["icon"]} <strong>{mode_info["label"]}</strong> — {mode_info["description"]}'
-    f'</div>',
+    f'<div class="{banner_class}">{mode_info["icon"]} Mode: <strong>{mode_info["label"]}</strong> — {mode_info["description"]}</div>',
     unsafe_allow_html=True
 )
 
 # ============================================
-# LLM — CORE CALL WITH PROPER HISTORY
+# LLM HELPER FUNCTIONS
 # ============================================
 
 def call_claude(system_prompt: str, user_message: str, include_history: bool = True) -> str:
-    """Call Claude via Bedrock with properly structured conversation history"""
+    """Call Claude via Bedrock with conversation history.
+
+    FIX #1: Uses get_messages_for_bedrock() to pass a proper alternating
+    messages[] array instead of flattening history into a single user message.
+    FIX #3: max_tokens raised to 8192 for longer responses and better memory.
+    """
     try:
-        messages = []
-
         if include_history:
-            # Get properly formatted message history
-            history_messages = chat_history.get_messages_for_bedrock()
-            messages.extend(history_messages)
-
-        # Append current user message
-        messages.append({"role": "user", "content": user_message})
-
-        # Ensure messages alternate correctly (deduplicate consecutive same-role)
-        cleaned = []
-        for msg in messages:
-            if cleaned and cleaned[-1]["role"] == msg["role"]:
-                # Merge consecutive same-role messages
-                cleaned[-1]["content"] += "\n" + msg["content"]
-            else:
-                cleaned.append(msg)
-
+            # Build proper messages array from stored history
+            messages = chat_history.get_messages_for_bedrock()
+            # Append the new user message
+            messages.append({"role": "user", "content": user_message})
+            # Final safety pass: ensure no consecutive same-role messages
+            cleaned = []
+            for msg in messages:
+                if cleaned and cleaned[-1]["role"] == msg["role"]:
+                    cleaned[-1]["content"] += "\n" + msg["content"]
+                else:
+                    cleaned.append(msg)
+            messages = cleaned
+        else:
+            messages = [{"role": "user", "content": user_message}]
+        
         response = bedrock_runtime.invoke_model(
             modelId=BEDROCK_MODEL_ID,
             body=json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 8192,
+                "max_tokens": 8192,   # FIX #3: raised from 4096
                 "system": system_prompt,
-                "messages": cleaned
+                "messages": messages  # FIX #1: proper messages array
             })
         )
-
+        
         result = json.loads(response['body'].read())
         return result['content'][0]['text']
-
     except Exception as e:
         st.error(f"Error calling Claude: {e}")
         return None
 
 # ============================================
-# FILE PROCESSING
+# GENERAL ASSISTANT PROMPT
+# ============================================
+
+GENERAL_ASSISTANT_PROMPT = """
+You are Diva, a friendly and helpful AI assistant for Deriva Energy employees.
+
+You can help with anything — coding, writing, analysis, general questions, brainstorming, and more.
+You are currently in GENERAL CHAT mode, so behave like a capable, warm, and helpful AI assistant.
+
+If users ask about charging codes or wind farm maintenance, let them know they can switch to the
+appropriate mode using the sidebar buttons for more focused help.
+
+Keep responses concise and friendly. You are an internal tool for Deriva Energy employees.
+"""
+
+def generate_natural_response(user_query: str, uploaded_files: list = None) -> str:
+    """Generate response, optionally with attached files/images"""
+    if uploaded_files:
+        response = call_claude_with_media(GENERAL_ASSISTANT_PROMPT, user_query, uploaded_files)
+    else:
+        response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
+    if not response:
+        return "I'm here to help! Could you rephrase your question?"
+    return response
+
+# ============================================
+# FILE / IMAGE PROCESSING (GENERAL CHAT)
 # ============================================
 
 SUPPORTED_IMAGE_TYPES = ["png", "jpg", "jpeg", "gif", "webp"]
-SUPPORTED_FILE_TYPES = ["pdf", "txt", "csv", "py", "json", "md"]
+SUPPORTED_FILE_TYPES = ["pdf", "txt", "csv", "py", "json", "md", "docx"]
 
 def encode_image_to_base64(file_bytes: bytes) -> str:
+    """Encode image bytes to base64 string"""
     return base64.standard_b64encode(file_bytes).decode("utf-8")
 
 def extract_text_from_file(uploaded_file) -> str:
+    """Extract text content from uploaded file"""
     filename = uploaded_file.name.lower()
     file_bytes = uploaded_file.read()
 
-    if filename.endswith((".txt", ".md", ".py")):
+    if filename.endswith(".txt") or filename.endswith(".md") or filename.endswith(".py"):
         return file_bytes.decode("utf-8", errors="ignore")
+
     elif filename.endswith(".csv"):
         try:
             df = pd.read_csv(io.BytesIO(file_bytes))
             return f"CSV File: {uploaded_file.name}\n\n{df.to_string(index=False)}"
         except Exception as e:
             return f"Could not parse CSV: {e}"
+
     elif filename.endswith(".json"):
         try:
             data = json.loads(file_bytes.decode("utf-8"))
             return f"JSON File: {uploaded_file.name}\n\n{json.dumps(data, indent=2)}"
         except Exception as e:
             return f"Could not parse JSON: {e}"
+
     elif filename.endswith(".pdf"):
         try:
             import pypdf
             reader = pypdf.PdfReader(io.BytesIO(file_bytes))
-            text = "".join(page.extract_text() + "\n" for page in reader.pages)
+            text = ""
+            for page in reader.pages:
+                text += page.extract_text() + "\n"
             return f"PDF File: {uploaded_file.name}\n\n{text}"
         except ImportError:
             return "PDF support requires `pypdf`. Run: pip install pypdf"
         except Exception as e:
             return f"Could not parse PDF: {e}"
-    return f"[Unsupported file type: {uploaded_file.name}]"
+
+    else:
+        return f"[Unsupported file type: {uploaded_file.name}]"
+
 
 def call_claude_with_media(system_prompt: str, user_message: str, uploaded_files: list) -> str:
+    """Call Claude with text + optional images/files"""
     try:
         content_blocks = []
 
         for uploaded_file in uploaded_files:
             file_ext = uploaded_file.name.split(".")[-1].lower()
-            uploaded_file.seek(0)
+            uploaded_file.seek(0)  # reset pointer
 
             if file_ext in SUPPORTED_IMAGE_TYPES:
+                # Add as image block
                 image_data = encode_image_to_base64(uploaded_file.read())
                 media_type_map = {
                     "jpg": "image/jpeg", "jpeg": "image/jpeg",
                     "png": "image/png", "gif": "image/gif", "webp": "image/webp"
                 }
+                media_type = media_type_map.get(file_ext, "image/png")
                 content_blocks.append({
                     "type": "image",
                     "source": {
                         "type": "base64",
-                        "media_type": media_type_map.get(file_ext, "image/png"),
+                        "media_type": media_type,
                         "data": image_data
                     }
                 })
             else:
+                # Extract text and add as text block
                 file_text = extract_text_from_file(uploaded_file)
                 content_blocks.append({
                     "type": "text",
                     "text": f"[Attached file: {uploaded_file.name}]\n\n{file_text}"
                 })
 
+        # Add the user's text message
         content_blocks.append({"type": "text", "text": user_message})
 
-        # Build messages with history
+        # FIX #1: use proper history array here too
         history_messages = chat_history.get_messages_for_bedrock()
         messages = history_messages + [{"role": "user", "content": content_blocks}]
 
@@ -857,7 +621,7 @@ def call_claude_with_media(system_prompt: str, user_message: str, uploaded_files
             modelId=BEDROCK_MODEL_ID,
             body=json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 8192,
+                "max_tokens": 8192,   # FIX #3: raised from 4000
                 "system": system_prompt,
                 "messages": messages
             })
@@ -871,53 +635,18 @@ def call_claude_with_media(system_prompt: str, user_message: str, uploaded_files
         return None
 
 # ============================================
-# SYSTEM PROMPTS
-# ============================================
-
-GENERAL_ASSISTANT_PROMPT = """
-You are Diva, a friendly and capable AI assistant for Deriva Energy employees.
-You can help with anything — coding, writing, analysis, general questions, brainstorming, and more.
-Keep responses helpful, concise, and warm. You are an internal tool for Deriva Energy employees.
-If users ask about charging codes or wind farm maintenance, let them know they can switch modes in the sidebar.
-"""
-
-CHILTON_SYSTEM_PROMPT = """
-You are Diva in CHILTON MANUAL mode — a wind farm maintenance expert for Deriva Energy.
-Focus exclusively on:
-- Wind turbine maintenance procedures and schedules
-- Troubleshooting mechanical and electrical issues
-- Component-specific guidance (blades, gearboxes, generators, pitch systems, yaw systems, etc.)
-- Safety procedures for wind farm operations
-- Preventive and corrective maintenance
-
-Be precise, safety-conscious, and practical. Use clear step-by-step formatting.
-Always mention relevant safety precautions.
-"""
-
-# ============================================
-# CHARGING DETECTION & EXTRACTION
+# CHARGING QUESTION DETECTION
 # ============================================
 
 CHARGING_DETECTION_PROMPT = """
-You are a charging guidelines assistant for Deriva Energy.
-Determine if the user's question is about CHARGING GUIDELINES or DEPARTMENTS.
-Return ONLY valid JSON: {"is_charging_question": true | false, "confidence": "high" | "medium" | "low"}
-"""
+You are Diva, a charging guidelines assistant for Deriva Energy.
 
-EXTRACTION_PROMPT = """
-You are a charging guidelines assistant. Extract key information from the user's query.
-Extract:
-1. team: ONLY if explicitly mentioned (IT, Finance, HR, Legal, Corporate, Land Services, Commercial, Development, Tech Services, Operations)
-2. keywords: Key words for searching
-3. location: Specific location if mentioned
-4. is_new_query: Is this a NEW charging question or a follow-up? (true/false)
+Determine if the user's question is about CHARGING GUIDELINES or DEPARTMENTS.
 
 Return ONLY valid JSON:
 {
-  "team": "IT" | "Finance" | "HR" | "Legal" | "Corporate" | "Land Services" | "Commercial" | "Development" | "Tech Services" | "Operations" | null,
-  "keywords": "search terms" | null,
-  "location": "location name" | null,
-  "is_new_query": true | false
+  "is_charging_question": true | false,
+  "confidence": "high" | "medium" | "low"
 }
 """
 
@@ -928,28 +657,61 @@ def is_charging_question(user_query: str) -> bool:
     ]
     user_lower = user_query.lower()
     has_charging_keyword = any(keyword in user_lower for keyword in charging_keywords)
+
     if not has_charging_keyword and len(user_query.split()) > 3:
         return False
+
     response = call_claude(CHARGING_DETECTION_PROMPT, user_query, include_history=False)
     if not response:
         return has_charging_keyword
+
     try:
-        content = response.strip().replace("```json", "").replace("```", "").strip()
+        content = response.strip()
+        for marker in ["```json", "```"]:
+            content = content.replace(marker, "")
+        content = content.strip()
         m = re.search(r'\{.*\}', content, re.DOTALL)
         data = json.loads(m.group() if m else content)
         return data.get("is_charging_question", has_charging_keyword)
     except:
         return has_charging_keyword
 
+# ============================================
+# EXTRACTION PROMPT
+# ============================================
+
+EXTRACTION_PROMPT = """
+You are Diva, a charging guidelines assistant. Extract key information from the user's query.
+
+Extract:
+1. **team**: ONLY if explicitly mentioned (IT, Finance, HR, Legal, Corporate, Land Services, Commercial, Development, Tech Services, Operations)
+2. **keywords**: Key words the user wants to search for
+3. **location**: Specific location if mentioned
+4. **is_new_query**: Is this a NEW charging question or a follow-up? (true/false)
+
+Return ONLY valid JSON:
+{
+  "team": "IT" | "Finance" | "HR" | "Legal" | "Corporate" | "Land Services" | "Commercial" | "Development" | "Tech Services" | "Operations" | null,
+  "keywords": "search terms" | null,
+  "location": "location name" | null,
+  "is_new_query": true | false
+}
+"""
+
 def extract_query_info(user_query: str) -> Dict:
     response = call_claude(EXTRACTION_PROMPT, user_query, include_history=True)
     if not response:
         return st.session_state.extracted_context.copy()
+    
     try:
-        content = response.strip().replace("```json", "").replace("```", "").strip()
+        content = response.strip()
+        for marker in ["```json", "```"]:
+            content = content.replace(marker, "")
+        content = content.strip()
         m = re.search(r'\{.*\}', content, re.DOTALL)
         data = json.loads(m.group() if m else content)
         is_new_query = data.get("is_new_query", False)
+
         if is_new_query:
             extracted = {
                 "team": data.get("team"),
@@ -959,6 +721,7 @@ def extract_query_info(user_query: str) -> Dict:
             }
             st.session_state.extracted_context = extracted
             return extracted
+
         extracted = {
             "team": data.get("team"),
             "keywords": data.get("keywords"),
@@ -967,7 +730,12 @@ def extract_query_info(user_query: str) -> Dict:
         }
         merged = {}
         for key in ["team", "keywords", "location", "exact_description"]:
-            merged[key] = extracted.get(key) or st.session_state.extracted_context.get(key)
+            if extracted.get(key):
+                merged[key] = extracted[key]
+            elif st.session_state.extracted_context.get(key):
+                merged[key] = st.session_state.extracted_context[key]
+            else:
+                merged[key] = None
         st.session_state.extracted_context = merged
         return merged
     except:
@@ -975,8 +743,7 @@ def extract_query_info(user_query: str) -> Dict:
 
 def is_likely_new_query(user_input: str) -> bool:
     user_lower = user_input.lower().strip()
-    new_query_phrases = ["how to charge", "where to charge", "charge for", "charging for",
-                         "codes for", "what about", "how about", "need codes", "looking for"]
+    new_query_phrases = ["how to charge", "where to charge", "charge for", "charging for", "codes for", "what about", "how about", "need codes", "looking for"]
     for phrase in new_query_phrases:
         if phrase in user_lower:
             return True
@@ -984,7 +751,9 @@ def is_likely_new_query(user_input: str) -> bool:
         return False
     question_words = ["how", "what", "where", "which", "can", "do"]
     first_word = user_lower.split()[0] if user_lower.split() else ""
-    return first_word in question_words
+    if first_word in question_words:
+        return True
+    return False
 
 # ============================================
 # CSV SEARCH FUNCTIONS
@@ -1019,21 +788,24 @@ def get_charging_data(team: str, exact_description: str, location: str = None) -
             matches = location_matches
     return matches, has_multiple
 
+# ============================================
+# FORMATTING FUNCTIONS
+# ============================================
+
 def format_charging_info(row: pd.Series) -> str:
-    return (
-        f"- **Description:** {row['Description']}\n"
-        f"- **Account:** {row['Account']}\n"
-        f"- **Location:** {row['Location']}\n"
-        f"- **Company ID:** {row['Company ID']}\n"
-        f"- **Project:** {row['Project']}\n"
-        f"- **Department:** {row['Department']}"
-    )
+    return f"""- **Description:** {row['Description']}
+- **Account:** {row['Account']}
+- **Location:** {row['Location']}
+- **Company ID:** {row['Company ID']}
+- **Project:** {row['Project']}
+- **Department:** {row['Department']}"""
 
 def format_multiple_variants(team: str, matches: pd.DataFrame) -> str:
     description = matches.iloc[0]['Description']
-    result = f"**{team} Team — {description}**\n\nThis charging code has **{len(matches)} options**:\n\n"
+    result = f"**{team} Team - {description}**\n\n"
+    result += f"This charging code has **{len(matches)} options**. Please refer to the department list for more details:\n\n"
     for idx, (_, row) in enumerate(matches.iterrows(), 1):
-        result += f"---\n**Option {idx}:**\n"
+        result += f"---\n**OPTION {idx}:**\n"
         result += f"- **Description:** {row['Description']}\n"
         result += f"- **Account:** {row['Account']}\n"
         result += f"- **Location:** {row['Location']}\n"
@@ -1068,9 +840,7 @@ def check_if_selecting_from_list(user_input: str, extracted: Dict) -> str:
 def process_charging_question(user_input: str) -> str:
     st.session_state.in_charging_flow = True
     if is_likely_new_query(user_input):
-        st.session_state.extracted_context = {
-            "team": None, "keywords": None, "location": None, "exact_description": None
-        }
+        st.session_state.extracted_context = {"team": None, "keywords": None, "location": None, "exact_description": None}
     extracted = extract_query_info(user_input)
     if extracted.get("keywords") and not extracted.get("exact_description"):
         selected_description = check_if_selecting_from_list(user_input, extracted)
@@ -1087,12 +857,9 @@ def process_charging_question(user_input: str) -> str:
         return "Which team are you with? (IT, Finance, HR, Legal, Corporate, Land Services, Commercial, Development or Tech Services)"
 
     if team and team.lower() == "operations":
-        st.session_state.extracted_context = {
-            "team": None, "keywords": None, "location": None, "exact_description": None
-        }
+        st.session_state.extracted_context = {"team": None, "keywords": None, "location": None, "exact_description": None}
         st.session_state.in_charging_flow = False
-        return ("For Operations team charging codes, please refer to the **Operations Sections** in the "
-                "[O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true).")
+        return "For Operations team charging codes, please refer to the **Operations Sections** in the [O&M Charging Guidelines](https://derivaenergy.sharepoint.com/:x:/r/sites/DerivaFinance/_layouts/15/Doc.aspx?sourcedoc=%7B3CD9F65D-C693-4CE8-904C-91074451F098%7D&file=Deriva%20OM%20Charging%20Guidelines.xlsx&action=default&mobileredirect=true)."
 
     if not keywords and not exact_description:
         return "What would you like to charge for?"
@@ -1102,11 +869,11 @@ def process_charging_question(user_input: str) -> str:
         if matches.empty:
             st.session_state.extracted_context["exact_description"] = None
             return f"I couldn't find charging codes for '{exact_description}' in {team} team."
-        st.session_state.extracted_context = {
-            "team": None, "keywords": None, "location": None, "exact_description": None
-        }
+        st.session_state.extracted_context = {"team": None, "keywords": None, "location": None, "exact_description": None}
         st.session_state.in_charging_flow = False
-        return format_multiple_variants(team, matches) if has_multiple else format_charging_info(matches.iloc[0])
+        if has_multiple:
+            return format_multiple_variants(team, matches)
+        return format_charging_info(matches.iloc[0])
 
     matching_descriptions = search_descriptions_by_keywords(team, keywords)
     if not matching_descriptions:
@@ -1115,13 +882,13 @@ def process_charging_question(user_input: str) -> str:
     if len(matching_descriptions) == 1:
         st.session_state.extracted_context["exact_description"] = matching_descriptions[0]
         matches, has_multiple = get_charging_data(team, matching_descriptions[0], location)
-        st.session_state.extracted_context = {
-            "team": None, "keywords": None, "location": None, "exact_description": None
-        }
+        st.session_state.extracted_context = {"team": None, "keywords": None, "location": None, "exact_description": None}
         st.session_state.in_charging_flow = False
-        return format_multiple_variants(team, matches) if has_multiple else format_charging_info(matches.iloc[0])
+        if has_multiple:
+            return format_multiple_variants(team, matches)
+        return format_charging_info(matches.iloc[0])
 
-    result = f"I found **{len(matching_descriptions)}** charging codes matching '{keywords}' in **{team}** team:\n\n"
+    result = f"I found {len(matching_descriptions)} charging codes matching '{keywords}' in {team} team:\n\n"
     for idx, desc in enumerate(matching_descriptions, 1):
         result += f"{idx}. {desc}\n"
     result += "\nWhich one are you looking for?"
@@ -1133,9 +900,7 @@ def process_charging_question(user_input: str) -> str:
 
 def is_department_question(user_query: str) -> bool:
     query_lower = user_query.lower()
-    department_keywords = ['department', 'dept', 'departments', 'depts', 'department number',
-                           'dept number', 'department code', 'how many department', 'list department',
-                           'show department', 'what department', 'which department', 'all department']
+    department_keywords = ['department', 'dept', 'departments', 'depts', 'department number', 'dept number', 'department code', 'how many department', 'list department', 'show department', 'what department', 'which department', 'all department']
     return any(keyword in query_lower for keyword in department_keywords)
 
 def search_departments(query: str) -> pd.DataFrame:
@@ -1182,19 +947,23 @@ def format_department_info(departments_df: pd.DataFrame, query: str) -> str:
         return response
     if len(departments_df) <= 5:
         response = f"**Found {len(departments_df)} department(s):**\n\n"
-        for _, row in departments_df.iterrows():
-            response += f"**{row['Department Number']} — {row['Department Name']}**\n"
-            for col, label in [('Resp Center', 'Responsibility Center'), ('HR Function Group', 'HR Function Group'),
-                                ('HR Group', 'HR Group'), ('SG&A/OPS/DEVEX', 'Category')]:
-                if col in row and pd.notna(row.get(col)):
-                    response += f"- **{label}:** {row[col]}\n"
+        for idx, row in departments_df.iterrows():
+            response += f"**{row['Department Number']} - {row['Department Name']}**\n"
+            if pd.notna(row.get('Resp Center')):
+                response += f"- Responsibility Center: {row['Resp Center']}\n"
+            if pd.notna(row.get('HR Function Group')):
+                response += f"- HR Function Group: {row['HR Function Group']}\n"
+            if pd.notna(row.get('HR Group')):
+                response += f"- HR Group: {row['HR Group']}\n"
+            if pd.notna(row.get('SG&A/OPS/DEVEX')):
+                response += f"- Category: {row['SG&A/OPS/DEVEX']}\n"
             response += "\n"
         return response
-    response = f"**Found {len(departments_df)} departments. Showing first 10:**\n\n"
+    response = f"**Found {len(departments_df)} departments. Here are the first 10:**\n\n"
     for _, row in departments_df.head(10).iterrows():
         response += f"- {row['Department Number']}: {row['Department Name']}\n"
     if len(departments_df) > 10:
-        response += f"\n*…and {len(departments_df) - 10} more. Please refine your search.*"
+        response += f"\n*...and {len(departments_df) - 10} more. Please refine your search.*"
     return response
 
 def process_department_question(user_input: str) -> str:
@@ -1202,48 +971,57 @@ def process_department_question(user_input: str) -> str:
     return format_department_info(departments, user_input)
 
 # ============================================
-# CHILTON MODE
+# CHILTON MANUAL MODE
 # ============================================
 
+CHILTON_SYSTEM_PROMPT = """
+You are Diva in CHILTON MANUAL mode — a wind farm maintenance expert for Deriva Energy.
+
+Your focus is exclusively on:
+- Wind turbine maintenance procedures and schedules
+- Troubleshooting mechanical and electrical issues
+- Component-specific guidance (blades, gearboxes, generators, pitch systems, yaw systems, etc.)
+- Safety procedures for wind farm operations
+- Preventive and corrective maintenance
+
+When CSV data is provided in the conversation, use it to answer questions precisely.
+If no data is available yet for a specific topic, answer from general wind turbine maintenance knowledge.
+
+Be precise, safety-conscious, and practical. Use clear step-by-step formatting when describing procedures.
+Always mention relevant safety precautions.
+"""
+
 def process_chilton_question(user_input: str) -> str:
+    """Process wind farm / Chilton Manual questions"""
+    # In the future, this will query CHILTON_CSV_FILES similar to charging
+    # For now, use LLM with the specialized system prompt
     response = call_claude(CHILTON_SYSTEM_PROMPT, user_input, include_history=True)
     if not response:
-        return "I couldn't retrieve maintenance guidance at this time. Please try again or refer to your documentation."
+        return "I couldn't retrieve maintenance guidance at this time. Please try again or refer to your Chilton Manual documentation."
     return response
 
 # ============================================
-# GENERAL RESPONSE
-# ============================================
-
-def generate_natural_response(user_query: str, uploaded_files: list = None) -> str:
-    if uploaded_files:
-        response = call_claude_with_media(GENERAL_ASSISTANT_PROMPT, user_query, uploaded_files)
-    else:
-        response = call_claude(GENERAL_ASSISTANT_PROMPT, user_query, include_history=True)
-    return response or "I'm here to help! Could you rephrase your question?"
-
-# ============================================
-# MAIN MESSAGE ROUTER
+# MAIN PROCESSING LOGIC
 # ============================================
 
 def process_message(user_input: str, uploaded_files: list = None) -> str:
     mode = st.session_state.chat_mode
 
     greetings = ["hi", "hello", "hey", "yo", "hiya", "good morning", "good afternoon", "good evening"]
-    if user_input.lower().strip() in greetings or any(
-        user_input.lower().strip().startswith(g + " ") for g in greetings
-    ):
+    if user_input.lower().strip() in greetings or any(user_input.lower().strip().startswith(g + " ") for g in greetings):
         if mode == "general":
-            return "Hi there! I'm Diva, Deriva Energy's AI assistant. How can I help you today?"
+            return "Hi there! I'm Diva, your AI assistant. How can I help you today?"
         elif mode == "charging":
             return "Hi! I'm in **Charging Guidelines** mode. Ask me about charging codes, accounts, projects, or departments!"
         elif mode == "chilton":
             return "Hi! I'm in **Chilton Manual** mode. Ask me about wind turbine maintenance, troubleshooting, or procedures!"
 
+    # ---- GENERAL MODE ----
     if mode == "general":
         st.session_state.in_charging_flow = False
         return generate_natural_response(user_input, uploaded_files=uploaded_files)
 
+    # ---- CHARGING MODE ----
     elif mode == "charging":
         if is_department_question(user_input):
             st.session_state.in_charging_flow = False
@@ -1252,26 +1030,22 @@ def process_message(user_input: str, uploaded_files: list = None) -> str:
             return process_charging_question(user_input)
         if is_charging_question(user_input):
             return process_charging_question(user_input)
-        return (
-            "I'm currently in **Charging Guidelines** mode. "
-            "Ask me about charging codes, account numbers, projects, or departments. "
-            "Switch to **General Chat** in the sidebar for other questions!"
-        )
+        else:
+            return (
+                "I'm currently focused on **Charging Guidelines**. "
+                "Ask me about charging codes, account numbers, projects, or departments. "
+                "If you'd like to chat freely, switch to **General Chat** mode in the sidebar!"
+            )
 
+    # ---- CHILTON MODE ----
     elif mode == "chilton":
         return process_chilton_question(user_input)
 
     return generate_natural_response(user_input)
 
 # ============================================
-# RENDER CHAT HISTORY
+# RENDER EXISTING CHAT HISTORY
 # ============================================
-
-# Re-initialize chat_history with current session_id (may have changed)
-chat_history = DynamoDBChatHistory(
-    table_name=DDB_TABLE_NAME,
-    session_id=st.session_state["session_id"]
-)
 
 messages = chat_history.get_messages()
 for msg in messages:
@@ -1281,19 +1055,35 @@ for msg in messages:
         st.markdown(content)
 
 # ============================================
-# CHAT INPUT
+# CHAT INPUT & PROCESSING
 # ============================================
 
 placeholders = {
-    "general": "Ask me anything…",
-    "charging": "Ask about charging codes, accounts, or departments…",
-    "chilton": "Ask about wind turbine maintenance or procedures…"
+    "general": "Ask me anything...",
+    "charging": "Ask about charging codes, accounts, or departments...",
+    "chilton": "Ask about wind turbine maintenance or procedures..."
 }
 
-user_input = st.chat_input(placeholders.get(st.session_state.chat_mode, "Type your message…"))
+# FIX #2: File uploader pinned just above the chat input bar via fixed CSS.
+# Wrapped in .pinned-uploader div which uses position:fixed so it never
+# moves regardless of how long the conversation grows.
+uploaded_files = None
+if st.session_state.chat_mode == "general":
+    st.markdown('<div class="pinned-uploader">', unsafe_allow_html=True)
+    uploaded_files = st.file_uploader(
+        "�� Attach files or images (optional)",
+        type=SUPPORTED_IMAGE_TYPES + SUPPORTED_FILE_TYPES,
+        accept_multiple_files=True,
+        key="file_uploader",
+        label_visibility="collapsed",
+        help="Supports: PNG, JPG, GIF, WEBP, PDF, TXT, CSV, PY, JSON, MD"
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+user_input = st.chat_input(placeholders.get(st.session_state.chat_mode, "Type your message..."))
 
 if user_input:
-    # Build display message
+    # Build display message with file names
     display_message = user_input
     if uploaded_files:
         file_names = ", ".join([f.name for f in uploaded_files])
@@ -1303,33 +1093,26 @@ if user_input:
         st.markdown(display_message)
     chat_history.add_message("user", display_message)
 
-    # Update session title from first user message
-    current_session = session_manager.get_session(st.session_state["session_id"])
-    if not current_session.get('title') or current_session.get('title') == 'New conversation':
-        title = user_input[:50]
-        session_manager.upsert_session(
-            session_id=st.session_state["session_id"],
-            title=title,
-            mode=st.session_state.chat_mode
-        )
-    else:
-        session_manager.upsert_session(
-            session_id=st.session_state["session_id"],
-            mode=st.session_state.chat_mode
-        )
-
     with st.chat_message("assistant"):
-        with st.spinner("Thinking…"):
+        with st.spinner("Thinking..."):
             response = process_message(user_input, uploaded_files=uploaded_files)
             st.markdown(response)
-
     chat_history.add_message("assistant", response)
+
 
 # ============================================
 # FOOTER
 # ============================================
 
-st.markdown(
-    '<div class="footer-note">Diva is made by Deriva Energy · Internal use only · May contain errors</div>',
-    unsafe_allow_html=True
-)
+st.divider()
+footer = """
+<style>
+a:link, a:visited { color: blue; background-color: transparent; text-decoration: underline; }
+a:hover, a:active { color: red; background-color: transparent; text-decoration: underline; }
+.footer { position: fixed; left:0; bottom:0; width:100%; background-color:white; color:black; text-align:center; }
+</style>
+<div class="footer">
+<p>Diva The Chatbot is made by Deriva Energy and is for internal use only. It may contain errors.</p>
+</div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
